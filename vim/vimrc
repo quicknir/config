@@ -1,0 +1,5 @@
+syntax enable
+set background=light
+colorscheme solarized
+set rnu
+set number
