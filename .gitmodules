@@ -7,3 +7,9 @@
 [submodule "terminal/dircolors-solarized"]
 	path = terminal/dircolors-solarized
 	url = https://github.com/seebi/dircolors-solarized
+[submodule "vim/vim-pathogen"]
+	path = vim/vim-pathogen
+	url = https://github.com/tpope/vim-pathogen.git
+[submodule "vim/vim/bundle/vim-surround"]
+	path = vim/vim/bundle/vim-surround
+	url = https://github.com/tpope/vim-surround.git

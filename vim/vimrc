@@ -6,3 +6,4 @@ set number
 set hlsearch
 set incsearch
 autocmd VimLeave * call system("xclip -selection c", getreg('+'))
+execute pathogen#infect()
