@@ -4,3 +4,6 @@
 [submodule "terminal/prezto"]
 	path = terminal/prezto
 	url = https://github.com/quicknir/prezto
+[submodule "terminal/dircolors-solarized"]
+	path = terminal/dircolors-solarized
+	url = https://github.com/seebi/dircolors-solarized
