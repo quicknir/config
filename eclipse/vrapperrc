@@ -1,0 +1,11 @@
+set incsearch
+set hlsearch
+set clipboard=unnamedplus,autoselect
+set expandtab
+
+autocmd "C/C++ Editor" set shiftwidth=2
+autocmd "C/C++ Editor" set tabstop=2
+autocmd "C/C++ Editor" set textwidth=99
+autocmd "Python Editor" set shiftwidth=4
+autocmd "Python Editor" set tabstop=4
+autocmd "Python Editor" set textwidth=79
