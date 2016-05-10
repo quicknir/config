@@ -1,12 +1,13 @@
 [global_config]
-  enabled_plugins = LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
+  borderless = True
   handle_size = 3
-  inactive_color_offset = 0.82
+  inactive_color_offset = 0.76
 [keybindings]
 [layouts]
   [[default]]
     [[[child1]]]
       parent = window0
+      profile = default
       type = Terminal
     [[[window0]]]
       parent = ""
@@ -22,5 +23,7 @@
     font = Input 12
     foreground_color = "#657b83"
     palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#eee8d5:#002b36:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
+    scroll_on_output = False
+    scrollback_lines = 10000
     show_titlebar = False
     use_system_font = False
