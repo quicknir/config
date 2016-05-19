@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.python.pydev.plugin.preferences.CheckDefaultPreferencesDialog">
+		<item value="497" key="width"/>
+		<item value="2633" key="x"/>
+		<item value="256" key="y"/>
+		<item value="427" key="height"/>
+	</section>
+	<section name="org.python.pydev.ui.dialogs.Select1Dialog.shell">
+		<item value="480" key="width"/>
+		<item value="2641" key="x"/>
+		<item value="345" key="y"/>
+		<item value="383" key="height"/>
+	</section>
+	<section name="com.python.pydev.actions.QuickShowOutline">
+		<item value="800" key="width"/>
+		<item value="672" key="x"/>
+		<item value="181" key="y"/>
+		<item value="653" key="height"/>
+	</section>
+</section>

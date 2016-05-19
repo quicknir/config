@@ -1,0 +1,4 @@
+#Wed Aug 19 18:14:59 EDT 2015
+__DEFAULT__=false
+org.eclipse.help.ui.localSearch.master=true
+expression=Import launch configuration
