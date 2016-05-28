@@ -34,7 +34,7 @@ values."
      ;;        shell-default-position 'bottom)
      ;; spell-checking
      syntax-checking
-     ;; version-control
+     version-control
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -312,10 +312,18 @@ you should place your code here."
   (evil-leader/set-key-for-mode 'c++-mode "pi" 'rtags-print-dependencies)
   (evil-leader/set-key-for-mode 'c++-mode "ps" 'rtags-print-symbol-info)
   (evil-leader/set-key-for-mode 'c++-mode "pp" 'rtags-preprocess-file)
+  (evil-leader/set-key-for-mode 'c++-mode "s" 'projectile-find-other-file)
+  (evil-leader/set-key-for-mode 'c++-mode "S" 'projectile-find-other-file-other-window)
 
-  ;; Use s for easy motion (incomplete)
-  ;; (define-key evil-normal-state-map "s" 'avy-goto-char-2)
-  ;; (define-key evil-motion-state-map "s" 'avy-goto-char-2)
+  ;; Use s for easy motion
+  (define-key evil-normal-state-map "s" 'avy-goto-char-2)
+  (define-key evil-motion-state-map "s" 'avy-goto-char-2)
+
+  (evil-define-key 'operator evil-surround-mode-map "s" 'avy-goto-char-2)
+  (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
+
+  (evil-define-key 'visual evil-surround-mode-map "s" 'avy-goto-char-2)
+  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
