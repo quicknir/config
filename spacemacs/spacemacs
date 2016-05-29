@@ -24,16 +24,21 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      auto-completion
-     ;; better-defaults
      emacs-lisp
      git
      markdown
+     (c-c++ :variables
+            c-c++-default-mode-for-headers 'c++-mode)
      ;; org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
+
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom
+            shell-default-shell 'multi-term)
      ;; spell-checking
-     syntax-checking
+     (syntax-checking :variables
+            syntax-checking-enable-by-default t)
+     ;; rtags
      version-control
      )
    ;; List of additional packages that will be installed without being
@@ -128,7 +133,7 @@ values."
    ;; and TAB or <C-m> and RET.
    ;; In the terminal, these pairs are generally indistinguishable, so this only
    ;; works in the GUI. (default nil)
-   dotspacemacs-distinguish-gui-tab nil
+   dotspacemacs-distinguish-gui-tab t
    ;; (Not implemented) dotspacemacs-distinguish-gui-ret nil
    ;; The command key used for Evil commands (ex-commands) and
    ;; Emacs commands (M-x).
@@ -249,18 +254,6 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  ;; Ensure that header files are opened in C++ mode
-  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-  ;; (setq-default dotspacemacs-configuration-layers
-  ;;   '((c-c++ :variables
-  ;;            c-c++-default-mode-for-headers 'c++-mode)))
-
-  ;; ;; Bind clang-format-region to C-M-tab in all modes:
-  ;; (global-set-key [C-M-tab] 'clang-format-region)
-  ;; ;; Bind clang-format-buffer to tab on the c++-mode only:
-  ;; (add-hook 'c++-mode-hook 'clang-format-bindings)
-  ;; (defun clang-format-bindings ()
-  ;;   (define-key c++-mode-map [tab] 'clang-format-buffer))
 
   ;; Start of rtags stuff, begin with company integration
   (add-to-list 'load-path "~/Documents/rtags/src")
@@ -287,8 +280,6 @@ you should place your code here."
     (setq-local flycheck-check-syntax-automatically nil))
   ;; c-mode-common-hook is also called by c++-mode
   (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
-  (setq-default dotspacemacs-configuration-layers
-                '((syntax-checking :variables syntax-checking-enable-by-default t)))
 
   ;; jump list integration
   (add-hook 'rtags-jump-hook 'evil-set-jump)
@@ -315,6 +306,9 @@ you should place your code here."
   (evil-leader/set-key-for-mode 'c++-mode "s" 'projectile-find-other-file)
   (evil-leader/set-key-for-mode 'c++-mode "S" 'projectile-find-other-file-other-window)
 
+  (evil-leader/set-key-for-mode 'c++-mode "i" 'clang-format-buffer)
+  (evil-leader/set-key-for-mode 'c++-mode "I" 'clang-format-region)
+
   ;; Use s for easy motion
   (define-key evil-normal-state-map "s" 'avy-goto-char-2)
   (define-key evil-motion-state-map "s" 'avy-goto-char-2)
@@ -324,7 +318,14 @@ you should place your code here."
 
   (evil-define-key 'visual evil-surround-mode-map "s" 'avy-goto-char-2)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+
+  ;; Configuration for shell
+  (eval-after-load "Term"
+     '(define-key evil-motion-state-map (kbd "C-e") nil))
+  (eval-after-load "Term"
+     '(define-key evil-insert-state-map (kbd "C-e") nil))
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+ 
