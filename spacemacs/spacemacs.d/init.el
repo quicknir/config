@@ -27,17 +27,20 @@ values."
      emacs-lisp
      git
      markdown
+
      (c-c++ :variables
             c-c++-default-mode-for-headers 'c++-mode)
-     ;; org
 
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom
-            shell-default-shell 'multi-term)
-     ;; spell-checking
+            shell-default-shell 'multi-term
+            shell-default-term-shell "/spare/local/nir/zsh/bin/zsh"
+            multi-term-program "/spare/local/nir/zsh/bin/zsh")
+
      (syntax-checking :variables
-            syntax-checking-enable-by-default t)
+                      syntax-checking-enable-by-default t)
+
      ;; rtags
      version-control
 
@@ -51,7 +54,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '()
    ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(smartparens)
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
@@ -115,11 +118,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Input"
+   dotspacemacs-default-font '("Input Mono"
                                :size 16
-                               :weight bold
-                               :width normal
-                               :powerline-scale 1.1)
+                               :weight normal
+                               :width condensed
+                               :powerline-scale 1.6)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -215,7 +218,7 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers 'relative
+   dotspacemacs-line-numbers nil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -260,17 +263,23 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
   ;; Start of rtags stuff, begin with company integration
-  (add-to-list 'load-path "~/Documents/rtags/src")
+  (add-to-list 'load-path "~/.rtags/src")
   (require 'package)
   (package-initialize)
   (require 'rtags)
+  (require 'company-rtags)
+  ;; (require 'company)
 
   (setq rtags-autostart-diagnostics t)
   (rtags-diagnostics)
   (setq rtags-completions-enabled t)
   (global-company-mode)
-  (push 'company-rtags company-backends)
-  (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
+  ;; (push 'company-rtags company-backends)
+  ;; (add-hook 'c-mode-common-hook
+  ;;    (lambda ()
+  ;;      (setq company-backends ('company-rtags))))
+  ;; (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
+  (define-key c-mode-base-map (kbd "<C-tab>") 'company-rtags)
 
   ;; helm integration
   (setq rtags-use-helm t)
@@ -328,8 +337,28 @@ you should place your code here."
      '(define-key evil-motion-state-map (kbd "C-e") nil))
   (eval-after-load "Term"
      '(define-key evil-insert-state-map (kbd "C-e") nil))
+
+  ;; Projectile
+  (setq projectile-enable-caching t)
+
+  ;; cc mode
+  (electric-pair-mode 1)
+ ;; (setq-default c-basic-offset 4)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
- 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(evil-args-closers (quote (")" "}" "]" ">")))
+ '(evil-args-openers (quote ("(" "{" "[" "<"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
