@@ -11,11 +11,24 @@ values."
    ;; `+distribution'. For now available distributions are `spacemacs-base'
    ;; or `spacemacs'. (default 'spacemacs)
    dotspacemacs-distribution 'spacemacs
+   ;; Lazy installation of layers (i.e. layers are installed only when a file
+   ;; with a supported type is opened). Possible values are `all', `unused'
+   ;; and `nil'. `unused' will lazy install only unused layers (i.e. layers
+   ;; not listed in variable `dotspacemacs-configuration-layers'), `all' will
+   ;; lazy install any layer that support lazy installation even the layers
+   ;; listed in `dotspacemacs-configuration-layers'. `nil' disable the lazy
+   ;; installation feature and you have to explicitly list a layer in the
+   ;; variable `dotspacemacs-configuration-layers' to install it.
+   ;; (default 'unused)
+   dotspacemacs-enable-lazy-installation 'unused
+   ;; If non-nil then Spacemacs will ask for confirmation before installing
+   ;; a layer lazily. (default t)
+   dotspacemacs-ask-for-lazy-installation t
+   ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '()
-   ;; List of configuration layers to load. If it is the symbol `all' instead
-   ;; of a list then all discovered layers will be installed.
+   ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
      ;; ----------------------------------------------------------------
@@ -24,12 +37,22 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      auto-completion
-     emacs-lisp
+     dash
      git
-     markdown
+     helm
+     version-control
+     ycmd
+     (syntax-checking :variables
+                      syntax-checking-enable-by-default t)
 
+     ;; Languages
+     emacs-lisp
      (c-c++ :variables
             c-c++-default-mode-for-headers 'c++-mode)
+     python
+     markdown
+     javascript
+     lua
 
      (shell :variables
             shell-default-height 30
@@ -37,12 +60,6 @@ values."
             shell-default-shell 'multi-term
             shell-default-term-shell "/spare/local/nir/zsh/bin/zsh"
             multi-term-program "/spare/local/nir/zsh/bin/zsh")
-
-     (syntax-checking :variables
-                      syntax-checking-enable-by-default t)
-
-     ;; rtags
-     version-control
 
      ;; Only used for multi-line f and t
      (evil-snipe :variables
@@ -53,12 +70,18 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '()
-   ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '(smartparens)
-   ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
-   ;; are declared in a layer which is not a member of
-   ;; the list `dotspacemacs-configuration-layers'. (default t)
-   dotspacemacs-delete-orphan-packages t))
+   ;; A list of packages that cannot be updated.
+   dotspacemacs-frozen-packages '()
+   ;; A list of packages that will not be install and loaded.
+   dotspacemacs-excluded-packages '(evil-unimpaired smartparens)
+   ;; Defines the behaviour of Spacemacs when downloading packages.
+   ;; Possible values are `used', `used-but-keep-unused' and `all'. `used' will
+   ;; download only explicitly used packages and remove any unused packages as
+   ;; well as their dependencies. `used-but-keep-unused' will download only the
+   ;; used packages but won't delete them if they become unused. `all' will
+   ;; download all the packages regardless if they are used or not and packages
+   ;; won't be deleted by Spacemacs. (default is `used')
+   dotspacemacs-download-packages 'used))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -81,10 +104,12 @@ values."
    ;; If non nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. (default t)
    dotspacemacs-check-for-update t
-   ;; One of `vim', `emacs' or `hybrid'. Evil is always enabled but if the
-   ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
-   ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
-   ;; unchanged. (default 'vim)
+   ;; One of `vim', `emacs' or `hybrid'.
+   ;; `hybrid' is like `vim' except that `insert state' is replaced by the
+   ;; `hybrid state' with `emacs' key bindings. The value can also be a list
+   ;; with `:variables' keyword (similar to layers). Check the editing styles
+   ;; section of the documentation for details on available variables.
+   ;; (default 'vim)
    dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
@@ -95,33 +120,27 @@ values."
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'official
-   ;; List of items to show in the startup buffer. If nil it is disabled.
-   ;; Possible values are: `recents' `bookmarks' `projects'.
-   ;; (default '(recents projects))
-   dotspacemacs-startup-lists '(recents projects)
-   ;; Number of recent files to show in the startup buffer. Ignored if
-   ;; `dotspacemacs-startup-lists' doesn't include `recents'. (default 5)
-   dotspacemacs-startup-recent-list-size 5
+   ;; List of items to show in startup buffer or an association list of of
+   ;; the form `(list-type . list-size)`. If nil it is disabled.
+   ;; Possible values for list-type are:
+   ;; `recents' `bookmarks' `projects' `agenda' `todos'."
+   dotspacemacs-startup-lists '((recents . 5)
+                                (projects . 7))
    ;; Default major mode of the scratch buffer (default `text-mode')
    dotspacemacs-scratch-mode 'text-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-light
-                         spacemacs-dark
-                         solarized-light
-                         solarized-dark
-                         leuven
-                         monokai
-                         zenburn)
+                         spacemacs-dark)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
-   ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
-   ;; size to make separators look not too crappy.
+   ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
+   ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Input Mono"
                                :size 16
                                :weight normal
-                               :width condensed
+                               :width normal
                                :powerline-scale 1.6)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -134,6 +153,9 @@ values."
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
    ;; (default "C-M-m)
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
+   ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
+   ;; (default "SPC")
+   dotspacemacs-emacs-command-key "SPC"
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs C-i, TAB and C-m, RET.
    ;; Setting it to a non-nil value, allows for separate commands under <C-i>
@@ -141,14 +163,17 @@ values."
    ;; In the terminal, these pairs are generally indistinguishable, so this only
    ;; works in the GUI. (default nil)
    dotspacemacs-distinguish-gui-tab t
-   ;; (Not implemented) dotspacemacs-distinguish-gui-ret nil
-   ;; The command key used for Evil commands (ex-commands) and
-   ;; Emacs commands (M-x).
-   ;; By default the command key is `:' so ex-commands are executed like in Vim
-   ;; with `:' and Emacs commands are executed with `<leader> :'.
-   dotspacemacs-command-key ":"
-   ;; If non nil `Y' is remapped to `y$'. (default t)
+   ;; If non nil `Y' is remapped to `y$' in Evil states. (default nil)
    dotspacemacs-remap-Y-to-y$ t
+   ;; If non-nil, the shift mappings `<' and `>' retain visual state if used
+   ;; there. (default t)
+   dotspacemacs-retain-visual-state-on-shift nil
+   ;; If non-nil, J and K move lines up and down when in visual mode.
+   ;; (default nil)
+   dotspacemacs-visual-line-move-text nil
+   ;; If non nil, inverse the meaning of `g' in `:substitute' Evil ex-command.
+   ;; (default nil)
+   dotspacemacs-ex-substitute-global nil
    ;; Name of the default layout (default "Default")
    dotspacemacs-default-layout-name "Default"
    ;; If non nil the default layout name is displayed in the mode-line.
@@ -157,6 +182,10 @@ values."
    ;; If non nil then the last auto saved layouts are resume automatically upon
    ;; start. (default nil)
    dotspacemacs-auto-resume-layouts nil
+   ;; Size (in MB) above which spacemacs will prompt to open the large file
+   ;; literally to avoid performance issues. Opening a file literally means that
+   ;; no major mode or minor modes are active. (default is 1)
+   dotspacemacs-large-file-size 1
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -164,10 +193,6 @@ values."
    dotspacemacs-auto-save-file-location 'cache
    ;; Maximum number of rollback slots to keep in the cache. (default 5)
    dotspacemacs-max-rollback-slots 5
-   ;; If non nil then `ido' replaces `helm' for some commands. For now only
-   ;; `find-files' (SPC f f), `find-spacemacs-file' (SPC f e s), and
-   ;; `find-contrib-file' (SPC f e c) are replaced. (default nil)
-   dotspacemacs-use-ido nil
    ;; If non nil, `helm' will try to minimize the space it uses. (default nil)
    dotspacemacs-helm-resize nil
    ;; if non nil, the helm header is hidden when there is only one source.
@@ -178,7 +203,7 @@ values."
    dotspacemacs-helm-position 'bottom
    ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content. (default nil)
-   dotspacemacs-enable-paste-micro-state nil
+   dotspacemacs-enable-paste-transient-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
    dotspacemacs-which-key-delay 0.4
@@ -209,19 +234,30 @@ values."
    ;; the transparency level of a frame when it's inactive or deselected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
    dotspacemacs-inactive-transparency 90
+   ;; If non nil show the titles of transient states. (default t)
+   dotspacemacs-show-transient-state-title t
+   ;; If non nil show the color guide hint for transient state keys. (default t)
+   dotspacemacs-show-transient-state-color-guide t
    ;; If non nil unicode symbols are displayed in the mode line. (default t)
    dotspacemacs-mode-line-unicode-symbols t
    ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth
-   ;; scrolling overrides the default behavior of Emacs which recenters the
-   ;; point when it reaches the top or bottom of the screen. (default t)
-   dotspacemacs-smooth-scrolling nil
+   ;; scrolling overrides the default behavior of Emacs which recenters point
+   ;; when it reaches the top or bottom of the screen. (default t)
+   dotspacemacs-smooth-scrolling t
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
    dotspacemacs-line-numbers nil
+   ;; Code folding method. Possible values are `evil' and `origami'.
+   ;; (default 'evil)
+   dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
+   ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
+   ;; over any automatically added closing parenthesis, bracket, quote, etc…
+   ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
+   dotspacemacs-smart-closing-parenthesis nil
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
@@ -242,7 +278,7 @@ values."
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup 'changed
+   dotspacemacs-whitespace-cleanup 'trailing
    ))
 
 (defun dotspacemacs/user-init ()
@@ -252,75 +288,110 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  )
+)
 
 (defun dotspacemacs/user-config ()
-  "Configuration function for user code.
-This function is called at the very end of Spacemacs initialization after
-layers configuration.
-This is the place where most of your configurations should be done. Unless it is
-explicitly specified that a variable should be set before a package is loaded,
-you should place your code here."
+;;   "Configuration function for user code.
+;; This function is called at the very end of Spacemacs initialization after
+;; layers configuration.
+;; This is the place where most of your configurations should be done. Unless it is
+;; explicitly specified that a variable should be set before a package is loaded,
+;; you should place your code here."
 
-  ;; Start of rtags stuff, begin with company integration
+  ;; ycmd setup
+  (require 'ycmd)
+  (set-variable 'ycmd-server-command '("python" "/spare/local/nir/venv-mosaic/vim-YouCompleteMe/1.20160711/share/vim/bundle/vim-YouCompleteMe/third_party/ycmd/ycmd"))
+  (set-variable 'ycmd-extra-conf-whitelist '("/spare/local/nir/code_w_script/code/dev/*"))
+
+  ;; ycmd-company integration
+  (require 'company)
+  ;; (require 'company-ycmd)
+  (setq company-idle-delay 0.5)
+  (global-set-key (kbd "<C-tab>") 'company-complete)
+  ;; (global-flycheck-mode)
+  ;; (global-company-mode)
+  ;; (global-ycmd-mode)
+  ;; (flycheck-ycmd-setup)
+  ;; (require 'flycheck-ycmd)
+  (setq ycmd-parse-conditions '(save new-line mode-enabled idle-change))
+  (setq ycmd-idle-change-delay 1.0)
+
+  ;; Start of rtags stuff
   (add-to-list 'load-path "~/.rtags/src")
-  (require 'package)
-  (package-initialize)
+  ;; (require 'package)
+  ;; (package-initialize)
   (require 'rtags)
-  (require 'company-rtags)
-  ;; (require 'company)
-
   (setq rtags-autostart-diagnostics t)
-  (rtags-diagnostics)
-  (setq rtags-completions-enabled t)
-  (global-company-mode)
-  ;; (push 'company-rtags company-backends)
-  ;; (add-hook 'c-mode-common-hook
-  ;;    (lambda ()
-  ;;      (setq company-backends ('company-rtags))))
-  ;; (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
-  (define-key c-mode-base-map (kbd "<C-tab>") 'company-rtags)
-
   ;; helm integration
   (setq rtags-use-helm t)
-
-  ;; rtags/flycheck integration
-  (global-flycheck-mode)
-  (require 'flycheck-rtags)
-  (defun my-flycheck-rtags-setup ()
-    (flycheck-select-checker 'rtags)
-    (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-    (setq-local flycheck-check-syntax-automatically nil))
-  ;; c-mode-common-hook is also called by c++-mode
-  (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
-
   ;; jump list integration
   (add-hook 'rtags-jump-hook 'evil-set-jump)
+  (setq rtags-jump-to-first-match nil)
+
+  ;; ;; flycheck auto completion. Prefer ycmd for fuzzy & better template completion
+  ;; (require 'company-rtags)
+  ;; (setq rtags-completions-enabled t)
+  ;; (push 'company-rtags company-backends)
+  ;; (global-set-key (kbd "<C-tab>") 'company-rtags)
+
+  ;; flycheck rtags integration. Prefer ycmd for perf reasons
+  ;; (require 'flycheck-rtags)
+  ;;  (defun my-flycheck-rtags-setup ()
+  ;;    (flycheck-select-checker 'rtags)
+  ;;    (setq-local flycheck-highlighting-mode nil)) ;; RTags creates more accurate overlays.
+  ;;  ;; c-mode-common-hook is also called by c++-mode
+  ;;  (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
 
   ;; Key bindings
+
+  (defun cpp-ide/rtags-find-symbol-at-point-other-file ()
+    (interactive)
+    (let((current-prefix-arg '(4)))
+      (call-interactively 'rtags-find-symbol-at-point)
+      )
+    )
+
   (evil-leader/set-key-for-mode 'c++-mode "d" 'rtags-find-symbol-at-point)
-  (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-find-file)
-  (evil-leader/set-key-for-mode 'c++-mode "t" 'rtags-find-symbol)
-  (evil-leader/set-key-for-mode 'c++-mode "g" 'rtags-find-references-at-point)
-  (evil-leader/set-key-for-mode 'c++-mode "G" 'rtags-find-references)
-  (evil-leader/set-key-for-mode 'c++-mode "." 'rtags-next-match)
-  (evil-leader/set-key-for-mode 'c++-mode "," 'rtags-previous-match)
+  (evil-leader/set-key-for-mode 'c++-mode "D" 'cpp-ide/rtags-find-symbol-at-point-other-file)
+  (evil-leader/set-key-for-mode 'c++-mode "/" 'rtags-find-symbol)
+
+  ;; capital R: only in file, open in follow mode (need to implement). Alternative would be o/O
+  ;; change this to always bring up helm, even if one match
+  (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-find-references-at-point)
+
+  ;; Q: why unbound? A: performance is really, really bad. Just find symbol, then ref-at-point
+  ;; (evil-leader/set-key-for-mode 'c++-mode "R" 'rtags-find-references)
+
   (evil-leader/set-key-for-mode 'c++-mode "v" 'rtags-find-virtuals-at-point)
-  (evil-leader/set-key-for-mode 'c++-mode "o" 'rtags-imenu)
-  (evil-leader/set-key-for-mode 'c++-mode "f" 'rtags-fix-fixit-at-point)
-  (evil-leader/set-key-for-mode 'c++-mode "F" 'rtags-fixit)
-  (evil-leader/set-key-for-mode 'c++-mode "D" 'rtags-diagnostics)
-  (evil-leader/set-key-for-mode 'c++-mode "R" 'rtags-rename-symbol)
+
+  (evil-leader/set-key-for-mode 'c++-mode "i" 'rtags-imenu)
+
+  ;; TODO: planned micro state
+;; (evil-leader/set-key-for-mode 'c++-mode "o" (rtags-occurence-transient state))
+;; "n" 'rtags-next-match)
+;; "N/p" 'rtags-previous-match)
+;; "R" 'rtags-rename-symbol)
+
+  (evil-leader/set-key-for-mode 'c++-mode "F" 'ycmd-fixit)
+  (evil-leader/set-key-for-mode 'c++-mode "C-r" 'rtags-rename-symbol)
+
+  ;; (S)witch file
+  (evil-leader/set-key-for-mode 'c++-mode "s" 'projectile-find-other-file)
+  (evil-leader/set-key-for-mode 'c++-mode "S" 'projectile-find-other-file-other-window)
+
+  (evil-leader/set-key-for-mode 'c++-mode "TAB" 'clang-format-buffer)
+
+  ;; Q: why unbound? A: gives bizarre, bizarre results sometimes. Not robust.
+  ;; (evil-leader/set-key-for-mode 'c++-mode "=" 'clang-format-region)
+
   (evil-leader/set-key-for-mode 'c++-mode "pt" 'rtags-print-class-hierarchy)
   (evil-leader/set-key-for-mode 'c++-mode "pe" 'rtags-print-enum-value-at-point)
   (evil-leader/set-key-for-mode 'c++-mode "pi" 'rtags-print-dependencies)
   (evil-leader/set-key-for-mode 'c++-mode "ps" 'rtags-print-symbol-info)
-  (evil-leader/set-key-for-mode 'c++-mode "pp" 'rtags-preprocess-file)
-  (evil-leader/set-key-for-mode 'c++-mode "s" 'projectile-find-other-file)
-  (evil-leader/set-key-for-mode 'c++-mode "S" 'projectile-find-other-file-other-window)
 
-  (evil-leader/set-key-for-mode 'c++-mode "i" 'clang-format-buffer)
-  (evil-leader/set-key-for-mode 'c++-mode "I" 'clang-format-region)
+  (evil-leader/set-key-for-mode 'c++-mode "pS" 'ycmd-get-type)
+
+  (evil-leader/set-key-for-mode 'c++-mode "pp" 'rtags-preprocess-file)
 
   ;; Use s for easy motion
   (define-key evil-normal-state-map "s" 'avy-goto-char-2)
@@ -343,8 +414,86 @@ you should place your code here."
 
   ;; cc mode
   (electric-pair-mode 1)
- ;; (setq-default c-basic-offset 4)
-)
+  (setq-default c-basic-offset 4)
+
+  ;; avy
+  (setq avy-all-windows nil)
+
+  ;; evil mc
+  ;; (global-evil-mc-mode)
+
+  (defun nir/pause-and-make-cursor()
+    (evil-mc-pause-cursors)
+    (evil-mc-make-cursor-at-pos)
+    )
+
+  ;; (defun nir/clear-cursors-and-pause ()
+  ;;   (interactive)
+  ;;   (call-interactively 'evil-mc-undo-all-cursors)
+  ;;   (call-interactively 'evil-mc-pause-cursors)
+  ;; )
+  (defun column-number-at-pos (pos)
+    (save-excursion (goto-char pos) (current-column))
+  )
+
+  (defun dosomething-region (p1 p2)
+    "Prints region starting and ending positions."
+    (interactive "r")
+    (message "Region starts: %d, %d, end at: %d, %d"
+             (line-number-at-pos p1) (column-number-at-pos p1)
+             (line-number-at-pos p2) (column-number-at-pos p2)
+             )
+    )
+
+  (defun make-vertical-cursors (p1 p2)
+    "makes vertical cursors"
+    (interactive "r")
+    (evil-mc-pause-cursors)
+    (let ((start-row (line-number-at-pos p1))
+          (end-row (line-number-at-pos p2))
+          (start-col (min (column-number-at-pos p1) (column-number-at-pos p2)))
+          )
+      (save-excursion
+        (goto-char p1)
+        (move-to-column start-col)
+        (while (< start-row end-row)
+          (call-interactively 'evil-mc-make-cursor-here)
+          (forward-line 1)
+          (move-to-column start-col)
+          (setq start-row (+ start-row 1))
+          )
+        )
+      (call-interactively 'evil-exit-visual-state)
+      (call-interactively 'evil-mc-resume-cursors)
+      (goto-char p2)
+      (move-to-column start-col)
+      )
+    )
+
+  (defun my-ag ()
+ (interactive)
+    (let ((prev-follow-val (helm-get-attribute-from-source-type 'follow helm-source-do-ag)))
+      (helm-attrset 'follow 1 helm-source-do-ag)
+      (call-interactively 'helm-do-ag-buffers)
+      (helm-attrset 'follow prev-follow-val helm-source-do-ag)
+      )
+    )
+
+  (defun followize (helm-source helm-command)
+    (lexical-let ((hs helm-source)
+                  (hc helm-command))
+      (lambda ()
+        (interactive)
+        (let ((prev-follow-val (helm-get-attribute-from-source-type 'follow hs)))
+          (helm-attrset 'follow 1 hs)
+          (call-interactively hc)
+          (helm-attrset 'follow prev-follow-val hs)
+          )
+        )
+      )
+    )
+  ;; (evil-leader/set-key-for-mode 'c++-mode "q" (followize helm-source-do-ag 'helm-do-ag-buffers))
+  )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -354,11 +503,5 @@ you should place your code here."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-args-closers (quote (")" "}" "]" ">")))
- '(evil-args-openers (quote ("(" "{" "[" "<"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+ '(evil-args-openers (quote ("(" "{" "[" "<")))
+)
