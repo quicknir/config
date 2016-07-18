@@ -27,7 +27,7 @@ values."
    ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '()
+   dotspacemacs-configuration-layer-path '("~/.spacemacs.d/layers/")
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
@@ -37,18 +37,15 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      auto-completion
-     dash
      git
      helm
      version-control
      ycmd
-     (syntax-checking :variables
-                      syntax-checking-enable-by-default t)
+     syntax-checking
 
      ;; Languages
      emacs-lisp
-     (c-c++ :variables
-            c-c++-default-mode-for-headers 'c++-mode)
+     cpp2
      python
      markdown
      javascript
@@ -137,7 +134,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Input Mono"
+   dotspacemacs-default-font '("Input"
                                :size 16
                                :weight normal
                                :width normal
@@ -299,101 +296,14 @@ before packages are loaded. If you are unsure, you should try in setting them in
 ;; you should place your code here."
 
   ;; ycmd setup
-  (require 'ycmd)
   (set-variable 'ycmd-server-command '("python" "/spare/local/nir/venv-mosaic/vim-YouCompleteMe/1.20160711/share/vim/bundle/vim-YouCompleteMe/third_party/ycmd/ycmd"))
   (set-variable 'ycmd-extra-conf-whitelist '("/spare/local/nir/code_w_script/code/dev/*"))
 
-  ;; ycmd-company integration
-  (require 'company)
-  ;; (require 'company-ycmd)
+  ;; company setup
   (setq company-idle-delay 0.5)
   (global-set-key (kbd "<C-tab>") 'company-complete)
-  ;; (global-flycheck-mode)
-  ;; (global-company-mode)
-  ;; (global-ycmd-mode)
-  ;; (flycheck-ycmd-setup)
-  ;; (require 'flycheck-ycmd)
-  (setq ycmd-parse-conditions '(save new-line mode-enabled idle-change))
-  (setq ycmd-idle-change-delay 1.0)
 
-  ;; Start of rtags stuff
-  (add-to-list 'load-path "~/.rtags/src")
-  ;; (require 'package)
-  ;; (package-initialize)
-  (require 'rtags)
-  (setq rtags-autostart-diagnostics t)
-  ;; helm integration
-  (setq rtags-use-helm t)
-  ;; jump list integration
-  (add-hook 'rtags-jump-hook 'evil-set-jump)
-  (setq rtags-jump-to-first-match nil)
-
-  ;; ;; flycheck auto completion. Prefer ycmd for fuzzy & better template completion
-  ;; (require 'company-rtags)
-  ;; (setq rtags-completions-enabled t)
-  ;; (push 'company-rtags company-backends)
-  ;; (global-set-key (kbd "<C-tab>") 'company-rtags)
-
-  ;; flycheck rtags integration. Prefer ycmd for perf reasons
-  ;; (require 'flycheck-rtags)
-  ;;  (defun my-flycheck-rtags-setup ()
-  ;;    (flycheck-select-checker 'rtags)
-  ;;    (setq-local flycheck-highlighting-mode nil)) ;; RTags creates more accurate overlays.
-  ;;  ;; c-mode-common-hook is also called by c++-mode
-  ;;  (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
-
-  ;; Key bindings
-
-  (defun cpp-ide/rtags-find-symbol-at-point-other-file ()
-    (interactive)
-    (let((current-prefix-arg '(4)))
-      (call-interactively 'rtags-find-symbol-at-point)
-      )
-    )
-
-  (evil-leader/set-key-for-mode 'c++-mode "d" 'rtags-find-symbol-at-point)
-  (evil-leader/set-key-for-mode 'c++-mode "D" 'cpp-ide/rtags-find-symbol-at-point-other-file)
-  (evil-leader/set-key-for-mode 'c++-mode "/" 'rtags-find-symbol)
-
-  ;; capital R: only in file, open in follow mode (need to implement). Alternative would be o/O
-  ;; change this to always bring up helm, even if one match
-  (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-find-references-at-point)
-
-  ;; Q: why unbound? A: performance is really, really bad. Just find symbol, then ref-at-point
-  ;; (evil-leader/set-key-for-mode 'c++-mode "R" 'rtags-find-references)
-
-  (evil-leader/set-key-for-mode 'c++-mode "v" 'rtags-find-virtuals-at-point)
-
-  (evil-leader/set-key-for-mode 'c++-mode "i" 'rtags-imenu)
-
-  ;; TODO: planned micro state
-;; (evil-leader/set-key-for-mode 'c++-mode "o" (rtags-occurence-transient state))
-;; "n" 'rtags-next-match)
-;; "N/p" 'rtags-previous-match)
-;; "R" 'rtags-rename-symbol)
-
-  (evil-leader/set-key-for-mode 'c++-mode "F" 'ycmd-fixit)
-  (evil-leader/set-key-for-mode 'c++-mode "C-r" 'rtags-rename-symbol)
-
-  ;; (S)witch file
-  (evil-leader/set-key-for-mode 'c++-mode "s" 'projectile-find-other-file)
-  (evil-leader/set-key-for-mode 'c++-mode "S" 'projectile-find-other-file-other-window)
-
-  (evil-leader/set-key-for-mode 'c++-mode "TAB" 'clang-format-buffer)
-
-  ;; Q: why unbound? A: gives bizarre, bizarre results sometimes. Not robust.
-  ;; (evil-leader/set-key-for-mode 'c++-mode "=" 'clang-format-region)
-
-  (evil-leader/set-key-for-mode 'c++-mode "pt" 'rtags-print-class-hierarchy)
-  (evil-leader/set-key-for-mode 'c++-mode "pe" 'rtags-print-enum-value-at-point)
-  (evil-leader/set-key-for-mode 'c++-mode "pi" 'rtags-print-dependencies)
-  (evil-leader/set-key-for-mode 'c++-mode "ps" 'rtags-print-symbol-info)
-
-  (evil-leader/set-key-for-mode 'c++-mode "pS" 'ycmd-get-type)
-
-  (evil-leader/set-key-for-mode 'c++-mode "pp" 'rtags-preprocess-file)
-
-  ;; Use s for easy motion
+  ;; Key bindings; use s for easy motion
   (define-key evil-normal-state-map "s" 'avy-goto-char-2)
   (define-key evil-motion-state-map "s" 'avy-goto-char-2)
 
@@ -422,77 +332,76 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; evil mc
   ;; (global-evil-mc-mode)
 
-  (defun nir/pause-and-make-cursor()
-    (evil-mc-pause-cursors)
-    (evil-mc-make-cursor-at-pos)
-    )
+ ;;  (defun nir/pause-and-make-cursor()
+ ;;    (evil-mc-pause-cursors)
+ ;;    (evil-mc-make-cursor-at-pos)
+ ;;    )
 
-  ;; (defun nir/clear-cursors-and-pause ()
-  ;;   (interactive)
-  ;;   (call-interactively 'evil-mc-undo-all-cursors)
-  ;;   (call-interactively 'evil-mc-pause-cursors)
-  ;; )
-  (defun column-number-at-pos (pos)
-    (save-excursion (goto-char pos) (current-column))
-  )
+ ;;  ;; (defun nir/clear-cursors-and-pause ()
+ ;;  ;;   (interactive)
+ ;;  ;;   (call-interactively 'evil-mc-undo-all-cursors)
+ ;;  ;;   (call-interactively 'evil-mc-pause-cursors)
+ ;;  ;; )
+ ;;  (defun column-number-at-pos (pos)
+ ;;    (save-excursion (goto-char pos) (current-column))
+ ;;  )
 
-  (defun dosomething-region (p1 p2)
-    "Prints region starting and ending positions."
-    (interactive "r")
-    (message "Region starts: %d, %d, end at: %d, %d"
-             (line-number-at-pos p1) (column-number-at-pos p1)
-             (line-number-at-pos p2) (column-number-at-pos p2)
-             )
-    )
+ ;;  (defun dosomething-region (p1 p2)
+ ;;    "Prints region starting and ending positions."
+ ;;    (interactive "r")
+ ;;    (message "Region starts: %d, %d, end at: %d, %d"
+ ;;             (line-number-at-pos p1) (column-number-at-pos p1)
+ ;;             (line-number-at-pos p2) (column-number-at-pos p2)
+ ;;             )
+ ;;    )
 
-  (defun make-vertical-cursors (p1 p2)
-    "makes vertical cursors"
-    (interactive "r")
-    (evil-mc-pause-cursors)
-    (let ((start-row (line-number-at-pos p1))
-          (end-row (line-number-at-pos p2))
-          (start-col (min (column-number-at-pos p1) (column-number-at-pos p2)))
-          )
-      (save-excursion
-        (goto-char p1)
-        (move-to-column start-col)
-        (while (< start-row end-row)
-          (call-interactively 'evil-mc-make-cursor-here)
-          (forward-line 1)
-          (move-to-column start-col)
-          (setq start-row (+ start-row 1))
-          )
-        )
-      (call-interactively 'evil-exit-visual-state)
-      (call-interactively 'evil-mc-resume-cursors)
-      (goto-char p2)
-      (move-to-column start-col)
-      )
-    )
+ ;;  (defun make-vertical-cursors (p1 p2)
+ ;;    "makes vertical cursors"
+ ;;    (interactive "r")
+ ;;    (evil-mc-pause-cursors)
+ ;;    (let ((start-row (line-number-at-pos p1))
+ ;;          (end-row (line-number-at-pos p2))
+ ;;          (start-col (min (column-number-at-pos p1) (column-number-at-pos p2)))
+ ;;          )
+ ;;      (save-excursion
+ ;;        (goto-char p1)
+ ;;        (move-to-column start-col)
+ ;;        (while (< start-row end-row)
+ ;;          (call-interactively 'evil-mc-make-cursor-here)
+ ;;          (forward-line 1)
+ ;;          (move-to-column start-col)
+ ;;          (setq start-row (+ start-row 1))
+ ;;          )
+ ;;        )
+ ;;      (call-interactively 'evil-exit-visual-state)
+ ;;      (call-interactively 'evil-mc-resume-cursors)
+ ;;      (goto-char p2)
+ ;;      (move-to-column start-col)
+ ;;      )
+ ;;    )
 
-  (defun my-ag ()
- (interactive)
-    (let ((prev-follow-val (helm-get-attribute-from-source-type 'follow helm-source-do-ag)))
-      (helm-attrset 'follow 1 helm-source-do-ag)
-      (call-interactively 'helm-do-ag-buffers)
-      (helm-attrset 'follow prev-follow-val helm-source-do-ag)
-      )
-    )
+ ;;  (defun my-ag ()
+ ;; (interactive)
+ ;;    (let ((prev-follow-val (helm-get-attribute-from-source-type 'follow helm-source-do-ag)))
+ ;;      (helm-attrset 'follow 1 helm-source-do-ag)
+ ;;      (call-interactively 'helm-do-ag-buffers)
+ ;;      (helm-attrset 'follow prev-follow-val helm-source-do-ag)
+ ;;      )
+ ;;    )
 
-  (defun followize (helm-source helm-command)
-    (lexical-let ((hs helm-source)
-                  (hc helm-command))
-      (lambda ()
-        (interactive)
-        (let ((prev-follow-val (helm-get-attribute-from-source-type 'follow hs)))
-          (helm-attrset 'follow 1 hs)
-          (call-interactively hc)
-          (helm-attrset 'follow prev-follow-val hs)
-          )
-        )
-      )
-    )
-  ;; (evil-leader/set-key-for-mode 'c++-mode "q" (followize helm-source-do-ag 'helm-do-ag-buffers))
+ ;;  (defun followize (helm-source helm-command)
+ ;;    (lexical-let ((hs helm-source)
+ ;;                  (hc helm-command))
+ ;;      (lambda ()
+ ;;        (interactive)
+ ;;        (let ((prev-follow-val (helm-get-attribute-from-source-type 'follow hs)))
+ ;;          (helm-attrset 'follow 1 hs)
+ ;;          (call-interactively hc)
+ ;;          (helm-attrset 'follow prev-follow-val hs)
+ ;;          )
+ ;;        )
+ ;;      )
+ ;;    )
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
