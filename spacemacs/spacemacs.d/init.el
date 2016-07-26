@@ -402,6 +402,24 @@ before packages are loaded. If you are unsure, you should try in setting them in
  ;;        )
  ;;      )
  ;;    )
+  (defun spacemacs/make-move-buffer-to-window (windownum)
+    (lexical-let ((n windownum))
+      (lambda ()
+        (interactive)
+        (let ((b (current-buffer)))
+          (save-selected-window
+            (switch-to-prev-buffer)
+            (select-window-by-number n)
+            (switch-to-buffer b)
+            )))
+      )
+    )
+
+  (spacemacs/set-leader-keys "b1" (spacemacs/make-move-buffer-to-window 1))
+  (spacemacs/set-leader-keys "b2" (spacemacs/make-move-buffer-to-window 2))
+  (spacemacs/set-leader-keys "b3" (spacemacs/make-move-buffer-to-window 3))
+  (spacemacs/set-leader-keys "b4" (spacemacs/make-move-buffer-to-window 4))
+  (spacemacs/set-leader-keys "b5" (spacemacs/make-move-buffer-to-window 5))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
