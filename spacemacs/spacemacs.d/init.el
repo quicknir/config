@@ -311,7 +311,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq company-idle-delay 0.5)
   (global-set-key (kbd "<C-tab>") 'company-complete)
 
-  ;; Key bindings; use s for easy motion
+  ;; avy setup
+
   (define-key evil-normal-state-map "s" 'avy-goto-char-2)
   (define-key evil-motion-state-map "s" 'avy-goto-char-2)
 
@@ -320,6 +321,10 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (evil-define-key 'visual evil-surround-mode-map "s" 'avy-goto-char-2)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+
+  (evil-define-key '(normal motion visual operator) global-map (kbd "C-;") 'avy-goto-line)
+
+  (setq avy-all-windows nil)
 
   ;; Configuration for shell
   (eval-after-load "Term"
@@ -334,8 +339,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (electric-pair-mode 1)
   (setq-default c-basic-offset 4)
 
-  ;; avy
-  (setq avy-all-windows nil)
 
   ;; evil mc
   ;; (global-evil-mc-mode)
