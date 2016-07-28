@@ -335,10 +335,21 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; Projectile
   (setq projectile-enable-caching t)
 
-  ;; cc mode
-  (electric-pair-mode 1)
-  (setq-default c-basic-offset 4)
+  (c-add-style "my-style"
+               '("stroustrup"
+                 (indent-tabs-mode . nil)
+                 (c-basic-offset . 4)
+                 (c-offsets-alist . (
+                                     (innamespace . -)
+                                     ))
+                 ))
 
+  (defun my-c++-mode-hook ()
+    (c-set-style "my-style")
+    (electric-pair-mode 1)
+    )
+
+  (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
   ;; evil mc
   ;; (global-evil-mc-mode)
