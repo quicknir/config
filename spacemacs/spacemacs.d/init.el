@@ -70,7 +70,15 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be install and loaded.
-   dotspacemacs-excluded-packages '(evil-unimpaired smartparens)
+   dotspacemacs-excluded-packages '(evil-unimpaired
+                                    smartparens
+                                    coffee-mode
+                                    company-tern
+                                    js-doc
+                                    js2-mode
+                                    js2-refactor
+                                    tern
+                                    web-beautify)
    ;; Defines the behaviour of Spacemacs when downloading packages.
    ;; Possible values are `used', `used-but-keep-unused' and `all'. `used' will
    ;; download only explicitly used packages and remove any unused packages as
