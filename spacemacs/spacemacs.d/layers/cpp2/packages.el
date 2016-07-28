@@ -59,7 +59,6 @@
     :config
     (progn
       (require 'compile)
-      (c-toggle-auto-newline 1)
       (dolist (mode '(c-mode c++-mode))
         (spacemacs/set-leader-keys-for-major-mode mode
           "s" 'projectile-find-other-file
@@ -101,6 +100,7 @@
   (spacemacs/add-to-hooks 'ycmd-mode '(c++-mode-hook c-mode-hook))
   (setq ycmd-parse-conditions '(save new-line mode-enabled idle-change))
   (setq ycmd-idle-change-delay 1.0)
+  (setq ycmd-confirm-fixit nil)
   (spacemacs/set-leader-keys-for-major-mode 'c++-mode
     "F" 'ycmd-fixit
     "pS" 'ycmd-get-type))
