@@ -328,9 +328,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   ;; Configuration for shell
   (eval-after-load "Term"
-     '(define-key evil-motion-state-map (kbd "C-e") nil))
+    '(evil-define-key 'insert term-raw-map (kbd "C-e") 'term-send-raw))
   (eval-after-load "Term"
-     '(define-key evil-insert-state-map (kbd "C-e") nil))
+    '(evil-define-key 'insert term-mode-map (kbd "C-e") 'term-send-raw))
 
   ;; Projectile
   (setq projectile-enable-caching t)
