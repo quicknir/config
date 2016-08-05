@@ -327,6 +327,11 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (setq avy-all-windows nil)
 
+  ;; snipe; because I'm using alternate f/t behavior if I don't disable highlighting then
+  ;; f<SPC> becomes very slow, for example
+  (setq evil-snipe-enable-incremental-highlight nil)
+  (setq evil-snipe-enable-highlight nil)
+
   ;; Configuration for shell
   (eval-after-load "Term"
     '(evil-define-key 'insert term-raw-map (kbd "C-e") 'term-send-raw))
