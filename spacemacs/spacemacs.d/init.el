@@ -72,6 +72,7 @@ values."
    ;; A list of packages that will not be install and loaded.
    dotspacemacs-excluded-packages '(evil-unimpaired
                                     smartparens
+                                    centered-buffer-mode
                                     coffee-mode
                                     company-tern
                                     js-doc
