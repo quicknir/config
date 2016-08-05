@@ -408,14 +408,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
  ;;      )
  ;;    )
 
-  (setq my-timer (run-at-time "0.01 sec" nil (lambda ())))
-
-  (defun delay-exec()
-    (cancel-timer my-timer)
-    (setq my-timer (run-at-time "0.1 sec" nil 'helm-execute-persistent-action))
-    )
-
   (require 'helm-ag)
+  (setq helm-follow-follow-on-update t)
   (defun followize (helm-source helm-command)
     (lexical-let ((hs helm-source)
                   (hc helm-command))
@@ -423,9 +417,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
         (interactive)
         (let ((prev-follow-val (helm-attr 'follow hs)))
           (helm-attrset 'follow 1 hs)
-          (add-hook 'helm-after-update-hook 'delay-exec)
           (call-interactively hc)
-          (remove-hook 'helm-after-update-hook 'delay-exec)
           (helm-attrset 'follow prev-follow-val hs)
           )
         )
