@@ -80,14 +80,14 @@ values."
                                     js2-refactor
                                     tern
                                     web-beautify)
-   ;; Defines the behaviour of Spacemacs when downloading packages.
-   ;; Possible values are `used', `used-but-keep-unused' and `all'. `used' will
-   ;; download only explicitly used packages and remove any unused packages as
-   ;; well as their dependencies. `used-but-keep-unused' will download only the
-   ;; used packages but won't delete them if they become unused. `all' will
-   ;; download all the packages regardless if they are used or not and packages
-   ;; won't be deleted by Spacemacs. (default is `used')
-   dotspacemacs-download-packages 'used))
+   ;; Defines the behaviour of Spacemacs when installing packages.
+   ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
+   ;; `used-only' installs only explicitly used packages and uninstall any
+   ;; unused packages as well as their unused dependencies.
+   ;; `used-but-keep-unused' installs only the used packages but won't uninstall
+   ;; them if they become unused. `all' installs *all* packages supported by
+   ;; Spacemacs and never uninstall them. (default is `used-only')
+   dotspacemacs-install-packages 'used-only))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -108,8 +108,14 @@ values."
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
    ;; If non nil then spacemacs will check for updates at startup
-   ;; when the current branch is not `develop'. (default t)
-   dotspacemacs-check-for-update t
+   ;; when the current branch is not `develop'. Note that checking for
+   ;; new versions works via git commands, thus it calls GitHub services
+   ;; whenever you start Emacs. (default nil)
+   dotspacemacs-check-for-update nil
+   ;; If non-nil, a form that evaluates to a package directory. For example, to
+   ;; use different package directories for different Emacs versions, set this
+   ;; to `emacs-version'.
+   dotspacemacs-elpa-subdirectory nil
    ;; One of `vim', `emacs' or `hybrid'.
    ;; `hybrid' is like `vim' except that `insert state' is replaced by the
    ;; `hybrid state' with `emacs' key bindings. The value can also be a list
@@ -126,12 +132,16 @@ values."
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'official
-   ;; List of items to show in startup buffer or an association list of of
-   ;; the form `(list-type . list-size)`. If nil it is disabled.
+   ;; List of items to show in startup buffer or an association list of
+   ;; the form `(list-type . list-size)`. If nil then it is disabled.
    ;; Possible values for list-type are:
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
+   ;; List sizes may be nil, in which case
+   ;; `spacemacs-buffer-startup-lists-length' takes effect.
    dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
+   ;; True if the home buffer should respond to resize events.
+   dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
    dotspacemacs-scratch-mode 'text-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
@@ -150,6 +160,11 @@ values."
                                :powerline-scale 1.6)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
+   ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
+   ;; (default "SPC")
+   dotspacemacs-emacs-command-key "SPC"
+   ;; The key used for Vim Ex commands (default ":")
+   dotspacemacs-ex-command-key ":"
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
    dotspacemacs-emacs-leader-key "M-m"
@@ -157,11 +172,8 @@ values."
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
    dotspacemacs-major-mode-leader-key ","
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
-   ;; (default "C-M-m)
+   ;; (default "C-M-m")
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
-   ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
-   ;; (default "SPC")
-   dotspacemacs-emacs-command-key "SPC"
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs C-i, TAB and C-m, RET.
    ;; Setting it to a non-nil value, allows for separate commands under <C-i>
@@ -207,6 +219,11 @@ values."
    ;; define the position to display `helm', options are `bottom', `top',
    ;; `left', or `right'. (default 'bottom)
    dotspacemacs-helm-position 'bottom
+   ;; Controls fuzzy matching in helm. If set to `always', force fuzzy matching
+   ;; in all non-asynchronous sources. If set to `source', preserve individual
+   ;; source settings. Else, disable fuzzy matching in all sources.
+   ;; (default 'always)
+   dotspacemacs-helm-use-fuzzy nil
    ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content. (default nil)
    dotspacemacs-enable-paste-transient-state nil
@@ -268,7 +285,7 @@ values."
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
    dotspacemacs-highlight-delimiters 'all
-   ;; If non nil advises quit functions to keep server open when quitting.
+   ;; If non nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
    dotspacemacs-persistent-server nil
    ;; List of search tool executable names. Spacemacs uses the first installed
@@ -297,12 +314,12 @@ before packages are loaded. If you are unsure, you should try in setting them in
 )
 
 (defun dotspacemacs/user-config ()
-;;   "Configuration function for user code.
-;; This function is called at the very end of Spacemacs initialization after
-;; layers configuration.
-;; This is the place where most of your configurations should be done. Unless it is
-;; explicitly specified that a variable should be set before a package is loaded,
-;; you should place your code here."
+  "Configuration function for user code.
+This function is called at the very end of Spacemacs initialization after
+layers configuration.
+This is the place where most of your configurations should be done. Unless it is
+explicitly specified that a variable should be set before a package is loaded,
+you should place your code here."
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "/spare/local/nir/venv-mosaic/vim-YouCompleteMe/1.20160711/share/vim/bundle/vim-YouCompleteMe/third_party/ycmd/ycmd"))
@@ -341,6 +358,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; Projectile
   (setq projectile-enable-caching t)
 
+  ;; cc-mode
   (c-add-style "my-style"
                '("stroustrup"
                  (indent-tabs-mode . nil)
@@ -357,6 +375,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
+  ;; Enhancements to mc; get this into mc ASAP
   ;; evil mc
   ;; (global-evil-mc-mode)
 
