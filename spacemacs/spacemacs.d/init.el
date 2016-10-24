@@ -450,6 +450,9 @@ you should place your code here."
   (spacemacs/set-leader-keys "ss" (followize 'helm-do-ag-this-file))
   (spacemacs/set-leader-keys "sS" (followize 'spacemacs/helm-file-smart-do-search-region-or-symbol))
 
+  ;; Window and buffer movement customizations, get this merged into spacemacs
+  (spacemacs/set-leader-keys "wD" 'delete-other-windows)
+  (spacemacs/set-leader-keys "bD" 'spacemacs/kill-other-buffers)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
