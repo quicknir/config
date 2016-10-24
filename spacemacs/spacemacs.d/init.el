@@ -450,50 +450,6 @@ you should place your code here."
   (spacemacs/set-leader-keys "ss" (followize 'helm-do-ag-this-file))
   (spacemacs/set-leader-keys "sS" (followize 'spacemacs/helm-file-smart-do-search-region-or-symbol))
 
-  (defun spacemacs/move-buffer-to-window (windownum)
-    (interactive)
-    (let ((b (current-buffer))
-          (w (selected-window)))
-      (save-selected-window
-        (select-window-by-number windownum)
-        (switch-to-buffer b)
-        (select-window w)
-        (switch-to-prev-buffer)
-        (unrecord-window-buffer (selected-window) b)
-        ))
-    )
-
-  (defun spacemacs/swap-buffers-to-window (windownum)
-    (interactive)
-    (let ((b1 (current-buffer))
-          (w1 (selected-window)))
-      (save-selected-window
-        (select-window-by-number windownum)
-        (let ((b2 (current-buffer))
-              (w2 (selected-window)))
-          (unless (eq w1 w2)
-            (switch-to-buffer b1)
-            (unrecord-window-buffer w2 b2)
-            (select-window w1)
-            (switch-to-buffer b2)
-            (unrecord-window-buffer w1 b1)
-            ))))
-    )
-
-  (dotimes (i 9)
-    (let ((n (+ i 1)))
-      (eval `(defun ,(intern (format "move-buffer-to-window-%s" n)) (&optional arg)
-               ,(format "Move buffer to the window with number %i." n)
-               (interactive "P")
-               (if arg
-                   (spacemacs/swap-buffers-to-window ,n)
-                 (spacemacs/move-buffer-to-window ,n)))))
-    )
-
-  (dotimes (i 9)
-    (let ((n (+ i 1)))
-      (spacemacs/set-leader-keys (format "b%i" n) (intern (format "move-buffer-to-window-%s" n)))
-      ))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
