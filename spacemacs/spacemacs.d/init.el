@@ -356,10 +356,8 @@ you should place your code here."
   (setq evil-snipe-enable-highlight nil)
 
   ;; Configuration for shell
-  (eval-after-load "Term"
-    '(evil-define-key 'insert term-raw-map (kbd "C-e") 'term-send-raw))
-  (eval-after-load "Term"
-    '(evil-define-key 'insert term-mode-map (kbd "C-e") 'term-send-raw))
+  (evil-define-key 'insert term-mode-map (kbd "C-e") 'term-send-raw)
+  (evil-define-key 'insert term-raw-map (kbd "C-e") 'term-send-raw)
 
   ;; Projectile
   (setq projectile-enable-caching t)
