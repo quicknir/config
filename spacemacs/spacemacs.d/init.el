@@ -72,8 +72,7 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be install and loaded.
-   dotspacemacs-excluded-packages '(evil-unimpaired
-                                    smartparens
+   dotspacemacs-excluded-packages '(smartparens
                                     centered-buffer-mode
                                     coffee-mode
                                     company-tern
