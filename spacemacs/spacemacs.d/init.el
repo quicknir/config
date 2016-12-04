@@ -383,28 +383,11 @@ you should place your code here."
   ;; evil mc
   ;; (global-evil-mc-mode)
 
- ;;  (defun nir/pause-and-make-cursor()
- ;;    (evil-mc-pause-cursors)
- ;;    (evil-mc-make-cursor-at-pos)
- ;;    )
 
- ;;  ;; (defun nir/clear-cursors-and-pause ()
- ;;  ;;   (interactive)
- ;;  ;;   (call-interactively 'evil-mc-undo-all-cursors)
- ;;  ;;   (call-interactively 'evil-mc-pause-cursors)
- ;;  ;; )
   (defun column-number-at-pos (pos)
     (save-excursion (goto-char pos) (current-column))
   )
 
- ;;  (defun dosomething-region (p1 p2)
- ;;    "Prints region starting and ending positions."
- ;;    (interactive "r")
- ;;    (message "Region starts: %d, %d, end at: %d, %d"
- ;;             (line-number-at-pos p1) (column-number-at-pos p1)
- ;;             (line-number-at-pos p2) (column-number-at-pos p2)
- ;;             )
- ;;    )
 
   (defun make-vertical-cursors (p1 p2)
     "makes vertical cursors"
@@ -439,11 +422,7 @@ you should place your code here."
         (let ((prev-follow-val (helm-attr 'follow helm-source-do-ag)))
           (helm-attrset 'follow 1 helm-source-do-ag)
           (call-interactively hc)
-          (helm-attrset 'follow prev-follow-val helm-source-do-ag)
-          )
-        )
-      )
-    )
+          (helm-attrset 'follow prev-follow-val helm-source-do-ag)))))
 
   (spacemacs/set-leader-keys "sb" (followize 'helm-do-ag-buffers))
   (spacemacs/set-leader-keys "sB" (followize 'spacemacs/helm-buffers-do-ag-region-or-symbol))
