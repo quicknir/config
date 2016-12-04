@@ -336,16 +336,15 @@ you should place your code here."
   (setq company-idle-delay 0.5)
   (global-set-key (kbd "<C-tab>") 'company-complete)
 
-  ;; avy setup
+  (push '(company-dabbrev-code company-yasnippet) company-backends-c-mode-common)
 
-  (define-key evil-normal-state-map "s" 'avy-goto-char-2)
-  (define-key evil-motion-state-map "s" 'avy-goto-char-2)
-
-  (evil-define-key 'operator evil-surround-mode-map "s" 'avy-goto-char-2)
+  ;; Rebind surround to S instead of s, so we can use s for avy
   (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
-
-  (evil-define-key 'visual evil-surround-mode-map "s" 'avy-goto-char-2)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+
+  ;; avy setup
+  (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-2)
+  (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-2)
 
   (evil-define-key '(normal motion visual operator) global-map (kbd "C-;") 'avy-goto-line)
 
