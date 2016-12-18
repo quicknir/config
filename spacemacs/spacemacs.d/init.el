@@ -332,6 +332,10 @@ you should place your code here."
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "/spare/local/nir/venv-mosaic/vim-YouCompleteMe/1.20160711/share/vim/bundle/vim-YouCompleteMe/third_party/ycmd/ycmd"))
   (set-variable 'ycmd-extra-conf-whitelist '("/spare/local/nir/code_w_script/code/dev/*"))
+  (with-eval-after-load "ycmd"
+    (progn
+      (require 'ycmd-eldoc)
+      (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)))
 
   ;; company setup
   (setq company-idle-delay 0.5)
