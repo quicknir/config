@@ -99,7 +99,7 @@
 (defun cpp2/post-init-ycmd ()
   (spacemacs/add-to-hooks 'ycmd-mode '(c++-mode-hook c-mode-hook))
   (setq ycmd-parse-conditions '(save new-line mode-enabled idle-change))
-  (setq ycmd-idle-change-delay 1.0)
+  (setq ycmd-idle-change-delay 2.0)
   (setq ycmd-confirm-fixit nil)
   (spacemacs/set-leader-keys-for-major-mode 'c++-mode
     "F" 'ycmd-fixit
