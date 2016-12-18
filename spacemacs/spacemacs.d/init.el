@@ -36,7 +36,8 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     auto-completion
+     (auto-completion :variables
+                     auto-completion-enable-help-tooltip 'manual)
      git
      helm
      version-control
@@ -335,6 +336,8 @@ you should place your code here."
   ;; company setup
   (setq company-idle-delay 0.5)
   (global-set-key (kbd "<C-tab>") 'company-complete)
+  (with-eval-after-load "company"
+    '(define-key company-active-map (kbd "C-d") 'company-quickhelp-manual-begin))
 
   (push '(company-dabbrev-code company-yasnippet) company-backends-c-mode-common)
 
