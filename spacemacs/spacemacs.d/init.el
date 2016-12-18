@@ -377,11 +377,11 @@ you should place your code here."
 
   (defun my-c++-mode-hook ()
     (c-set-style "my-style")
-    (electric-pair-mode 1)
     )
 
   (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
+  (electric-pair-mode 1)
   ;; evil mc
   (global-evil-mc-mode 1)
 
