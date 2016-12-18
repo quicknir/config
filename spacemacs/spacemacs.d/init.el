@@ -434,7 +434,7 @@ you should place your code here."
   (spacemacs/set-leader-keys "sb" (followize 'helm-do-ag-buffers))
   (spacemacs/set-leader-keys "sB" (followize 'spacemacs/helm-buffers-do-ag-region-or-symbol))
   (spacemacs/set-leader-keys "ss" (followize 'helm-do-ag-this-file))
-  (spacemacs/set-leader-keys "sS" (followize 'spacemacs/helm-file-smart-do-search-region-or-symbol))
+  (spacemacs/set-leader-keys "sS" (followize 'spacemacs/helm-file-do-ag-region-or-symbol))
 
   ;; Window and buffer movement customizations, get this merged into spacemacs
   (spacemacs/set-leader-keys "wD" 'delete-other-windows)
