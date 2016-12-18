@@ -379,41 +379,45 @@ you should place your code here."
 
   (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
-  ;; Enhancements to mc; get this into mc ASAP
   ;; evil mc
-  ;; (global-evil-mc-mode)
+  (global-evil-mc-mode 1)
 
+  (defun evil--mc-make-cursor-at-col-append (_startcol endcol orig-line)
+    (end-of-line)
+    (when (> endcol (current-column))
+      (insert-char ?\s (- endcol (current-column))))
+    (move-to-column (- endcol 1))
+    (unless (= (line-number-at-pos) orig-line)
+      (message (number-to-string (current-column)))
+      (evil-mc-make-cursor-here)))
 
-  (defun column-number-at-pos (pos)
-    (save-excursion (goto-char pos) (current-column))
-  )
+  (defun evil--mc-make-cursor-at-col-insert (startcol _endcol orig-line)
+    (end-of-line)
+    (unless (or (= (line-number-at-pos) orig-line) (> startcol (last-column)))
+      (move-to-column startcol)
+      (evil-mc-make-cursor-here)))
 
-
-  (defun make-vertical-cursors (p1 p2)
-    "makes vertical cursors"
-    (interactive "r")
+  (defun evil--mc-make-vertical-cursors (beg end func)
     (evil-mc-pause-cursors)
-    (let ((start-row (line-number-at-pos p1))
-          (end-row (line-number-at-pos p2))
-          (start-col (min (column-number-at-pos p1) (column-number-at-pos p2)))
-          )
-      (save-excursion
-        (goto-char p1)
-        (move-to-column start-col)
-        (while (< start-row end-row)
-          (call-interactively 'evil-mc-make-cursor-here)
-          (forward-line 1)
-          (move-to-column start-col)
-          (setq start-row (+ start-row 1))
-          )
-        )
-      (call-interactively 'evil-exit-visual-state)
-      (call-interactively 'evil-mc-resume-cursors)
-      (goto-char p2)
-      (move-to-column start-col)
-      )
+    (apply-on-rectangle func
+                        beg end (line-number-at-pos (point)))
+    (evil-mc-resume-cursors)
+    (evil-normal-state)
+    (move-to-column (evil-mc-column-number (min beg end)))
     )
 
+  (defun evil-mc-insert-vertical-cursors (beg end)
+    (interactive (list (region-beginning) (region-end)))
+    (evil--mc-make-vertical-cursors beg end 'evil--mc-make-cursor-at-col-insert))
+
+  (defun evil-mc-append-vertical-cursors (beg end)
+    (interactive (list (region-beginning) (region-end)))
+    (evil--mc-make-vertical-cursors beg end 'evil--mc-make-cursor-at-col-append))
+
+  (evil-define-key 'visual global-map "gI" 'evil-mc-insert-vertical-cursors)
+  (evil-define-key 'visual global-map "gA" 'evil-mc-append-vertical-cursors)
+
+  ; use helm-ag in place of swoop
   (require 'helm-ag)
   (defun followize (helm-command)
     (lexical-let ((hc helm-command))
