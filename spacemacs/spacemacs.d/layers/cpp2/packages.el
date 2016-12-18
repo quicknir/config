@@ -7,7 +7,6 @@
     clang-format
     cmake-mode
     company
-    company-ycmd
     gdb-mi
     flycheck
     ycmd
@@ -104,6 +103,3 @@
   (spacemacs/set-leader-keys-for-major-mode 'c++-mode
     "F" 'ycmd-fixit
     "pS" 'ycmd-get-type))
-
-(defun cpp2/post-init-company-ycmd ()
-  (push 'company-ycmd company-backends-c-mode-common))
