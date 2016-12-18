@@ -43,6 +43,7 @@
       )
     :config
     (progn
+      (require 'rtags-helm)
       (setq rtags-jump-to-first-match nil)
       (setq rtags-use-helm t)
       (add-hook 'rtags-jump-hook 'evil-set-jump)
