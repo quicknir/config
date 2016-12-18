@@ -338,12 +338,18 @@ you should place your code here."
       (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)))
 
   ;; company setup
-  (setq company-idle-delay 0.5)
-  (global-set-key (kbd "<C-tab>") 'company-complete)
+  (setq company-idle-delay 0.2)
+  (defun ycm ()
+    (interactive)
+    (company-abort)
+    (setq company-backend 'company-ycmd)
+    (company-manual-begin))
+
+  (global-set-key (kbd "<C-tab>") 'ycm)
+
   (with-eval-after-load "company"
     '(define-key company-active-map (kbd "C-d") 'company-quickhelp-manual-begin))
 
-  (push '(company-dabbrev-code company-yasnippet) company-backends-c-mode-common)
 
   ;; Rebind surround to S instead of s, so we can use s for avy
   (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
