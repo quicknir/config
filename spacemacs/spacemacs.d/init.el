@@ -58,8 +58,8 @@ values."
             shell-default-height 30
             shell-default-position 'bottom
             shell-default-shell 'multi-term
-            shell-default-term-shell "/spare/local/nir/zsh/bin/zsh"
-            multi-term-program "/spare/local/nir/zsh/bin/zsh")
+            shell-default-term-shell "zsh"
+            multi-term-program "zsh")
 
      ;; Only used for multi-line f and t
      (evil-snipe :variables
@@ -338,8 +338,8 @@ you should place your code here."
   (spaceline-toggle-buffer-encoding-abbrev-off)
 
   ;; ycmd setup
-  (set-variable 'ycmd-server-command '("python" "/spare/local/nir/venv-mosaic/vim-YouCompleteMe/1.20160711/share/vim/bundle/vim-YouCompleteMe/third_party/ycmd/ycmd"))
-  (set-variable 'ycmd-extra-conf-whitelist '("/spare/local/nir/code_w_script/code/dev/*"))
+  (set-variable 'ycmd-server-command '("python" "ycmd"))
+  (set-variable 'ycmd-extra-conf-whitelist '())
   (with-eval-after-load "ycmd"
     (progn
       (require 'ycmd-eldoc)
