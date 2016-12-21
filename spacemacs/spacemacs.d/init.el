@@ -409,7 +409,7 @@ you should place your code here."
 
   (defun evil--mc-make-cursor-at-col-insert (startcol _endcol orig-line)
     (end-of-line)
-    (unless (or (= (line-number-at-pos) orig-line) (> startcol (last-column)))
+    (unless (or (= (line-number-at-pos) orig-line) (> startcol (current-column)))
       (move-to-column startcol)
       (evil-mc-make-cursor-here)))
 
