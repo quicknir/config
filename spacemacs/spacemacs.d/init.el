@@ -339,6 +339,7 @@ you should place your code here."
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
+  (set-variable 'ycmd-global-config "~/.spacemacs.d/ycm_extra_conf.py")
   (set-variable 'ycmd-extra-conf-whitelist '())
   (with-eval-after-load "ycmd"
     (progn
