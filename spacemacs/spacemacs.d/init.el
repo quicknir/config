@@ -332,6 +332,11 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  ;; Some minor mode customizations
+  (electric-pair-mode 1)
+  (purpose-mode -1)
+  (spaceline-toggle-buffer-encoding-abbrev-off)
+
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "/spare/local/nir/venv-mosaic/vim-YouCompleteMe/1.20160711/share/vim/bundle/vim-YouCompleteMe/third_party/ycmd/ycmd"))
   (set-variable 'ycmd-extra-conf-whitelist '("/spare/local/nir/code_w_script/code/dev/*"))
@@ -394,7 +399,6 @@ you should place your code here."
 
   (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
-  (electric-pair-mode 1)
   ;; evil mc
   (global-evil-mc-mode 1)
 
