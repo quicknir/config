@@ -481,6 +481,18 @@ you should place your code here."
                                                      (`needs-update " Upd")
                                                      (`ignored " Ign")
                                                      (_ "?")))))))))
+
+  (defun symbol-or-highlighted ()
+    (interactive)
+    (if (region-active-p)
+        (buffer-substring (region-beginning) (region-end))
+      (thing-at-point 'symbol)))
+
+  (defun set-search-register-dwim ()
+    (interactive)
+    (if evil-regexp-search
+        (push (symbol-or-highlighted) regexp-search-ring)
+      (push (symbol-or-highlighted) search-ring)))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
