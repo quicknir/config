@@ -7,14 +7,12 @@ import subprocess
 # compilation database set (by default, one is not set).
 flags = [
     '-fexceptions', '-DNDEBUG', '-std=c++14', '-x', 'c++',
-    '-Wno-unused-parameter', '-I', '.', '-I', '../', '-I', '../../'
+    '-Wno-unused-parameter', '-Wall', '-Wextra', '-Wpedantic', '-I', '.', '-I', '../', '-I', '../../'
 ]
 
-# Flags that get added whether or not there is a compilation database
-# Always good to get warnings, and fspellchecking is necessary to get
-# good fixit suggestions.
-extra_flags = ['-Wall', '-Wextra', '-Wno-unused-parameter', '-fspell-checking',
-               '-Wpedantic']
+# Flags that always get added
+# -fspell-checking gives better fixits and has no downside
+extra_flags = ['-fspell-checking']
 
 compilation_database_folder = ''
 
@@ -60,6 +58,19 @@ def load_system_includes(gcc_toolchain=None):
     system_include_cache[gcc_toolchain] = includes
     return includes
 
+
+def find_in_parent_dir(original_file, target):
+    d = os.path.abspath(original_file)
+
+    while True:
+        r = os.path.dirname(d)
+        if r == d:
+            return None
+
+        d = r
+        t = os.path.join(d, target)
+        if os.path.exists(t):
+            return t
 
 def DirectoryOfThisScript():
     return os.path.dirname(os.path.abspath(__file__))
