@@ -346,13 +346,16 @@ you should place your code here."
       (require 'ycmd-eldoc)
       (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)))
 
+  (require 'company-ycmd)
+
   ;; company setup
   (setq company-idle-delay 0.2)
   (defun ycm ()
     (interactive)
-    (company-abort)
-    (setq company-backend 'company-ycmd)
-    (company-manual-begin))
+    (company-cancel)
+    (let ((ycmd-force-semantic-completion (not (company-ycmd--in-include))))
+      (setq company-backend 'company-ycmd)
+      (company-manual-begin)))
 
   (global-set-key (kbd "<C-tab>") 'ycm)
 
