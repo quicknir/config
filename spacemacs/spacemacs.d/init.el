@@ -379,6 +379,8 @@ you should place your code here."
 
   ;; snipe; because I'm using alternate f/t behavior if I don't disable highlighting then
   ;; f<SPC> becomes very slow, for example
+  ;; Note that in addition to multi-line, also allows repeated f/t/F/T presses to repeat
+  ;; the seek. This effectively frees up ;, a home row key!
   (setq evil-snipe-enable-incremental-highlight nil)
   (setq evil-snipe-enable-highlight nil)
 
