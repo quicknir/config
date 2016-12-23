@@ -346,6 +346,8 @@ you should place your code here."
       (require 'ycmd-eldoc)
       (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)))
 
+  (add-hook 'python-mode-hook 'ycmd-mode)
+
   (require 'company-ycmd)
 
   ;; company setup
