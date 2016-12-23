@@ -370,8 +370,9 @@ you should place your code here."
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
 
   ;; avy setup
-  (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-2)
-  (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-2)
+  (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-timer)
+  (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-timer)
+  (setq avy-timeout-seconds 0.35)
 
   (evil-define-key '(normal motion visual operator) global-map (kbd "C-;") 'avy-goto-line)
 
