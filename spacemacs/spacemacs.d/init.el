@@ -378,6 +378,15 @@ you should place your code here."
 
   (setq avy-all-windows nil)
 
+  ;; Setup ace-jump-helm-line, for quick selection inside helm
+  (setq ace-jump-helm-line-default-action 'select)
+  (setq ace-jump-helm-line-select-key ?e)
+  (setq ace-jump-helm-line-move-only-key ?o)
+  (setq ace-jump-helm-line-persistent-key ?p)
+
+  (eval-after-load "helm"
+    '(define-key helm-map (kbd "C-;") 'ace-jump-helm-line))
+
   ;; snipe; because I'm using alternate f/t behavior if I don't disable highlighting then
   ;; f<SPC> becomes very slow, for example
   ;; Note that in addition to multi-line, also allows repeated f/t/F/T presses to repeat
