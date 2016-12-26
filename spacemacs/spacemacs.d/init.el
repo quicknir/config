@@ -475,6 +475,21 @@ you should place your code here."
   (spacemacs/set-leader-keys "wD" 'delete-other-windows)
   (spacemacs/set-leader-keys "bD" 'spacemacs/kill-other-buffers)
 
+  (require 'helm-projectile)
+  (defun helm-find-files-window-n (n)
+    (let* ((files (helm-marked-candidates))
+           (buffers (mapcar 'find-file-noselect files)))
+      (select-window-by-number n)
+      (cl-loop for buffer in buffers
+               do (progn
+                    (set-window-buffer nil buffer)))))
+
+  (defun helm-find-files-window-1 (_candidate)
+    (helm-find-files-window-n 1)
+    )
+
+  (helm-add-action-to-source "open in 1" 'helm-find-files-window-1 helm-source-projectile-files-list)
+
   ;; Replace git modeline segment with something nicer and smaller
   (spaceline-define-segment version-control
     "Version control information."
