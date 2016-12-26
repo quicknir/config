@@ -455,21 +455,29 @@ you should place your code here."
   (evil-define-key 'visual global-map "gI" 'evil-mc-insert-vertical-cursors)
   (evil-define-key 'visual global-map "gA" 'evil-mc-append-vertical-cursors)
 
-  ; use helm-ag in place of swoop
-  (require 'helm-ag)
-  (defun followize (helm-command)
-    (lexical-let ((hc helm-command))
+  ;; This function can be used to make any helm command automatically follow
+  (defun followize (command source)
+    (lexical-let ((hc command)
+                  (s source))
       (lambda ()
         (interactive)
-        (let ((prev-follow-val (helm-attr 'follow helm-source-do-ag)))
-          (helm-attrset 'follow 1 helm-source-do-ag)
+        (let ((prev-follow-val (helm-attr 'follow s)))
+          (helm-attrset 'follow 1 s)
           (call-interactively hc)
-          (helm-attrset 'follow prev-follow-val helm-source-do-ag)))))
+          (helm-attrset 'follow prev-follow-val s)))))
 
-  (spacemacs/set-leader-keys "sb" (followize 'helm-do-ag-buffers))
-  (spacemacs/set-leader-keys "sB" (followize 'spacemacs/helm-buffers-do-ag-region-or-symbol))
-  (spacemacs/set-leader-keys "ss" (followize 'helm-do-ag-this-file))
-  (spacemacs/set-leader-keys "sS" (followize 'spacemacs/helm-file-do-ag-region-or-symbol))
+  ;; use helm-ag with follow in place of swoop
+  (require 'helm-ag)
+
+  (spacemacs/set-leader-keys "sb" (followize 'helm-do-ag-buffers helm-source-do-ag))
+  (spacemacs/set-leader-keys "sB" (followize 'spacemacs/helm-buffers-do-ag-region-or-symbol helm-source-do-ag))
+  (spacemacs/set-leader-keys "ss" (followize 'helm-do-ag-this-file helm-source-do-ag))
+  (spacemacs/set-leader-keys "sS" (followize 'spacemacs/helm-file-do-ag-region-or-symbol helm-source-do-ag))
+
+  ;; Follow in imenu
+  (require 'helm-imenu)
+  (spacemacs/set-leader-keys "ji" (followize 'spacemacs/helm-jump-in-buffer helm-source-imenu))
+  (spacemacs/set-leader-keys "jI" (followize 'helm-imenu-in-all-buffers helm-source-imenu-all))
 
   ;; Window and buffer movement customizations, get this merged into spacemacs
   (spacemacs/set-leader-keys "wD" 'delete-other-windows)
