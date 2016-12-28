@@ -1,134 +1,126 @@
 import os
 import ycm_core
-import re
 import subprocess
+import logging
+from itertools import dropwhile, takewhile, tee, izip
 
 # These are the compilation flags that will be used in case there's no
-# compilation database set (by default, one is not set).
+# compilation database found
 flags = [
     '-fexceptions', '-DNDEBUG', '-std=c++14', '-x', 'c++',
-    '-Wno-unused-parameter', '-Wall', '-Wextra', '-Wpedantic', '-I', '.', '-I', '../', '-I', '../../'
+    '-Wno-unused-parameter', '-Wall', '-Wextra', '-Wpedantic', '-I', '.', '-I',
+    '../', '-I', '../../'
 ]
 
 # Flags that always get added
 # -fspell-checking gives better fixits and has no downside
 extra_flags = ['-fspell-checking']
 
-compilation_database_folder = ''
+SOURCE_EXTENSIONS = [
+    '.x.cpp', '.cpp', '.cxx', '.cc', '.c', '.m', '.mm', '.t.cpp'
+]
 
-if os.path.exists(compilation_database_folder):
-    database = ycm_core.CompilationDatabase(compilation_database_folder)
-else:
-    database = None
+HEADER_EXTENSIONS = {'.h', '.hxx', '.hpp', '.hh'}
 
-SOURCE_EXTENSIONS = ['.x.cpp', '.cpp', '.cxx', '.cc', '.c', '.m', '.mm',
-                     '.t.cpp']
-
-system_include_cache = {}
+l = logging.getLogger()
 
 
 def load_system_includes(gcc_toolchain=None):
-    # Typically we'll get the same system includes over and over,
-    # so let's cache the solution
-    if gcc_toolchain in system_include_cache:
-        return system_include_cache[gcc_toolchain]
 
     if gcc_toolchain is None:
-        gcc = []
-    else:
-        gcc = [gcc_toolchain]
+        gcc_toolchain = ""
 
-    regex = re.compile(
-        ur'(?:\#include \<...\> search starts here\:)(?P<list>.*?)(?:End of search list)',
-        re.DOTALL)
     process = subprocess.Popen(
-        ['clang', '-v', '-E', '-x', 'c++', '-'] + gcc,
+        ['clang', '-v', '-E', '-x', 'c++', '-', gcc_toolchain],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
     process_out, process_err = process.communicate('')
-    output = process_out + process_err
-    includes = []
-    for p in re.search(regex, output).group('list').split('\n'):
-        p = p.strip()
-        if len(p) > 0 and p.find('(framework directory)') < 0:
-            includes.append('-isystem')
-            includes.append(p)
+    output = process_err.split('\n')
 
-    system_include_cache[gcc_toolchain] = includes
-    return includes
+    def not_start(s):
+        return s != "#include <...> search starts here:"
+
+    def not_end(s):
+        return s != "End of search list."
+
+    from_start = dropwhile(not_start, output)
+    next(from_start)
+
+    return ["-isystem" + x for x in takewhile(not_end, from_start)]
 
 
 def find_in_parent_dir(original_file, target):
     d = os.path.abspath(original_file)
 
-    while True:
-        r = os.path.dirname(d)
-        if r == d:
-            return None
+    while not os.path.ismount(d):
+        d = os.path.dirname(d)
 
-        d = r
-        t = os.path.join(d, target)
-        if os.path.exists(t):
-            return t
+        if os.path.exists(os.path.join(d, target)):
+            return d
 
-def DirectoryOfThisScript():
-    return os.path.dirname(os.path.abspath(__file__))
+    return None
 
 
-def MakeRelativePathsInFlagsAbsolute(flags, working_directory):
+def pairwise(iterable):
+    a, b = tee(iterable)
+    next(b, None)
+    return izip(a, b)
+
+
+def make_paths_absolute(flags, working_directory):
+
+    path_flags = ['-isystem', '-I', '-iquote', '--sysroot=']
+
     if not working_directory:
         return list(flags)
+
     new_flags = []
-    make_next_absolute = False
-    path_flags = ['-isystem', '-I', '-iquote', '--sysroot=']
-    for flag in flags:
-        new_flag = flag
 
-        if make_next_absolute:
-            make_next_absolute = False
-            if not flag.startswith('/'):
-                new_flag = os.path.join(working_directory, flag)
+    def make_path_absolute(path):
+        if os.path.isabs(path):
+            return path
+        return os.path.join(working_directory, path)
 
-        for path_flag in path_flags:
-            if flag == path_flag:
-                make_next_absolute = True
-                break
+    pair_iter = pairwise(flags)
+    for flag, next_flag in pair_iter:
 
-            if flag.startswith(path_flag):
-                path = flag[len(path_flag):]
-                new_flag = path_flag + os.path.join(working_directory, path)
-                break
+        path_flag = next((p for p in path_flags if flag.startswith(p)), None)
 
-        if new_flag:
-            new_flags.append(new_flag)
+        if not path_flag:
+            new_flags.append(flag)
+            continue
+
+        if flag == path_flag:
+            new_flags.extend([flag, make_path_absolute(next_flag)])
+            next(pair_iter)
+            continue
+
+        path = flag[len(path_flag):]
+        new_flags.append(path_flag + make_path_absolute(path))
+
     return new_flags
 
 
-def is_header_file(filename):
-    extension = os.path.splitext(filename)[1]
-    return extension in {'.h', '.hxx', '.hpp', '.hh'}
-
-
-def GetCompilationInfoForFile(filename):
-    if not is_header_file:
-        return database.GetCompilationInfoForFile(filename)
-
-    # Header files are not compilation targets, so we need to use heuristics
-    # to get a reasonable set of flags
-
-    # First attempt: find a corresponding implementation or test file
-    basename = os.path.splitext(filename)[0]
+def header_heuristic_source_file(header_file, database):
+    l.info("Begin corresponding source file heuristic")
+    basename = os.path.splitext(header_file)[0]
     for extension in SOURCE_EXTENSIONS:
         replacement_file = basename + extension
         if os.path.exists(replacement_file):
             compilation_info = database.GetCompilationInfoForFile(
                 replacement_file)
+            l.info("Found corresponding source file {}".format(
+                replacement_file))
             if compilation_info.compiler_flags_:
                 return compilation_info
+            l.warn("Did not find corresponding source file in database!")
 
-    # Second attempt: any file in same directory
-    dir = os.path.dirname(filename)
+    return None
+
+
+def header_heuristic_same_dir(header_file, database):
+    dir = os.path.dirname(header_file)
 
     for f in os.listdir(dir):
         if any(f.endswith(i) for i in SOURCE_EXTENSIONS):
@@ -140,17 +132,45 @@ def GetCompilationInfoForFile(filename):
     return None
 
 
+HEADER_HEURISTICS = [header_heuristic_source_file, header_heuristic_same_dir]
+
+
+def get_flags_from_database(filename, database_dir):
+
+    database = ycm_core.CompilationDatabase(database_dir)
+
+    if not os.path.splitext(filename)[1] in HEADER_EXTENSIONS:
+        l.info("Source file, looking up flags in database")
+        return database.GetCompilationInfoForFile(filename)
+
+    # Header files are not compilation targets, so we need to use heuristics
+    # to get a reasonable set of flags
+
+    l.info("Header file, starting heuristics")
+    for hh in HEADER_HEURISTICS:
+        compilation_info = hh(filename, database)
+        if compilation_info:
+            return compilation_info
+
+    return None
+
+
 def FlagsForFile(filename, **kwargs):
-    if database:
+
+    l.info("Finding flags for file {}".format(filename))
+    database_dir = find_in_parent_dir(filename, "compile_commands.json")
+
+    if database_dir is not None:
+        l.info("Database found at directory {}".format(database_dir))
         # Bear in mind that compilation_info.compiler_flags_ does NOT return a
         # python list, but a "list-like" StringVec object
-        compilation_info = GetCompilationInfoForFile(filename)
+        compilation_info = get_flags_from_database(filename, database_dir)
         if not compilation_info:
             return None
 
-        final_flags = MakeRelativePathsInFlagsAbsolute(
+        final_flags = make_paths_absolute(
             compilation_info.compiler_flags_,
-            compilation_info.compiler_working_dir_) + extra_flags
+            compilation_info.compiler_working_dir_)
 
         # ycmd's heuristics are broken unfortunately, and decide that compiling
         # with clang means that we are compiling c code and not c++ code,
@@ -162,10 +182,9 @@ def FlagsForFile(filename, **kwargs):
         final_flags = final_flags + load_system_includes(
             next((x for x in final_flags
                   if x.startswith("--gcc-toolchain")), None))
-
     else:
-        relative_to = DirectoryOfThisScript()
-        final_flags = MakeRelativePathsInFlagsAbsolute(
-            flags, relative_to) + extra_flags + load_system_includes()
+        relative_to = os.path.dirname(os.path.abspath(filename))
+        final_flags = make_paths_absolute(flags,
+                                          relative_to) + load_system_includes()
 
-    return {'flags': final_flags, 'do_cache': True}
+    return {'flags': final_flags + extra_flags, 'do_cache': True}
