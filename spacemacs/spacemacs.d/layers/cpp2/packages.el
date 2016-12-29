@@ -92,6 +92,8 @@
       (setq rtags-jump-to-first-match nil)
       (setq rtags-use-helm t)
       (add-hook 'rtags-jump-hook 'evil-set-jump)
+      (add-to-list 'spacemacs-jump-handlers-c++-mode
+                   '(rtags-find-symbol-at-point :async t)))
       )
     )
   )
