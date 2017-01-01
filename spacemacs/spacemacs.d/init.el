@@ -362,9 +362,6 @@ you should place your code here."
 
   (global-set-key (kbd "<C-tab>") 'ycm)
 
-  (with-eval-after-load "company"
-    '(define-key company-active-map (kbd "C-d") 'company-quickhelp-manual-begin))
-
 
   ;; Rebind surround to S instead of s, so we can use s for avy
   (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
