@@ -336,6 +336,7 @@ you should place your code here."
   (electric-pair-mode 1)
   (purpose-mode -1)
   (spaceline-toggle-buffer-encoding-abbrev-off)
+  (setq evil-escape-unordered-key-sequence t)
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
