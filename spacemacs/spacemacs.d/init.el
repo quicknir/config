@@ -345,21 +345,17 @@ you should place your code here."
   (with-eval-after-load "ycmd"
     (progn
       (require 'ycmd-eldoc)
-      (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)))
+      (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)
+      (require 'company-ycmd)
+      (defun ycm ()
+        (interactive)
+        (company-cancel)
+        (let ((ycmd-force-semantic-completion (not (company-ycmd--in-include))))
+          (setq company-backend 'company-ycmd)
+          (company-manual-begin)))))
 
   (add-hook 'python-mode-hook 'ycmd-mode)
-
-  (require 'company-ycmd)
-
-  ;; company setup
   (setq company-idle-delay 0.2)
-  (defun ycm ()
-    (interactive)
-    (company-cancel)
-    (let ((ycmd-force-semantic-completion (not (company-ycmd--in-include))))
-      (setq company-backend 'company-ycmd)
-      (company-manual-begin)))
-
   (global-set-key (kbd "<C-tab>") 'ycm)
 
 
