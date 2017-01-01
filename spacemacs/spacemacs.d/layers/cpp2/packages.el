@@ -104,6 +104,9 @@
   (setq ycmd-parse-conditions '(save new-line mode-enabled idle-change))
   (setq ycmd-idle-change-delay 2.0)
   (setq ycmd-confirm-fixit nil)
+  (setq ycmd-global-config
+        (concat (configuration-layer/get-layer-path 'cpp2)
+                "ycmd_global_conf.py"))
   (spacemacs/set-leader-keys-for-major-mode 'c++-mode
     "F" 'ycmd-fixit
     "pS" 'ycmd-get-type))
