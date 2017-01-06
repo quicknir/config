@@ -476,6 +476,14 @@ you should place your code here."
   (spacemacs/set-leader-keys "wD" 'delete-other-windows)
   (spacemacs/set-leader-keys "bD" 'spacemacs/kill-other-buffers)
 
+  ;; By default, d and x do the same thing in visual mode. Give x a more useful
+  ;; purpose: delete to black hole register, so default register does not get
+  ;; get overriden
+  (evil-define-key  'visual global-map "x"
+    (lambda () (interactive)
+      (evil-use-register ?_)
+      (call-interactively 'evil-delete-char) ))
+
   (require 'helm-projectile)
   (defun helm-find-files-window-n (n)
     (let* ((files (helm-marked-candidates))
