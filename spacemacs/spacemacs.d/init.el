@@ -337,14 +337,11 @@ you should place your code here."
   (purpose-mode -1)
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (setq evil-escape-unordered-key-sequence t)
-  (define-key evil-normal-state-map (kbd "gD") 'spacemacs/jump-to-definition-other-window)
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
   (with-eval-after-load "ycmd"
     (progn
-      (require 'ycmd-eldoc)
-      (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)
       (require 'company-ycmd)
       (defun ycm ()
         (interactive)
