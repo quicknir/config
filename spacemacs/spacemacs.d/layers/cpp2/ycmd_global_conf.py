@@ -47,7 +47,7 @@ def load_system_includes(gcc_toolchain=None):
     from_start = dropwhile(not_start, output)
     next(from_start)
 
-    return ["-isystem" + x for x in takewhile(not_end, from_start)]
+    return ["-isystem" + x[1:] for x in takewhile(not_end, from_start)]
 
 
 def find_in_parent_dir(original_file, target):
