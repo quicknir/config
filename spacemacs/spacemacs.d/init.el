@@ -383,6 +383,8 @@ you should place your code here."
   ;; the seek. This effectively frees up ;, a home row key!
   (setq evil-snipe-enable-incremental-highlight nil)
   (setq evil-snipe-enable-highlight nil)
+  ;; Disable all keybindings other than f/t
+  (evil-snipe-mode -1)
 
   ;; Configuration for shell
   (evil-define-key 'insert term-mode-map (kbd "C-e") 'term-send-raw)
