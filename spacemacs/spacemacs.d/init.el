@@ -468,8 +468,15 @@ you should place your code here."
 
   ;; Follow in imenu
   (require 'helm-imenu)
-  (spacemacs/set-leader-keys "ji" (followize 'spacemacs/helm-jump-in-buffer helm-source-imenu))
-  (spacemacs/set-leader-keys "jI" (followize 'helm-imenu-in-all-buffers helm-source-imenu-all))
+  (setq helm-source-imenu
+        (helm-make-source "Imenu" 'helm-imenu-source
+          :fuzzy-match helm-imenu-fuzzy-match
+          :follow 1))
+  (setq helm-source-imenu-all
+        (helm-make-source "Imenu in all buffers" 'helm-imenu-source
+          :candidates 'helm-imenu-candidates-in-all-buffers
+          :fuzzy-match helm-imenu-fuzzy-match
+          :follow 1))
 
   ;; Window and buffer movement customizations, get this merged into spacemacs
   (spacemacs/set-leader-keys "wD" 'delete-other-windows)
