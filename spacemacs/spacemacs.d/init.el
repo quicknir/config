@@ -77,8 +77,7 @@ values."
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '(smartparens
-                                    evil-lisp-state
-                                    centered-buffer-mode
+                                    evil-lisp-state)
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -345,6 +344,7 @@ you should place your code here."
           (company-manual-begin)))))
 
   (add-hook 'python-mode-hook 'ycmd-mode)
+  (setq company-ycmd-request-sync-timeout 1.0)
   (setq company-idle-delay 0.2)
   (global-set-key (kbd "<C-tab>") 'ycm)
 
