@@ -58,9 +58,8 @@ values."
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom
-            shell-default-shell 'multi-term
-            shell-default-term-shell "zsh"
-            multi-term-program "zsh")
+            shell-default-shell 'ansi-term
+            shell-default-term-shell "zsh")
 
      ;; Only used for multi-line f and t
      (evil-snipe :variables
