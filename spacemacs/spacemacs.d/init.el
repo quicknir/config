@@ -49,7 +49,8 @@ values."
      cpp2
      python
      markdown
-     javascript
+     ;; Only load/config json related packages
+     (javascript :packages flycheck json-mode json-snatcher web-beautify)
      lua
 
      ;; Applications
@@ -79,13 +80,6 @@ values."
    dotspacemacs-excluded-packages '(smartparens
                                     evil-lisp-state
                                     centered-buffer-mode
-                                    coffee-mode
-                                    company-tern
-                                    js-doc
-                                    js2-mode
-                                    js2-refactor
-                                    tern
-                                    web-beautify)
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
