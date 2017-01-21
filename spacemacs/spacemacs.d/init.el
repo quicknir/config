@@ -427,7 +427,7 @@ you should place your code here."
     (evil-mc-pause-cursors)
     (apply-on-rectangle func
                         beg end (line-number-at-pos (point)))
-    (message (number-to-string (current-column)))(evil-mc-resume-cursors)
+    (evil-mc-resume-cursors)
     (evil-normal-state))
 
   (defun evil-mc-insert-vertical-cursors (beg end)
