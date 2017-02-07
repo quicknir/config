@@ -50,6 +50,7 @@ values."
      (python :variables
              python-fill-column 99)
      markdown
+     csv
      ;; Only load/config json related packages
      (javascript :packages flycheck json-mode json-snatcher web-beautify)
      lua
