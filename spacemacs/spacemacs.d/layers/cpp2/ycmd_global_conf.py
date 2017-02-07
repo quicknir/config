@@ -93,7 +93,10 @@ def make_paths_absolute(flags, working_directory):
 
         if flag == path_flag:
             new_flags.extend([flag, make_path_absolute(next_flag)])
-            next(pair_iter)
+            try:
+                next(pair_iter)
+            except StopIteration:
+                break
             continue
 
         path = flag[len(path_flag):]
