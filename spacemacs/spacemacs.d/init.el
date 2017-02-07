@@ -47,7 +47,8 @@ values."
      ;; Languages
      emacs-lisp
      cpp2
-     python
+     (python :variables
+             python-fill-column 99)
      markdown
      ;; Only load/config json related packages
      (javascript :packages flycheck json-mode json-snatcher web-beautify)
