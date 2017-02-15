@@ -179,7 +179,7 @@ def FlagsForFile(filename, **kwargs):
         # with clang means that we are compiling c code and not c++ code,
         # leading to marking every use of try/throw/catch as an error
         # final_flags[2] = 'c++'
-        final_flags[0] = "clang++"
+        final_flags.insert(0, "clang++")
 
         # To get system includes, see if gcc toolchain option specified
         final_flags = final_flags + load_system_includes(
