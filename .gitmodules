@@ -13,3 +13,6 @@
 [submodule "vim/vim/bundle/vim-surround"]
 	path = vim/vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
+[submodule "terminal/fzf"]
+	path = terminal/fzf
+	url = https://github.com/junegunn/fzf.git
