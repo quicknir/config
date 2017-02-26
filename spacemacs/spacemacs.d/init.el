@@ -508,7 +508,7 @@ you should place your code here."
     "Version control information."
     (when vc-mode
       (powerline-raw
-       (replace-regexp-in-string "Git" ""
+       (replace-regexp-in-string "Git." ":"
                                  (s-trim (concat vc-mode
                                                  (when (buffer-file-name)
                                                    (pcase (vc-state (buffer-file-name))
