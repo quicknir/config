@@ -332,6 +332,8 @@ you should place your code here."
   (purpose-mode -1)
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (setq evil-escape-unordered-key-sequence t)
+  (setq evil-escape-delay 0.06)
+  (ranger-override-dired-mode t)
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
