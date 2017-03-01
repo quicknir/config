@@ -335,6 +335,14 @@ you should place your code here."
   (setq evil-escape-delay 0.06)
   (ranger-override-dired-mode t)
 
+  ;; Make sure terminal client emacs has transparent background
+  (defun make-term-frame-trans (frame)
+    (unless (display-graphic-p frame)
+      (set-face-background 'default "unspecified-bg" frame)
+      (set-face-background 'font-lock-comment-face "unspecified-bg" frame)))
+
+  (add-hook 'after-make-frame-functions 'make-term-frame-trans)
+
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
   (with-eval-after-load "ycmd"
