@@ -327,6 +327,31 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  (unless window-system
+    ;; Callback for when user cuts
+    (defun xclip-cut-function (text &optional push)
+      (let* ((process-connection-type nil)
+             (proc (start-process "xclip" nil "xclip"
+                                  "-selection" "clipboard")))
+        (process-send-string proc text)
+        (process-send-eof proc)))
+
+    ;; Call back for when user pastes
+    (defun xclip-paste-function()
+      ;; Find out what is current selection by xclip. If it is different
+      ;; from the top of the kill-ring (car kill-ring), then return
+      ;; it. Else, nil is returned, so whatever is in the top of the
+      ;; kill-ring will be used.
+      (let ((xclip-output (shell-command-to-string "xclip -selection clipboard -o")))
+        (unless (string= (car kill-ring) xclip-output)
+          xclip-output)))
+    ;; Attach callbacks to hooks
+    (setq interprogram-cut-function 'xclip-cut-function)
+    (setq interprogram-paste-function 'xclip-paste-function))
+    ;; Idea from
+    ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
+    ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html)
+
   ;; Some minor mode customizations
   (electric-pair-mode 1)
   (purpose-mode -1)
