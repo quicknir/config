@@ -47,7 +47,7 @@
 
 (defun cpp2/post-init-flycheck ()
   (dolist (mode '(c-mode c++-mode))
-    (spacemacs/add-flycheck-hook mode)))
+    (spacemacs/enable-flycheck mode)))
 
 
 (defun cpp2/init-gdb-mi ()
