@@ -2,7 +2,7 @@ import os
 import ycm_core
 import subprocess
 import logging
-from itertools import dropwhile, takewhile, tee, izip
+from itertools import dropwhile, takewhile
 
 # These are the compilation flags that will be used in case there's no
 # compilation database found
@@ -36,7 +36,7 @@ def load_system_includes(gcc_toolchain=None):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
     process_out, process_err = process.communicate('')
-    output = process_err.split('\n')
+    output = process_err.decode('utf8').split('\n')
 
     def not_start(s):
         return s != "#include <...> search starts here:"
@@ -63,9 +63,12 @@ def find_in_parent_dir(original_file, target):
 
 
 def pairwise(iterable):
-    a, b = tee(iterable)
-    next(b, None)
-    return izip(a, b)
+    it = iter(iterable)
+    previous = next(it)
+
+    for x in it:
+        yield (previous, x)
+        previous = x
 
 
 def make_paths_absolute(flags, working_directory):
