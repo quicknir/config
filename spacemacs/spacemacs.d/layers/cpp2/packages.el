@@ -7,6 +7,7 @@
     company
     flycheck
     gdb-mi
+    modern-cpp-font-lock
     rtags
     ycmd
     ))
@@ -60,6 +61,14 @@
      ;; Non-nil means display source file containing the main routine at startup
      gdb-show-main t)))
 
+(defun cpp2/init-modern-cpp-font-lock ()
+  (use-package modern-cpp-font-lock
+    :defer t
+    :init
+    (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+    :config
+    (spacemacs|diminish modern-c++-font-lock-mode)
+    ))
 
 (defun cpp2/init-rtags ()
   (use-package rtags
