@@ -71,6 +71,7 @@ values."
      no-dots
      terminal
      mc-column
+     pretty-git-modeline
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -471,22 +472,4 @@ you should place your code here."
 
   (helm-add-action-to-source "open in 1" 'helm-find-files-window-1 helm-source-projectile-files-list)
 
-  ;; Replace git modeline segment with something nicer and smaller
-  (spaceline-define-segment version-control
-    "Version control information."
-    (when vc-mode
-      (powerline-raw
-       (replace-regexp-in-string "Git." ":"
-                                 (s-trim (concat vc-mode
-                                                 (when (buffer-file-name)
-                                                   (pcase (vc-state (buffer-file-name))
-                                                     (`up-to-date "")
-                                                     (`edited "*")
-                                                     (`added "+")
-                                                     (`unregistered "?")
-                                                     (`removed "-")
-                                                     (`needs-merge "!")
-                                                     (`needs-update " Upd")
-                                                     (`ignored " Ign")
-                                                     (_ "?")))))))))
   )
