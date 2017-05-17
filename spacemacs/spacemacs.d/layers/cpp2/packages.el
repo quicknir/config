@@ -7,6 +7,7 @@
     company
     flycheck
     gdb-mi
+    helm-rtags
     modern-cpp-font-lock
     rtags
     ycmd
@@ -61,6 +62,11 @@
      ;; Non-nil means display source file containing the main routine at startup
      gdb-show-main t)))
 
+(defun cpp2/init-helm-rtags ()
+    (use-package helm-rtags
+      :defer t
+      :init (setq rtags-display-result-backend 'helm)))
+
 (defun cpp2/init-modern-cpp-font-lock ()
   (use-package modern-cpp-font-lock
     :defer t
@@ -101,9 +107,7 @@
       (add-to-list 'spacemacs-jump-handlers-c++-mode '(rtags-find-symbol-at-point :async t)))
     :config
     (progn
-      (require 'rtags-helm)
-      (setq rtags-jump-to-first-match nil)
-      (setq rtags-use-helm t))))
+      (setq rtags-jump-to-first-match nil))))
 
 
 (defun cpp2/post-init-ycmd ()
