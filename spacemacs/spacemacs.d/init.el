@@ -334,9 +334,8 @@ you should place your code here."
   ;; Some minor mode customizations
   (electric-pair-mode 1)
   (purpose-mode -1)
+  (evil-escape-mode -1)
   (spaceline-toggle-buffer-encoding-abbrev-off)
-  (setq evil-escape-unordered-key-sequence t)
-  (setq evil-escape-delay 0.06)
   (ranger-override-dired-mode t)
 
   ;; ycmd setup
