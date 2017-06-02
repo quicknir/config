@@ -389,8 +389,10 @@ you should place your code here."
   (evil-snipe-mode -1)
 
   ;; Configuration for shell
-  (evil-define-key 'insert term-mode-map (kbd "C-e") 'term-send-raw)
-  (evil-define-key 'insert term-raw-map (kbd "C-e") 'term-send-raw)
+  (evil-define-key 'insert term-mode-map (kbd "C-r") 'term-send-raw)
+  (evil-define-key 'insert term-raw-map (kbd "C-r") 'term-send-raw)
+  (evil-define-key 'insert term-mode-map (kbd "C-f") 'term-send-raw)
+  (evil-define-key 'insert term-raw-map (kbd "C-f") 'term-send-raw)
 
   ;; Projectile
   (setq projectile-enable-caching t)
