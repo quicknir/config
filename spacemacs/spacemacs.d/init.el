@@ -337,6 +337,7 @@ you should place your code here."
   (evil-escape-mode -1)
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (ranger-override-dired-mode t)
+  (setq helm-swoop-split-window-function 'spacemacs//display-helm-window)
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
