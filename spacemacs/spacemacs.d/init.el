@@ -68,6 +68,7 @@ values."
             evil-snipe-enable-alternate-f-and-t-behaviors t)
 
      ;; Customizations
+     worse
      no-dots
      terminal
      mc-column
