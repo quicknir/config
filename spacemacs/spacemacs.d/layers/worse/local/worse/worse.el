@@ -2,7 +2,10 @@
 
 (require 'projectile)
 (require 'helm-ag)
+(require 'helm)
+(require 'helm-help)
 (require 'helm-projectile)
+(require 'helm-source)
 
 (defvar worse-projectile-files-buffer "*worse files*")
 
@@ -11,7 +14,6 @@
        :candidates-process
        (lambda ()
          (apply 'start-process "ag-files" nil (helm-ag--construct-do-ag-command (concat "-g -S " helm-pattern))))
-       :nohighlight t
        :keymap helm-projectile-find-file-map
        :help-message 'helm-ff-help-message
        :mode-line "foo"
@@ -20,6 +22,7 @@
        :persistent-help "Preview file"
        :requires-pattern 3))
 
+;;;###autoload
 (defun worse-faster-projectile-files ()
  (interactive)
  (let ((default-directory (projectile-project-root)))
