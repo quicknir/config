@@ -339,6 +339,7 @@ you should place your code here."
   (spaceline-toggle-buffer-encoding-abbrev-off)
   (ranger-override-dired-mode t)
   (setq helm-swoop-split-window-function 'spacemacs//display-helm-window)
+  (setq persp-add-buffer-on-after-change-major-mode t)
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
