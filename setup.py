@@ -40,6 +40,8 @@ def setup_config(repo_path):
         path.join(repo_path, "terminal", "terminator", "config"),
         path.expanduser('~/.config/terminator/config'))
 
+    # TODO: setup fzf, spacemacs
+
 
 if __name__ == "__main__":
     setup_config(path.dirname(path.realpath(__file__)))
