@@ -49,7 +49,9 @@ def setup_config(repo_path):
 
     symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
 
-    # TODO: setup fzf
+    print "Other things to do"
+    print "Goto fzf, run install"
+    print "Install xcape, xclip, silver surfer"
 
 if __name__ == "__main__":
     setup_config(path.dirname(path.realpath(__file__)))
