@@ -44,8 +44,11 @@ def setup_config(repo_path):
         path.join(repo_path, "terminal", "terminator", "config"),
         path.expanduser('~/.config/terminator/config'))
 
-    # TODO: setup fzf, spacemacs
+    symlink_and_bak(path.join(repo_path, 'spacemacs'), path.expanduser('~/.emacs.d'))
+    symlink_and_bak(path.join(repo_path, 'spacemacs.d'), path.expanduser('~/.spacemacs.d'))
 
+
+    # TODO: setup fzf
 
 if __name__ == "__main__":
     setup_config(path.dirname(path.realpath(__file__)))
