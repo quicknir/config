@@ -16,6 +16,10 @@ def bak(dest):
 def symlink_and_bak(src, dest):
     if os.path.exists(dest):
         bak(dest)
+    try:  # Create directory if it doesn't exist. Suppress failure.
+        os.makedirs(os.path.split(dest)[0])
+    except:
+        pass
     os.symlink(src, dest)
 
 
