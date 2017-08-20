@@ -47,6 +47,7 @@ def setup_config(repo_path):
     symlink_and_bak(path.join(repo_path, 'spacemacs'), path.expanduser('~/.emacs.d'))
     symlink_and_bak(path.join(repo_path, 'spacemacs.d'), path.expanduser('~/.spacemacs.d'))
 
+    symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
 
     # TODO: setup fzf
 
