@@ -49,6 +49,7 @@ values."
      cpp2
      (python :variables
              python-fill-column 99)
+     html
      markdown
      csv
      ;; Only load/config json related packages
