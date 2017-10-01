@@ -418,6 +418,11 @@ you should place your code here."
 
   ;; evil mc
   (global-evil-mc-mode 1)
+  ;; Fix for bug: https://github.com/gabesoft/evil-mc/issues/70
+  ;; https://github.com/emacs-evil/evil/issues/864
+  (add-hook 'evil-mc-after-cursors-deleted
+            (lambda ()
+              (setq evil-was-yanked-without-register t)))
 
   ;; This function can be used to make any helm command automatically follow
   (defun followize (command source)
