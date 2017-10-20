@@ -13,7 +13,6 @@
     ycmd
     ))
 
-
 (defun cpp2/init-cc-mode ()
   (use-package cc-mode
     :defer t
@@ -29,17 +28,14 @@
           "gt" 'cpp2/find-test-file
           "gT" 'cpp2/find-test-file-other-window)))))
 
-
 (defun cpp2/init-clang-format ()
   (use-package clang-format)
   (spacemacs/set-leader-keys-for-major-mode 'c++-mode
-    "TAB" 'clang-format-buffer))
-
+    "=" 'clang-format-buffer))
 
 (defun cpp2/init-cmake-mode ()
   (use-package cmake-mode
     :mode (("CMakeLists\\.txt\\'" . cmake-mode) ("\\.cmake\\'" . cmake-mode))))
-
 
 (defun cpp2/post-init-company ()
   (spacemacs|add-company-backends
@@ -48,11 +44,9 @@
     :backends company-cmake
     :modes cmake-mode))
 
-
 (defun cpp2/post-init-flycheck ()
   (dolist (mode '(c-mode c++-mode))
     (spacemacs/enable-flycheck mode)))
-
 
 (defun cpp2/init-gdb-mi ()
   (use-package gdb-mi
@@ -80,18 +74,16 @@
 
 (defun cpp2/init-rtags ()
   (use-package rtags
-    :defer f
+    :defer t
     :init
     (progn
       (spacemacs/set-leader-keys-for-major-mode 'c++-mode
-        "d" 'rtags-find-symbol-at-point
-        "D" 'cpp2/rtags-find-symbol-at-point-other-file
+        "gg" 'cpp2/goto-definition
         "/" 'rtags-find-symbol
-        "R" 'rtags-find-references-at-point
-        ;; "r" 'rtags-find-references-at-point-in-file to implement
+        "gr" 'rtags-find-references-at-point
         "v" 'rtags-find-virtuals-at-point
         "i" 'rtags-imenu
-        "C-r" 'rtags-rename-symbol
+        "rr" 'rtags-rename-symbol
 
         ;; print prefix
         "pt" 'rtags-print-class-hierarchy
@@ -99,18 +91,12 @@
         "pi" 'rtags-print-dependencies
         "ps" 'rtags-print-symbol-info
         "pp" 'rtags-preprocess-file
-
-        ;; TODO: planned micro state
-        ;; "o" (rtags-occurence-transient state)
-        ;; "n" 'rtags-next-match
-        ;; "N/p" 'rtags-previous-match
         )
       (add-hook 'rtags-jump-hook 'evil-set-jump)
-      (add-to-list 'spacemacs-jump-handlers-c++-mode '(rtags-find-symbol-at-point :async t)))
+      (add-to-list 'spacemacs-jump-handlers-c++-mode '(cpp2/goto-definition :async t)))
     :config
     (progn
       (setq rtags-jump-to-first-match nil))))
-
 
 (defun cpp2/post-init-ycmd ()
   (spacemacs/add-to-hooks 'ycmd-mode '(c++-mode-hook c-mode-hook))

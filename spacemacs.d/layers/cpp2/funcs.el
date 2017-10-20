@@ -1,4 +1,4 @@
-(defun cpp2/rtags-find-symbol-at-point-other-file ()
+(defun cpp2/rtags-find-symbol-at-point-other-window ()
   (interactive)
   (let((current-prefix-arg '(4)))
     (call-interactively 'rtags-find-symbol-at-point)
@@ -28,3 +28,8 @@
   (let ((ff-always-try-to-create nil)
         (ff-other-file-alist cpp2-test-file-alist))
     (ff-find-other-file t t)))
+
+(defun cpp2/goto-definition ()
+  (interactive)
+  (require 'rtags)
+  (if (rtags-is-indexed) (rtags-find-symbol-at-point) (ycmd-goto)))
