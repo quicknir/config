@@ -4,3 +4,27 @@
     (call-interactively 'rtags-find-symbol-at-point)
     )
   )
+
+(defun cpp2/find-other-file ()
+  (interactive)
+  (let ((ff-always-try-to-create nil)
+        (ff-other-file-alist cpp2-other-file-alist))
+    (ff-find-other-file nil t)))
+
+(defun cpp2/find-other-file-other-window ()
+  (interactive)
+  (let ((ff-always-try-to-create nil)
+        (ff-other-file-alist cpp2-other-file-alist))
+    (ff-find-other-file t t)))
+
+(defun cpp2/find-test-file ()
+  (interactive)
+  (let ((ff-always-try-to-create nil)
+        (ff-other-file-alist cpp2-test-file-alist))
+    (ff-find-other-file nil t)))
+
+(defun cpp2/find-test-file-other-window ()
+  (interactive)
+  (let ((ff-always-try-to-create nil)
+        (ff-other-file-alist cpp2-test-file-alist))
+    (ff-find-other-file t t)))

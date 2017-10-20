@@ -24,8 +24,10 @@
       (require 'compile)
       (dolist (mode '(c-mode c++-mode))
         (spacemacs/set-leader-keys-for-major-mode mode
-          "s" 'projectile-find-other-file
-          "S" 'projectile-find-other-file-other-window)))))
+          "ga" 'cpp2/find-other-file
+          "gA" 'cpp2/find-other-file-other-window
+          "gt" 'cpp2/find-test-file
+          "gT" 'cpp2/find-test-file-other-window)))))
 
 
 (defun cpp2/init-clang-format ()
