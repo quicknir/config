@@ -340,6 +340,11 @@ you should place your code here."
     (interactive)
     (unless (call-interactively 'yas-expand) (call-interactively 'company-yasnippet)))
   (define-key yas-minor-mode-map (kbd "C-/") 'nir-yasnippet-expand-or-complete)
+
+  (defun nir-past-closers ()
+    (interactive)
+    (skip-syntax-forward ")"))
+
   ;; Some minor mode customizations
   (electric-pair-mode 1)
   (purpose-mode -1)
