@@ -55,9 +55,11 @@ values."
      ;; Only load/config json related packages
      (javascript :packages flycheck json-mode json-snatcher web-beautify)
      lua
+     org
 
      ;; Applications
      ranger
+     treemacs
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom
