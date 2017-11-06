@@ -56,7 +56,24 @@
      ;; use gdb-many-windows by default when `M-x gdb'
      gdb-many-windows t
      ;; Non-nil means display source file containing the main routine at startup
-     gdb-show-main t)))
+     gdb-show-main t))
+  :config
+  (progn
+    (require 'compile)
+    (dolist (mode '(c-mode c++-mode))
+      (spacemacs/set-leader-keys-for-major-mode mode
+        "dd" 'gdb
+        "dc" 'gud-cont
+        "dn" 'gud-next
+        "ds" 'gud-step
+        "db" 'gud-break
+        "dB" 'gud-remove
+        "dr" 'gud-go
+        "da" 'gdb-io-eof
+        "dk" 'gud-up
+        "dj" 'gud-down
+        "du" 'gud-until
+        ))))
 
 (defun cpp2/init-helm-rtags ()
     (use-package helm-rtags

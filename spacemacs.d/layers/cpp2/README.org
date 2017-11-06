@@ -118,5 +118,27 @@ clang-format.
 |-------------+---------------|
 | ~SPC m =~   | Format buffer |
 
+** Debugging
+Debugging is done via gdb, so make sure you have a reasonably new version on
+your system. These keybindings only become active after running gdb with
+=SPC m d d=; once this happens emacs will enter a multi window layout. These
+bindings are then accessible from the source window.
+
+| Key Binding | Description               |
+|-------------+---------------------------|
+| ~SPC m d a~ | Abort debugger (send eof) |
+| ~SPC m d b~ | Add breakpoint at line    |
+| ~SPC m d B~ | Remove breakpoint at line |
+| ~SPC m d c~ | Continue executing        |
+| ~SPC m d d~ | Start debugger            |
+| ~SPC m d n~ | Next line                 |
+| ~SPC m d r~ | Run program               |
+| ~SPC m d s~ | Step into next line       |
+| ~SPC m d u~ | Run until this line       |
+| ~SPC m d k~ | Up stack frame            |
+| ~SPC m d j~ | Down stack frame          |
+
 * Future plans/enhancements
 - Allow customization; whether to use projectile for "other file" commands
+- Better handling of exit of debugging; restore window layout?
+- Debugging; make sure keybindings easier to access, not just in source window
