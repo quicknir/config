@@ -54,117 +54,69 @@ always be #included into the current file though). It also can't find
 references, look at include graphs, object hierarchies, and basically anything
 that requires understanding the whole project.
 
-Fortunately, this is exactly the niche that rtags fills.
+Fortunately, this is exactly the niche that rtags fills. To install rtags,
+begin by going to the website: https://github.com/Andersbakken/rtags. Similar
+to ycmd, you'll need to clone into it, and build. Then make sure that the
+built targets (=rc= & rdm) are in the =PATH=
 
 
 #+begin_src sh
     pip install flake8
 #+end_src
 
+* Configuration
+** Project setup
+If you're working on a single test file, or a very small project, you can just
+jump into the files and start working. The default flags for ycmd may serve
+you fine; the big obstacle in these cases is making sure that include paths work
+out. The default flags include directories ./, ../, and ../../ relative to the
+current file which is often good enough. You'll be able to use goto definition
+(=gd= or =SPC m g g=) because cpp2 will automatically fall back to ycmd's
+functionality when rtags doesn't have the current file indexed.
+
+However, for larger projects, or if you want to use the advanced functionality
+of rtags, you will need to produce a compilation database to tell both ycmd and
+rtags how to index your code. This file is always named =compile_commands.json=.
+The specification is discussed here:
+https://clang.llvm.org/docs/JSONCompilationDatabase.html. There are many ways
+to produce this file; both CMake and ninja make it quite straightforward, and
+if you use make, there's [[https://github.com/rizsotto/Bear][Bear]]. For ycmd, producing this file correctly and
+placing it in the root of the project is sufficient. For rtags, you'll
+need to trigger the server to start indexing the project. The best way to get
+a feel for this is to work through the example on the rtags github, where
+the rtags source tree is indexed. This is quite straightforward if you already
+built rtags; rtags is a CMake project so dumping out the compilation database
+is trivial. After that's done and rtags is working, ycmd based functionality
+should just work too.
+
 * Key Bindings
 ** Code navigation
-Start a Python or iPython inferior REPL process with ~SPC m s i~.
-If =ipython= is available in system executable search paths, =ipython=
-will be used to launch python shell; otherwise, default =python=
-interpreter will be used.  You may change your system executable
-search path by activating a virtual environment.
+Most commands that allow jumping to new locations  are located under  the ~g~ prefix.  =g=.
 
 Send code to inferior process commands:
 
-| Key Binding | Description                                     |
-|-------------+-------------------------------------------------|
-| ~SPC m s b~ | send buffer and keep code buffer focused        |
-| ~SPC m s B~ | send buffer and switch to REPL in insert mode   |
-| ~SPC m s f~ | send function and keep code buffer focused      |
-| ~SPC m s F~ | send function and switch to REPL in insert mode |
-| ~SPC m s i~ | start inferior REPL process                     |
-| ~SPC m s r~ | send region and keep code buffer focused        |
-| ~SPC m s R~ | send region and switch to REPL in insert mode   |
-| ~CTRL+j~    | next item in REPL history                       |
-| ~CTRL+k~    | previous item in REPL history                   |
+| Key Binding | Description                           |
+|-------------+---------------------------------------|
+| ~SPC m g a~ | Jump to other file                    |
+| ~SPC m g A~ | Jump to other file in other window    |
+| ~SPC m g g~ | Jump to definition                    |
+| ~SPC m g G~ | Jump to definition in other window    |
+| ~SPC m g t~ | Jump to test file                     |
+| ~SPC m g T~ | Jump to test file in other window     |
 
-** Running Python Script in shell
-To run a Python script like you would in the shell press ~SPC m c c~
-to start the Python script in comint mode. This is useful when working with
-multiple Python files since the REPL does not reload changes made in other
-modules.
+Note that cpp2 registers properly with the spacemacs jump handlers, so goto
+definition and in other window, are available under =gd= and =gD=
+respectively. Also, goto definition will use rtags functionality if the file is
+indexed by rtags, otherwise it will use ycmd, which will often jump to
+the declaration instead.
 
-| Key Binding | Description                                                               |
-|-------------+---------------------------------------------------------------------------|
-| ~SPC m c c~ | Execute current file in a comint shell                                    |
-| ~SPC m c C~ | Execute current file in a comint shell and switch to it in =insert state= |
+** Code Formatting
+There's only one formatting command, which is to format the entire buffer using
+clang-format.
 
-*Note:* With the universal argument ~SPC u~ you can enter a new
-compilation command.
+| Key Binding | Description   |
+|-------------+---------------|
+| ~SPC m =~   | Format buffer |
 
-** Testing
-Test commands start with ~m t~. To use the secondary test runner call the
-function with a prefix argument, for example ~SPC u SPC m t a~.
-
-| No Debug    | Description                                              |
-|-------------+----------------------------------------------------------|
-| ~SPC m t a~ | launch all tests of the project                          |
-| ~SPC m t b~ | launch all tests of the current buffer (same as module)  |
-| ~SPC m t m~ | launch all tests of the current module                   |
-| ~SPC m t s~ | launch all tests of the current suite (only with =nose=) |
-| ~SPC m t t~ | launch the current test (function)                       |
-
-| Debug       | Description                                                            |
-|-------------+------------------------------------------------------------------------|
-| ~SPC m t A~ | launch all tests of the project in debug mode                          |
-| ~SPC m t B~ | launch all tests of the current buffer (module) in debug mode          |
-| ~SPC m t M~ | launch all tests of the current module in debug mode                   |
-| ~SPC m t S~ | launch all tests of the current suite in debug mode (only with =nose=) |
-| ~SPC m t T~ | launch the current test (function) in debug mode                       |
-
-** Refactoring
-
-| Key Binding | Description                          |
-|-------------+--------------------------------------|
-| ~SPC m r i~ | remove unused imports with [[https://github.com/myint/autoflake][autoflake]] |
-| ~SPC m r I~ | sort imports with [[https://pypi.python.org/pypi/isort][isort]]              |
-
-** Live coding
-Live coding is provided by the [[https://github.com/donkirkby/live-py-plugin][live-py-plugin.]]
-
-| Key Binding | Description         |
-|-------------+---------------------|
-| ~SPC m l~   | Toggle live-py-mode |
-
-** Hy REPL process
-Start a Hy inferior repel process with ~SPC m s i~. If =hy= is
-available in system executable search paths, =hy= will be used to
-launch the shell. You may change your system executable search path
-by activating a virtual enviornment.
-
-Send code to hy REPL commands:
-
-| Key Binding | Description                                               |
-|-------------+-----------------------------------------------------------|
-| ~SPC m s b~ | send buffer and keep code buffer focused                  |
-| ~SPC m s B~ | switch to REPL                                            |
-| ~SPC m s e~ | send sexp in front of the cursor to the REPL              |
-| ~SPC m s f~ | send function to REPL and stay in buffer                  |
-| ~SPC m s F~ | send function to REPL and switch to repl buffer           |
-| ~SPC m s i~ | start inferior hy repl                                    |
-| ~SPC m s r~ | send current region to the REPL and stay in buffer        |
-| ~SPC m s R~ | send current region to the REPL and switch to repl buffer |
-
-** Other Python commands
-
-| Key Binding | Description                                                                  |
-|-------------+------------------------------------------------------------------------------|
-| ~SPC m =~   | Reformat the buffer according to PEP8 using  [[https://github.com/google/yapf][YAPF]]                            |
-| ~SPC m d b~ | toggle a breakpoint using =wdb=, =ipdb=, =pudb= or =pdb=                     |
-| ~SPC m g g~ | go to definition using =anaconda-mode-find-definitions= (~C-o~ to jump back) |
-| ~SPC m g a~ | go to assignment using =anaconda-mode-find-assignments= (~C-o~ to jump back) |
-| ~SPC m g b~ | jump back                                                                    |
-| ~SPC m g u~ | navigate between usages with =anaconda-mode-find-references=                 |
-| ~SPC m h d~ | look for documentation using =helm-pydoc=                                    |
-| ~SPC m h h~ | quick documentation using anaconda                                           |
-| ~SPC m h H~ | open documentation in =firefox= using [[https://github.com/tsgates/pylookup][pylookup]]                               |
-| ~SPC m v s~ | set a pyenv environment with [[https://github.com/pyenv/pyenv][pyenv]]                                           |
-| ~SPC m v u~ | unset a pyenv environment with [[https://github.com/pyenv/pyenv][pyenv]]                                         |
-| ~SPC m V w~ | work on virtual environment in =WORKON_HOME=                                 |
-| ~SPC m V a~ | activate a virtual environment in any directory                              |
-| ~SPC m V d~ | deactivate active virtual environment                                        |
+* Future plans/enhancements
+- Allow customization; whether to use projectile for "other file" commands
