@@ -38,7 +38,8 @@ This function should only modify configuration layer settings."
      (auto-completion :variables
                      auto-completion-enable-help-tooltip 'manual)
      git
-     helm
+     (helm :variables
+           helm-use-fuzzy nil)
      version-control
      ycmd
      syntax-checking
