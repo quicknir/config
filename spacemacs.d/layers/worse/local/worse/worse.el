@@ -16,9 +16,18 @@
          (query (cdr opt-query))
          (has-query (not (string= query ""))))
     (when (helm-ag--show-result-p options has-query)
-      (append worse-base-command
-              options
-              (and has-query (list (helm-ag--join-patterns query)))))))
+      (print-elements-of-list
+       (append worse-base-command
+               options
+               (and has-query (list (helm-ag--join-patterns query)))) ))))
+
+(defun print-elements-of-list (list)
+  "Print each element of LIST on a line of its own."
+  (let ((return-list list))
+    (while list
+      (print (car list))
+      (setq list (cdr list)))
+    return-list))
 
 (setq worse-helm-source-projectile-files-list
      (helm-build-async-source "Projectile files"
