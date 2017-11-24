@@ -66,7 +66,7 @@ This function should only modify configuration layer settings."
             shell-default-height 30
             shell-default-position 'bottom
             shell-default-shell 'ansi-term
-            shell-default-term-shell "/spare/local/nir/zsh/bin/zsh")
+            shell-default-term-shell "zsh")
 
      ;; Only used for multi-line f and t
      (evil-snipe :variables
