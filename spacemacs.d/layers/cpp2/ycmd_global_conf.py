@@ -125,8 +125,8 @@ def header_heuristic_source_file(header_file, database):
     return None
 
 
-def header_heuristic_same_dir(header_file, database):
-    dir = os.path.dirname(header_file)
+def heuristic_same_dir(filename, database):
+    dir = os.path.dirname(filename)
 
     for f in os.listdir(dir):
         if any(f.endswith(i) for i in SOURCE_EXTENSIONS):
@@ -138,7 +138,23 @@ def header_heuristic_same_dir(header_file, database):
     return None
 
 
-HEADER_HEURISTICS = [header_heuristic_source_file, header_heuristic_same_dir]
+def exact(filename, database):
+    compilation_info = database.GetCompilationInfoForFile(filename)
+    if compilation_info.compiler_flags_:
+        return compilation_info
+
+    return None
+
+
+def apply_heuristics(filename, database, heuristics):
+    for h in heuristics:
+        compilation_info = h(filename, database)
+        if compilation_info is not None:
+            return compilation_info
+
+
+HEADER_HEURISTICS = [header_heuristic_source_file, heuristic_same_dir]
+SOURCE_HEURISTICS = [exact, heuristic_same_dir]
 
 
 def get_flags_from_database(filename, database_dir):
@@ -147,18 +163,31 @@ def get_flags_from_database(filename, database_dir):
 
     if not os.path.splitext(filename)[1] in HEADER_EXTENSIONS:
         l.info("Source file, looking up flags in database")
-        return database.GetCompilationInfoForFile(filename)
+        compilation_info = apply_heuristics(filename, database,
+                                            SOURCE_HEURISTICS)
+    else:
+        l.info("Header file, starting heuristics")
+        compilation_info = apply_heuristics(filename, database,
+                                            HEADER_HEURISTICS)
 
-    # Header files are not compilation targets, so we need to use heuristics
-    # to get a reasonable set of flags
+    if compilation_info is None:
+        return None
 
-    l.info("Header file, starting heuristics")
-    for hh in HEADER_HEURISTICS:
-        compilation_info = hh(filename, database)
-        if compilation_info:
-            return compilation_info
+    final_flags = make_paths_absolute(compilation_info.compiler_flags_,
+                                      compilation_info.compiler_working_dir_)
 
-    return None
+    # ycmd's heuristics are broken unfortunately, and decide that compiling
+    # with clang means that we are compiling c code and not c++ code,
+    # leading to marking every use of try/throw/catch as an error
+    # final_flags[2] = 'c++'
+    final_flags[0] = "clang++"
+
+    # To get system includes, see if gcc toolchain option specified
+    final_flags = final_flags + load_system_includes(
+        next((x for x in final_flags
+              if x.startswith("--gcc-toolchain")), None))
+
+    return final_flags
 
 
 def FlagsForFile(filename, **kwargs):
@@ -166,29 +195,15 @@ def FlagsForFile(filename, **kwargs):
     l.info("Finding flags for file {}".format(filename))
     database_dir = find_in_parent_dir(filename, "compile_commands.json")
 
+    final_flags = None
+
     if database_dir is not None:
         l.info("Database found at directory {}".format(database_dir))
         # Bear in mind that compilation_info.compiler_flags_ does NOT return a
         # python list, but a "list-like" StringVec object
-        compilation_info = get_flags_from_database(filename, database_dir)
-        if not compilation_info:
-            return None
+        final_flags = get_flags_from_database(filename, database_dir)
 
-        final_flags = make_paths_absolute(
-            compilation_info.compiler_flags_,
-            compilation_info.compiler_working_dir_)
-
-        # ycmd's heuristics are broken unfortunately, and decide that compiling
-        # with clang means that we are compiling c code and not c++ code,
-        # leading to marking every use of try/throw/catch as an error
-        # final_flags[2] = 'c++'
-        final_flags[0] = "clang++"
-
-        # To get system includes, see if gcc toolchain option specified
-        final_flags = final_flags + load_system_includes(
-            next((x for x in final_flags
-                  if x.startswith("--gcc-toolchain")), None))
-    else:
+    if final_flags is None:
         relative_to = os.path.dirname(os.path.abspath(filename))
         final_flags = make_paths_absolute(flags,
                                           relative_to) + load_system_includes()
