@@ -378,13 +378,16 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-  (require 'yasnippet)
-  (require 'undo-tree)
-  (evil-define-key 'insert undo-tree-map (kbd "C-/") nil)
+  ;; Make C-/ expand yasnippet if available, else go into company
+  ;; Must unbind undo tree first
+  (with-eval-after-load 'undo-tree
+      (define-key undo-tree-map (kbd "C-/") nil))
   (defun nir-yasnippet-expand-or-complete ()
     (interactive)
     (unless (call-interactively 'yas-expand) (call-interactively 'company-yasnippet)))
-  (define-key yas-minor-mode-map (kbd "C-/") 'nir-yasnippet-expand-or-complete)
+  ;; Must bind in global map, else undo tree stops loading
+  (with-eval-after-load 'yasnippet
+      (define-key global-map (kbd "C-/") 'nir-yasnippet-expand-or-complete))
 
   (defun nir-past-closers ()
     (interactive)
