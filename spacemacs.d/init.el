@@ -406,6 +406,12 @@ before packages are loaded."
   (setq ycmd-mode-line-prefix "Ⓨ")
   (setq helm-always-two-windows nil)
 
+  (setq helm-for-files-preferred-list '(worse-helm-source-projectile-files-list
+                                        helm-source-buffers-list
+                                        helm-source-recentf))
+
+  (evil-define-key '(normal motion) global-map (kbd ";") 'helm-multi-files)
+
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
   (with-eval-after-load "ycmd"
