@@ -28,7 +28,7 @@ l = logging.getLogger()
 def load_system_includes(gcc_toolchain=None):
 
     if gcc_toolchain is None:
-        gcc_toolchain = "-stdlib=libc++"
+        gcc_toolchain = ""
 
     process = subprocess.Popen(
         ['clang', '-v', '-E', '-x', 'c++', '-', gcc_toolchain],
