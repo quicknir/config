@@ -58,6 +58,7 @@ This function should only modify configuration layer settings."
      (javascript :packages flycheck json-mode json-snatcher web-beautify)
      lua
      org
+     yaml
 
      ;; Applications
      ranger
