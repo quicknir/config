@@ -404,6 +404,7 @@ before packages are loaded."
   (setq persp-add-buffer-on-after-change-major-mode t)
   (setq evil-mc-mode-line-prefix "Ⓔ")
   (setq ycmd-mode-line-prefix "Ⓨ")
+  (setq helm-always-two-windows nil)
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
