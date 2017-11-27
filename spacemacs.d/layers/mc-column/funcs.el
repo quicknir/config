@@ -30,5 +30,7 @@
 
 (defun evil-mc-append-vertical-cursors (beg end)
   (interactive (list (region-beginning) (region-end)))
-  (mc-column--make-vertical-cursors beg end 'mc-column--make-cursor-at-col-append)
-  (move-to-column (- (max (mc-column--col-at-point beg) (mc-column--col-at-point end)) 1)))
+  (let ((final-column (- (max (mc-column--col-at-point beg) (mc-column--col-at-point end)) 1)))
+    (mc-column--make-vertical-cursors beg end 'mc-column--make-cursor-at-col-append)
+    (mc-column--col-at-point beg)
+    (move-to-column final-column)))
