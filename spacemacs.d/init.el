@@ -412,6 +412,13 @@ before packages are loaded."
 
   (evil-define-key '(normal motion) global-map (kbd ";") 'helm-multi-files)
 
+  ;; Treemacs
+  (with-eval-after-load "treemacs"
+    (treemacs-map-icons-with-auto-mode-alist
+     '(".h")
+     '((c-mode . treemacs-icon-c)
+       (c++-mode . treemacs-icon-cpp))))
+
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
   (with-eval-after-load "ycmd"
