@@ -565,6 +565,10 @@ before packages are loaded."
     (lambda ()(interactive)
       (helm-exit-and-execute-action 'helm-find-files-windows)))
 
+  ;; Stotp treemacs from messing up numbering. Bind SPC caps-lock (esc)
+  ;; to select treemacs
+  (add-to-list 'winum-ignored-buffers " *Treemacs-Framebuffer-1*")
+  (spacemacs/set-leader-keys "<escape>" 'treemacs-select-window)
 
   (setq evil-v$-gets-eol nil)
 
