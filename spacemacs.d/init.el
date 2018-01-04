@@ -422,21 +422,11 @@ before packages are loaded."
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
-  (with-eval-after-load "ycmd"
-    (progn
-      (require 'company-ycmd)
-      (defun ycm ()
-        (interactive)
-        (company-cancel)
-        (let ((ycmd-force-semantic-completion (not (company-ycmd--in-include))))
-          (setq company-backend 'company-ycmd)
-          (company-manual-begin)))))
 
   (add-hook 'python-mode-hook 'ycmd-mode)
   (setq company-ycmd-request-sync-timeout 1.0)
   (setq company-idle-delay 0.2)
-  (global-set-key (kbd "<C-tab>") 'ycm)
-
+  (global-set-key (kbd "<C-tab>") 'ycmd/manual-semantic-company-completer)
 
   ;; Rebind surround to S instead of s, so we can use s for avy
   (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)

@@ -5,6 +5,7 @@
     clang-format
     cmake-mode
     company
+    company-ycmd
     flycheck
     gdb-mi
     helm-rtags
@@ -126,3 +127,6 @@
   (spacemacs/set-leader-keys-for-major-mode 'c++-mode
     "F" 'ycmd-fixit
     "pS" 'ycmd-get-type))
+
+(defun cpp2/post-init-company-ycmd ()
+  (spacemacs|add-company-backends :backends company-ycmd :modes c-mode-common))
