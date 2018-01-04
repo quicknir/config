@@ -414,11 +414,18 @@ before packages are loaded."
   (evil-define-key '(normal motion) global-map (kbd ";") 'helm-multi-files)
 
   ;; Treemacs
+  ;; Stop treemacs from messing up numbering. Bind SPC caps-lock (esc) to select treemacs
+  ;; TODO: add to ignore file predicates to ignore pyc files
+  (add-to-list 'winum-ignored-buffers " *Treemacs-Framebuffer-1*")
+  (spacemacs/set-leader-keys "<escape>" 'treemacs-select-window)
+
   (with-eval-after-load "treemacs"
     (treemacs-map-icons-with-auto-mode-alist
      '(".h")
      '((c-mode . treemacs-icon-c)
-       (c++-mode . treemacs-icon-cpp))))
+       (c++-mode . treemacs-icon-cpp)))
+    (treemacs-tag-follow-mode 1)
+    (treemacs-git-mode 'simple))
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
@@ -555,11 +562,6 @@ before packages are loaded."
   (define-key helm-projectile-find-file-map (kbd "RET")
     (lambda ()(interactive)
       (helm-exit-and-execute-action 'helm-find-files-windows)))
-
-  ;; Stotp treemacs from messing up numbering. Bind SPC caps-lock (esc)
-  ;; to select treemacs
-  (add-to-list 'winum-ignored-buffers " *Treemacs-Framebuffer-1*")
-  (spacemacs/set-leader-keys "<escape>" 'treemacs-select-window)
 
   (setq evil-v$-gets-eol nil)
 
