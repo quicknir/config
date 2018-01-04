@@ -28,7 +28,7 @@ l = logging.getLogger()
 def load_system_includes(gcc_toolchain=None):
 
     if gcc_toolchain is None:
-        gcc_toolchain = ""
+        gcc_toolchain = "-stdlib=libc++"
 
     process = subprocess.Popen(
         ['clang', '-v', '-E', '-x', 'c++', '-', gcc_toolchain],
@@ -116,8 +116,8 @@ def header_heuristic_source_file(header_file, database):
         if os.path.exists(replacement_file):
             compilation_info = database.GetCompilationInfoForFile(
                 replacement_file)
-            l.info("Found corresponding source file {}".format(
-                replacement_file))
+            l.info(
+                "Found corresponding source file {}".format(replacement_file))
             if compilation_info.compiler_flags_:
                 return compilation_info
             l.warn("Did not find corresponding source file in database!")
@@ -183,9 +183,10 @@ def get_flags_from_database(filename, database_dir):
     final_flags[0] = "clang++"
 
     # To get system includes, see if gcc toolchain option specified
-    final_flags = final_flags + load_system_includes(
-        next((x for x in final_flags
-              if x.startswith("--gcc-toolchain")), None))
+    gcc_toolchain = next(
+        (x for x in final_flags if x.startswith("--gcc-toolchain")), None)
+    l.info("Gcc toolchain flag: {}".format(gcc_toolchain))
+    final_flags = final_flags + load_system_includes(gcc_toolchain)
 
     return final_flags
 
@@ -205,7 +206,7 @@ def FlagsForFile(filename, **kwargs):
 
     if final_flags is None:
         relative_to = os.path.dirname(os.path.abspath(filename))
-        final_flags = make_paths_absolute(flags,
-                                          relative_to) + load_system_includes()
+        final_flags = make_paths_absolute(
+            flags, relative_to) + load_system_includes()
 
     return {'flags': final_flags + extra_flags, 'do_cache': True}
