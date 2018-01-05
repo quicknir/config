@@ -425,7 +425,10 @@ before packages are loaded."
      '((c-mode . treemacs-icon-c)
        (c++-mode . treemacs-icon-cpp)))
     (treemacs-tag-follow-mode 1)
-    (treemacs-git-mode 'simple))
+    (treemacs-git-mode 'simple)
+    (add-to-list 'treemacs-ignored-file-predicates
+                 (lambda (file _)
+                   (string-match-p ".pyc\$" file))))
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
