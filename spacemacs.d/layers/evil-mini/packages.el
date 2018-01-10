@@ -15,7 +15,8 @@
                      minibuffer-local-must-match-map
                      minibuffer-local-isearch-map))
     (evil-define-key* 'normal map (kbd "<escape>") 'abort-recursive-edit)
-    (evil-define-key* 'normal map (kbd "<return>") 'exit-minibuffer))
+    (evil-define-key* 'normal map (kbd "<return>") 'exit-minibuffer)
+    (evil-define-key* 'insert map (kbd "C-r") 'helm-minibuffer-history))
 
   (add-hook 'minibuffer-setup-hook 'evil-collection-minibuffer-insert)
   ;; Because of the above minibuffer-setup-hook, some evil-ex bindings need be reset.
