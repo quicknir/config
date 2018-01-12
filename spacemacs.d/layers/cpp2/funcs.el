@@ -2,8 +2,18 @@
   (interactive)
   (let((current-prefix-arg '(4)))
     (call-interactively 'rtags-find-symbol-at-point)
-    )
-  )
+    ))
+
+(defun spacemacs//clang-format-on-save ()
+  "Format the current buffer with clang-format on save when
+`cpp2-enable-clang-format-on-save' is non-nil."
+  (when cpp2-enable-clang-format-on-save
+    (clang-format-buffer)))
+
+(defun spacemacs//add-clang-format-on-save ()
+  "Format the current buffer with clang-format on save when
+`cpp2-enable-clang-format-on-save' is non-nil."
+  (add-hook 'before-save-hook 'spacemacs//clang-format-on-save))
 
 (defun cpp2/find-other-file ()
   (interactive)

@@ -27,12 +27,21 @@
           "ga" 'cpp2/find-other-file
           "gA" 'cpp2/find-other-file-other-window
           "gt" 'cpp2/find-test-file
-          "gT" 'cpp2/find-test-file-other-window)))))
+          "gT" 'cpp2/find-test-file-other-window))
+
+      (c-add-style "cpp2-default-style" cpp2-default-style)
+      (dolist (hook cpp2-mode-hooks)
+        (add-hook hook (lambda () (c-set-style "cpp2-default-style")))))))
 
 (defun cpp2/init-clang-format ()
-  (use-package clang-format)
-  (spacemacs/set-leader-keys-for-major-mode 'c++-mode
-    "=" 'clang-format-buffer))
+  (use-package clang-format
+    :init
+    (progn
+      (dolist (mode cpp2-modes)
+        (spacemacs/set-leader-keys-for-major-mode mode
+          "=" 'clang-format-buffer))
+      (dolist (hook cpp2-mode-hooks)
+        (add-hook hook 'spacemacs//add-clang-format-on-save nil t)))))
 
 (defun cpp2/init-cmake-mode ()
   (use-package cmake-mode

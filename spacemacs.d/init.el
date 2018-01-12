@@ -48,7 +48,8 @@ This function should only modify configuration layer settings."
 
      ;; Languages
      emacs-lisp
-     cpp2
+     (cpp2 :variables
+           cpp2-enable-clang-format-on-save t)
      (python :variables
              python-fill-column 99)
      html
@@ -477,22 +478,6 @@ before packages are loaded."
 
   ;; Projectile
   (setq projectile-enable-caching t)
-
-  ;; cc-mode
-  (c-add-style "my-style"
-               '("stroustrup"
-                 (indent-tabs-mode . nil)
-                 (c-basic-offset . 4)
-                 (c-offsets-alist . (
-                                     (innamespace . -)
-                                     ))
-                 ))
-
-  (defun my-c++-mode-hook ()
-    (c-set-style "my-style")
-    )
-
-  (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
   ;; evil mc
   (global-evil-mc-mode 1)
