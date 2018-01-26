@@ -372,7 +372,12 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq custom-file (concat (file-name-directory dotspacemacs-filepath) "customize.el"))
-  )
+
+  (defmacro spacemacs|use-package (package-name &rest args)
+    (let* ((parent-dir (file-name-directory load-file-name))
+           (layer-dir (file-name-nondirectory (directory-file-name (file-name-directory parent-dir)))))
+      `(defun ,(intern (concat layer-dir "/init-" (symbol-name package-name))) ()
+         (use-package ,package-name ,@args)))))
 
 (defun dotspacemacs/user-config ()
   "Configuration for user code:
