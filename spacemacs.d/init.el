@@ -444,6 +444,11 @@ before packages are loaded."
   (setq company-idle-delay 0.2)
   (global-set-key (kbd "<C-tab>") 'ycmd/manual-semantic-company-completer)
 
+  (defun compilation-buffer ()
+      (interactive)
+      (set-window-buffer nil (get-buffer "*compilation*")))
+  (spacemacs/set-leader-keys "cb" 'compilation-buffer)
+
   ;; Rebind surround to S instead of s, so we can use s for avy
   (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
