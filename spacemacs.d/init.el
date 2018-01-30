@@ -443,7 +443,7 @@ before packages are loaded."
   (add-hook 'python-mode-hook 'ycmd-mode)
   (setq company-ycmd-request-sync-timeout 1.0)
   (setq company-idle-delay 0.2)
-  (global-set-key (kbd "<C-tab>") 'ycmd/manual-semantic-company-completer)
+  (evil-define-key 'insert c++-mode-map (kbd "C-l") 'ycmd/manual-semantic-company-completer)
 
   (defun compilation-buffer ()
       (interactive)
