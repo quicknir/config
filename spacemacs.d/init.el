@@ -40,7 +40,8 @@ This function should only modify configuration layer settings."
      git
      (helm :variables
            helm-use-fuzzy nil)
-     version-control
+     (version-control :variables
+                      version-control-diff-side 'left)
      ycmd
      syntax-checking
      ;; (with-eval-after-load 'yasnippet
