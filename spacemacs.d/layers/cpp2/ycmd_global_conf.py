@@ -128,30 +128,45 @@ def header_heuristic_source_file(header_file, database):
 
 
 def heuristic_same_dir(filename, database):
-    dir = os.path.dirname(filename)
+    file_dir = os.path.dirname(filename)
+    dir_files = os.listdir(file_dir)
+    extension = path.splitext(filename)[-1]
 
-    for f in os.listdir(dir):
+    # Prioritize same extension over different, helps with test files
+    dir_files = [x for x in dir_files if x.endswith(extension)
+                 ] + [x for x in dir_files if not x.endswith(extension)]
+
+    for f in dir_files:
         if any(f.endswith(i) for i in SOURCE_EXTENSIONS):
             compilation_info = database.GetCompilationInfoForFile(
-                os.path.join(dir, f))
+                os.path.join(file_dir, f))
             if compilation_info.compiler_flags_:
+                l.info("Found samedir file for flags: {}".format(f))
                 return compilation_info
 
     return None
 
 
 def heuristic_closest_in_db(filename, database):
+    l.info("Entering closest file in db heuristic")
     database_dir = find_in_parent_dir(filename, "compile_commands.json")
     with open(path.join(database_dir, "compile_commands.json")) as f:
         json_db = json.load(f)
 
     db_filenames = (path.join(x['directory'], x['file']) for x in json_db)
 
-    def key_value(db_fn):
-        return path.relpath(filename, db_fn).count('/') - (
-            0.5 if db_fn.endswith(filename.split('.')[-1]) else 0)
+    extension = path.splitext(filename)[-1]
 
-    compilation_info = database.GetCompilationInfoForFile(min(db_filenames,key=key_value))
+    def key_value(db_fn):
+        distance = path.relpath(filename, db_fn).count('/')
+        # Prioritize same extension; this can help with test files
+        return distance - 0.5 if db_fn.endswith(extension) else 0
+
+    best_match = min(db_filenames, key=key_value)
+    l.info("Best match found: {}".format(best_match))
+
+    compilation_info = database.GetCompilationInfoForFile(best_match)
+
     if compilation_info.compiler_flags_:
         return compilation_info
 
@@ -173,7 +188,9 @@ def apply_heuristics(filename, database, heuristics):
             return compilation_info
 
 
-HEADER_HEURISTICS = [header_heuristic_source_file, heuristic_same_dir, heuristic_closest_in_db]
+HEADER_HEURISTICS = [
+    header_heuristic_source_file, heuristic_same_dir, heuristic_closest_in_db
+]
 SOURCE_HEURISTICS = [exact, heuristic_same_dir, heuristic_closest_in_db]
 
 
