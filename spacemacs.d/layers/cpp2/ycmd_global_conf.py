@@ -1,7 +1,9 @@
 import os
+from os import path
 import ycm_core
 import subprocess
 import logging
+import json
 from itertools import dropwhile, takewhile
 
 # These are the compilation flags that will be used in case there's no
@@ -138,6 +140,24 @@ def heuristic_same_dir(filename, database):
     return None
 
 
+def heuristic_closest_in_db(filename, database):
+    database_dir = find_in_parent_dir(filename, "compile_commands.json")
+    with open(path.join(database_dir, "compile_commands.json")) as f:
+        json_db = json.load(f)
+
+    db_filenames = (path.join(x['directory'], x['file']) for x in json_db)
+
+    def key_value(db_fn):
+        return path.relpath(filename, db_fn).count('/') - (
+            0.5 if db_fn.endswith(filename.split('.')[-1]) else 0)
+
+    compilation_info = database.GetCompilationInfoForFile(min(db_filenames,key=key_value))
+    if compilation_info.compiler_flags_:
+        return compilation_info
+
+    return None
+
+
 def exact(filename, database):
     compilation_info = database.GetCompilationInfoForFile(filename)
     if compilation_info.compiler_flags_:
@@ -153,8 +173,8 @@ def apply_heuristics(filename, database, heuristics):
             return compilation_info
 
 
-HEADER_HEURISTICS = [header_heuristic_source_file, heuristic_same_dir]
-SOURCE_HEURISTICS = [exact, heuristic_same_dir]
+HEADER_HEURISTICS = [header_heuristic_source_file, heuristic_same_dir, heuristic_closest_in_db]
+SOURCE_HEURISTICS = [exact, heuristic_same_dir, heuristic_closest_in_db]
 
 
 def get_flags_from_database(filename, database_dir):
