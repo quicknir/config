@@ -82,6 +82,7 @@ This function should only modify configuration layer settings."
      mc-column
      pretty-git-modeline
      evil-mini
+     ;; my-spaceline
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -406,7 +407,6 @@ before packages are loaded."
   (electric-pair-mode 1)
   (purpose-mode -1)
   (evil-escape-mode -1)
-  (spaceline-toggle-buffer-encoding-abbrev-off)
   (ranger-override-dired-mode t)
   (setq helm-swoop-split-window-function 'spacemacs//display-helm-window)
   (setq persp-add-buffer-on-after-change-major-mode t)
