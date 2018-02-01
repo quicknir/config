@@ -32,6 +32,9 @@ def load_system_includes(gcc_toolchain=None):
     if gcc_toolchain is None:
         gcc_toolchain = "-stdlib=libc++"
 
+    l.info("Calling clang at {}".format(subprocess.check_output(["which", "clang"])))
+    l.info("Clang version: {}".format(subprocess.check_output(["clang", "--version"])))
+
     process = subprocess.Popen(
         ['clang', '-v', '-E', '-x', 'c++', '-', gcc_toolchain],
         stdin=subprocess.PIPE,
