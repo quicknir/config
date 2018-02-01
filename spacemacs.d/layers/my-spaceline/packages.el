@@ -12,24 +12,46 @@
   (require 'spaceline)
   (require 'spaceline-all-the-icons)
 
+  (defgroup nir-spaceline nil "")
+
+  (defface nir-git-lines-added-face
+    '((t (:foreground "green")))
+    ""
+    :group 'nir-spaceline)
+  (defface nir-git-lines-added-face-icon
+    '((t (:family "github-octicons" :foreground "green" )))
+    ""
+    :group 'nir-spaceline)
+
+  (defface nir-git-lines-removed-face
+    '((t (:foreground "red")))
+    ""
+    :group 'nir-spaceline)
+  (defface nir-git-lines-modified-face
+    '((t (:foreground "orange")))
+    ""
+    :group 'nir-spaceline)
+
+  ;; (all-the-icons-octicon "diff-removed" :v-adjust 0.0)
+  ;; (all-the-icons-octicon "diff-modified" :v-adjust 0.0)) diff-icons)
   (spaceline-define-segment nir-git
     "An `all-the-icons' segment to display Added/Removed stats for files under git VC."
     (cl-destructuring-bind (added removed modified) (spaceline-all-the-icons--git-statistics)
-      (cl-destructuring-bind (added-icon removed-icon modified-icon) (spaceline-all-the-icons-icon-set-git-stats)
-        (let* ((space (propertize " " 'face `(:height ,(if spaceline-all-the-icons-slim-render 0.2 1.0))))
-               (icons (list
-                       (spaceline-all-the-icons--git-stats added-icon added 'success)
-                       (unless (zerop removed) (spaceline-all-the-icons--git-stats removed-icon removed 'error))
-                       (unless (zerop modified) (spaceline-all-the-icons--git-stats modified-icon modified 'warning)))))
-          ;; (propertize
-          ;;  (mapconcat 'identity (cl-remove-if 'not icons) space))
-          (propertize  (car icons))
-          )))
-
+      (let* ((space (propertize " " 'face `(:height ,(if spaceline-all-the-icons-slim-render 0.2 1.0))))
+             (icons (list
+                     (unless (zerop added)
+                       (propertize (concat "+" (number-to-string added)) 'face 'nir-git-lines-added-face))
+                     (unless (zerop removed)
+                       (propertize (concat "-" (number-to-string removed)) 'face 'nir-git-lines-removed-face))
+                     (unless (zerop modified)
+                       (propertize (concat "*" (number-to-string modified)) 'face 'nir-git-lines-modified-face)))))
+        (propertize
+         (mapconcat 'identity (cl-remove-if 'not icons) " "))))
     :when (and active
                (not (equal '(0 0 0) (spaceline-all-the-icons--git-statistics)))))
-  (spaceline-all-the-icons--setup-git-ahead)
-  (spaceline-toggle-all-the-icons-git-ahead-on)
+
+  (set-fontset-font "fontset-default" '(61547 . 61547) (font-spec :name (all-the-icons-octicon-family)))
+
   (spaceline-compile
     `(((persp-name
         workspace-number
@@ -46,21 +68,13 @@
        :priority 3)
       (minor-modes :when active)
       (erc-track :when active)
-      (all-the-icons-vc-icon
-       all-the-icons-vc-status)
-      ((all-the-icons-git-ahead
-       all-the-icons-git-status) :separation " ")
-      ;; ((all-the-icons-vc-icon
-      ;;   all-the-icons-vc-status
-      ;;   ((all-the-icons-git-ahead
-      ;;     all-the-icons-git-status) :separator " ")
+      ((all-the-icons-vc-icon
+       all-the-icons-vc-status
+       :separator "|" nir-git) :when active)
       ;;   ((all-the-icons-flycheck-status
       ;;     all-the-icons-flycheck-status-info) :separator " ")
       ;;   all-the-icons-package-updates)
       ;;  :face other-face
-      ;;  :separator (spaceline-all-the-icons--separator spaceline-all-the-icons-secondary-separator " "))
-      (version-control :when active
-                       :priority 7)
       (org-pomodoro :when active)
       (org-clock :when active))
     `(which-function
