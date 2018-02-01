@@ -541,27 +541,6 @@ before packages are loaded."
       (evil-use-register ?_)
       (call-interactively 'evil-delete-char) ))
 
-  (defun helm-open-buffers-in-windows (buffers)
-    (if (= (length buffers) 1) (set-window-buffer nil (car buffers))
-      (let ((cur-win 1)
-            (num-windows (length (window-list))))
-        (cl-loop for buffer in buffers
-                 do (when (<= cur-win num-windows)
-                      (set-window-buffer (winum-get-window-by-number cur-win) buffer)
-                      (setq cur-win (+ cur-win 1)))))))
-
-  (require 'helm-projectile)
-  (defun helm-find-files-windows (candidate)
-    (let* ((files (helm-marked-candidates))
-           (buffers (mapcar 'find-file-noselect files)))
-      (helm-open-buffers-in-windows buffers)))
-
-  ;; (helm-add-action-to-source "open in 1" 'helm-find-files-windows helm-source-projectile-files-list)
-  ;; (helm-add-action-to-source "open in 1" 'helm-find-files-windows helm-source-find-files)
-  (define-key helm-projectile-find-file-map (kbd "RET")
-    (lambda ()(interactive)
-      (helm-exit-and-execute-action 'helm-find-files-windows)))
-
   (setq evil-v$-gets-eol nil)
 
   (evil-define-motion evil-end-of-line (count)
