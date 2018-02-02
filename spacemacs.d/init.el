@@ -444,6 +444,7 @@ before packages are loaded."
   (setq company-ycmd-request-sync-timeout 1.0)
   (setq company-idle-delay 0.2)
   (evil-define-key 'insert c++-mode-map (kbd "C-l") 'ycmd/manual-semantic-company-completer)
+  (evil-define-key 'insert python-mode-map (kbd "C-l") 'ycmd/manual-semantic-company-completer)
 
   (defun compilation-buffer ()
       (interactive)
