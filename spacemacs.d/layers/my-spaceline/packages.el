@@ -12,28 +12,6 @@
   (require 'spaceline)
   (require 'spaceline-all-the-icons)
 
-  (defgroup nir-spaceline nil "")
-
-  (defface nir-git-lines-added-face
-    '((t (:foreground "green")))
-    ""
-    :group 'nir-spaceline)
-  (defface nir-git-lines-added-face-icon
-    '((t (:family "github-octicons" :foreground "green" )))
-    ""
-    :group 'nir-spaceline)
-
-  (defface nir-git-lines-removed-face
-    '((t (:foreground "red")))
-    ""
-    :group 'nir-spaceline)
-  (defface nir-git-lines-modified-face
-    '((t (:foreground "orange")))
-    ""
-    :group 'nir-spaceline)
-
-  ;; (all-the-icons-octicon "diff-removed" :v-adjust 0.0)
-  ;; (all-the-icons-octicon "diff-modified" :v-adjust 0.0)) diff-icons)
   (spaceline-define-segment nir-git
     "An `all-the-icons' segment to display Added/Removed stats for files under git VC."
     (cl-destructuring-bind (added removed modified) (spaceline-all-the-icons--git-statistics)
@@ -47,9 +25,6 @@
          (mapconcat 'identity icons " "))))
     :when (and active
                (not (equal '(0 0 0) (spaceline-all-the-icons--git-statistics)))))
-
-  (set-fontset-font "fontset-default" '(61547 . 61547)
-                    (font-spec :name (all-the-icons-octicon-family)))
 
   (setq powerline-default-separator 'arrow)
 

@@ -17,3 +17,16 @@
 ;; (setq helm-display-function 'helm-display-buffer-in-own-frame
 ;;       helm-display-buffer-reuse-frame t
 ;;       helm-use-undecorated-frame-option t)
+
+;; (defgroup nir-spaceline nil "")
+
+;; (defface nir-git-lines-added-face
+;;   '((t (:foreground "green")))
+;;   ""
+;;   :group 'nir-spaceline)
+
+;; (all-the-icons-octicon "diff-removed" :v-adjust 0.0)
+;; (all-the-icons-octicon "diff-modified" :v-adjust 0.0)) diff-icons)
+
+;; (set-fontset-font "fontset-default" '(61547 . 61547)
+;;                   (font-spec :name (all-the-icons-octicon-family)))
