@@ -12,41 +12,23 @@
   (require 'spaceline)
   (require 'spaceline-all-the-icons)
 
-  ;; Use this to define evil-mc segment
-  ;; (defun evil-mc-active-mode-line (prefix)
-  ;;   "Get the mode-line text to be displayed when there are active cursors"
-  ;;   (let ((mode-line-text
-  ;;          (concat mode-line-text-prefix
-  ;;                  (when (and (evil-mc-frozen-p)
-  ;;                             evil-mc-mode-line-text-paused)
-  ;;                    "(paused)")
-  ;;                  (format ":%d" (evil-mc-get-cursor-count)))))
-  ;;     ;; mode line text colors
-  ;;     (cond ((and (evil-mc-frozen-p)
-  ;;                 evil-mc-mode-line-text-inverse-colors)
-  ;;            (propertize mode-line-text 'face '(:inverse-video t)))
-  ;;           ;; resumed (unfrozen) cursors
-  ;;           (evil-mc-mode-line-text-cursor-color
-  ;;            (propertize
-  ;;             mode-line-text
-  ;;             'face
-  ;;             '(:inherit cursor :foreground "black" :distant-foreground "white")))
-  ;;           ;; default colors
-  ;;           (t mode-line-text))))
+  (spaceline-define-segment evil-mc-segment
+    (let ((face (if (evil-mc-frozen-p) 'error 'success)))
+      (propertize (concat "Ⓔ" (format ":%d" (evil-mc-get-cursor-count))) 'face face)
+      )
+    :when (and active (> (evil-mc-get-cursor-count) 1))
+    )
 
-  ;; Use this to define ycmd segment (then remove minor mode segment, or at least toggle off by default)
-  ;; (defun ycmd--mode-line-status-text ()
-  ;;   "Get text for the mode line."
-  ;;   (let ((force-semantic
-  ;;          (when ycmd-force-semantic-completion "/s"))
-  ;;         (text (pcase ycmd--last-status-change
-  ;;                 (`parsed "")
-  ;;                 (`parsing "*")
-  ;;                 (`unparsed "?")
-  ;;                 (`stopped "-")
-  ;;                 (`starting ">")
-  ;;                 (`errored "!"))))
-  ;;     (concat " ycmd" force-semantic text)))
+  (spaceline-define-segment ycmd-segment
+    (pcase ycmd--last-status-change
+      (`parsed (propertize  "Ⓨ" 'face 'success))
+      (`parsing (propertize  "Ⓨ" 'face 'warning))
+      (`unparsed (propertize  "Ⓨ?" 'face 'error))
+      (`stopped (propertize  "Ⓨ-" 'face 'error))
+      (`starting (propertize  "Ⓨ>" 'face 'error))
+      (`errored (propertize  "Ⓨ!" 'face 'error)))
+    :when (and active ycmd-mode)
+    )
 
   (spaceline-define-segment nir-git
     (progn
@@ -56,11 +38,10 @@
          (cl-destructuring-bind (added removed modified) (spaceline-all-the-icons--git-statistics)
            (let* ((icons
                    (list
-                    "|"
+                    " |"
                     (propertize (concat "+" (number-to-string added)) 'face 'success)
                     (propertize (concat "-" (number-to-string removed)) 'face 'error)
                     (propertize (concat "*" (number-to-string modified)) 'face 'warning))))
-
              (propertize
               (mapconcat 'identity icons " ")))))
         (`added "added")
@@ -69,13 +50,51 @@
 
     :when (and active vc-mode (buffer-file-name)
                (not (equal (vc-state (buffer-file-name)) `up-to-date)))
-    ;; :when active
+    )
+
+  ;; (defun spaceline-all-the-icons--flycheck-status ()
+  ;;   "Render the mode line for Flycheck Status in a more verbose fashion."
+  ;;   (let* ((text (cl-case flycheck-last-status-change
+  ;;                  (finished    (spaceline-all-the-icons--flycheck-finished))
+  ;;                  (running     (concat (all-the-icons-faicon "refresh") " Running"))
+  ;;                  (no-checker  "⚠ No Checker")
+  ;;                  (not-checked "✖ Disabled")
+  ;;                  (errored     "⚠ Error")
+  ;;                  (interrupted "⛔ Interrupted")))
+
+  (defun my-spaceline/flycheck-one-type (counts state prefix face)
+    (let* ((errorp (flycheck-has-current-errors-p state))
+           (err (cdr (assq state counts))))
+      (if errorp
+          (propertize (concat prefix (if err (number-to-string err) "?")) 'face face))))
+
+  (defun my-spaceline/flycheck-counts ()
+    (if (not (flycheck-has-current-errors-p)) (propertize "✔" 'face 'success)
+      (let* ((counts (flycheck-count-errors flycheck-current-errors)))
+        (concat
+         (my-spaceline/flycheck-one-type counts 'error "✖" 'spaceline-flycheck-error)
+         (my-spaceline/flycheck-one-type counts 'warning "⚠" 'spaceline-flycheck-warning)
+         (my-spaceline/flycheck-one-type counts 'info "🛈" 'spaceline-flycheck-info))
+        )))
+
+  (spaceline-define-segment my-flycheck
+    (pcase  flycheck-last-status-change
+      ('finished    (my-spaceline/flycheck-counts))
+      ('running     "")
+      ('no-checker  (propertize "⚠ No Checker" 'face 'error))
+      ('not-checked (propertize "✖ Disabled" 'face 'error))
+      ('errored     (propertize "⚠ Error" 'face 'error))
+      ('interrupted (propertize "⛔ Interrupted" 'face 'error)))
+    :when (and active flycheck-mode)
     )
 
   (setq powerline-default-separator 'arrow)
+  ;; Minor modes mostly not useful; have special segments for ycmd, evil-mc
+  (spaceline-toggle-minor-modes-off)
 
   (spaceline-compile
-    `(((persp-name
+    `(
+      ((persp-name
         workspace-number
         window-number)
        :fallback evil-state
@@ -88,25 +107,25 @@
       (erc-track :when active)
       ((all-the-icons-vc-icon
         all-the-icons-vc-status
-        nir-git) :when active)
-      ((flycheck-error flycheck-warning flycheck-info)
-       :when active
-       :priority 3)
+        nir-git) :when active :separator "")
+      ycmd-segment
+      my-flycheck
+      evil-mc-segment
       (org-pomodoro :when active)
       (org-clock :when active)
       (all-the-icons-multiple-cursors)
       )
-    `
-    (
-     (anzu :priority 4)
-     which-function
-     (python-pyvenv :fallback python-pyenv)
-     (selection-info :priority 2)
-     ((point-position
-       line-column)
-      :separator " | "
-      :priority 3)
-     (global :when active)
-     (buffer-position :priority 0)
-     (hud :priority 0)))
-  )
+    `(
+      (anzu :priority 4)
+      which-function
+      (python-pyvenv :fallback python-pyenv)
+      (selection-info :priority 2)
+      ((point-position
+        line-column)
+       :separator " | "
+       :priority 3)
+      (global :when active)
+      (buffer-position :priority 0)
+      (hud :priority 0)
+      )
+    ))
