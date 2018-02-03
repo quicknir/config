@@ -14,7 +14,7 @@
 
   (spaceline-define-segment evil-mc-segment
     (let ((face (if (evil-mc-frozen-p) 'error 'success)))
-      (propertize (concat "Ⓔ" (format ":%d" (evil-mc-get-cursor-count))) 'face face)
+      (propertize (concat "Ⓔ " (format "%d" (evil-mc-get-cursor-count))) 'face face)
       )
     :when (and active (> (evil-mc-get-cursor-count) 1))
     )
@@ -22,35 +22,34 @@
   (spaceline-define-segment ycmd-segment
     (pcase ycmd--last-status-change
       (`parsed (propertize  "Ⓨ" 'face 'success))
-      (`parsing (propertize  "Ⓨ" 'face 'warning))
-      (`unparsed (propertize  "Ⓨ?" 'face 'error))
-      (`stopped (propertize  "Ⓨ-" 'face 'error))
-      (`starting (propertize  "Ⓨ>" 'face 'error))
-      (`errored (propertize  "Ⓨ!" 'face 'error)))
-    :when (and active ycmd-mode)
+      (`parsing (propertize  "Ⓨ " 'face 'warning))
+      (`unparsed (propertize  "Ⓨ ?" 'face 'error))
+      (`stopped (propertize  "Ⓨ -" 'face 'error))
+      (`starting (propertize  "Ⓨ >" 'face 'error))
+      (`errored (propertize  "Ⓨ !" 'face 'error)))
+    :when (and active (bound-and-true-p ycmd-mode))
     )
 
   (spaceline-define-segment nir-git
     (progn
       (vc-refresh-state)
-      (pcase (vc-state (buffer-file-name))
-        (`edited
-         (cl-destructuring-bind (added removed modified) (spaceline-all-the-icons--git-statistics)
-           (let* ((icons
-                   (list
-                    " |"
-                    (propertize (concat "+" (number-to-string added)) 'face 'success)
-                    (propertize (concat "-" (number-to-string removed)) 'face 'error)
-                    (propertize (concat "*" (number-to-string modified)) 'face 'warning))))
-             (propertize
-              (mapconcat 'identity icons " ")))))
-        (`added "added")
-        (_ "shit see what's going on")
-        ))
-
-    :when (and active vc-mode (buffer-file-name)
-               (not (equal (vc-state (buffer-file-name)) `up-to-date)))
-    )
+      (let ((prefix (concat " " (car (vc-git-branches)))))
+        (pcase (vc-state (buffer-file-name))
+          (`edited
+           (cl-destructuring-bind (added removed modified) (spaceline-all-the-icons--git-statistics)
+             (let* ((icons
+                     (list
+                      " |"
+                      (propertize (concat "+" (number-to-string added)) 'face 'success)
+                      (propertize (concat "-" (number-to-string removed)) 'face 'error)
+                      (propertize (concat "*" (number-to-string modified)) 'face 'warning))))
+               (concat prefix (propertize
+                               (mapconcat 'identity icons " "))))))
+          (`up-to-date prefix)
+          (`added "added")
+          (_ "shit see what's going on")
+          )))
+    :when (and active vc-mode (buffer-file-name)))
 
   ;; (defun spaceline-all-the-icons--flycheck-status ()
   ;;   "Render the mode line for Flycheck Status in a more verbose fashion."
@@ -85,11 +84,12 @@
       ('not-checked (propertize "✖ Disabled" 'face 'error))
       ('errored     (propertize "⚠ Error" 'face 'error))
       ('interrupted (propertize "⛔ Interrupted" 'face 'error)))
-    :when (and active flycheck-mode)
+    :when (and active (bound-and-true-p flycheck-mode))
     )
 
-  (setq powerline-default-separator 'arrow)
+  (setq-default powerline-default-separator 'utf-8)
   ;; Minor modes mostly not useful; have special segments for ycmd, evil-mc
+  ;; But leave it in so it's easy to toggle back on
   (spaceline-toggle-minor-modes-off)
 
   (spaceline-compile
@@ -99,15 +99,14 @@
         window-number)
        :fallback evil-state
        :face highlight-face
+       :separator "|"
        :priority 0)
       ((buffer-modified buffer-size buffer-id remote-host all-the-icons-mode-icon)
        :priority 5)
       (process :when active)
       (minor-modes :when active)
       (erc-track :when active)
-      ((all-the-icons-vc-icon
-        all-the-icons-vc-status
-        nir-git) :when active :separator "")
+      nir-git
       ycmd-segment
       my-flycheck
       evil-mc-segment
