@@ -87,7 +87,10 @@
     :when (and active (bound-and-true-p flycheck-mode))
     )
 
-  (setq-default powerline-default-separator 'utf-8)
+  (if (display-graphic-p)
+      (setq-default powerline-default-separator 'arrow)
+    (setq-default powerline-default-separator 'utf-9))
+
   ;; Minor modes mostly not useful; have special segments for ycmd, evil-mc
   ;; But leave it in so it's easy to toggle back on
   (spaceline-toggle-minor-modes-off)
