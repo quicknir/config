@@ -40,6 +40,7 @@ This function should only modify configuration layer settings."
      git
      (helm :variables
            helm-use-fuzzy nil)
+     (semantic :packages semantic stickyfunc-enhance)
      (version-control :variables
                       version-control-diff-side 'left)
      ycmd
