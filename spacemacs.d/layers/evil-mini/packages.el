@@ -25,5 +25,9 @@
   (evil-define-key 'insert evil-ex-completion-map (kbd "C-n") 'next-complete-history-element)
   (evil-define-key 'normal evil-ex-completion-map (kbd "C-p") 'previous-history-element)
   (evil-define-key 'normal evil-ex-completion-map (kbd "C-n") 'next-history-element)
-  (with-eval-after-load 'helm (evil-define-key 'insert helm-map (kbd "C-k") 'helm-previous-line))
+  (with-eval-after-load 'helm
+    (progn
+      (evil-define-key 'insert helm-map (kbd "C-k") 'helm-previous-line)
+      (evil-define-key 'insert helm-map (kbd "C-z") 'helm-select-action)
+      ))
   )
