@@ -163,10 +163,11 @@ def heuristic_closest_in_db(filename, database):
     def key_value(db_fn):
         distance = path.relpath(filename, db_fn).count('/')
         # Prioritize same extension; this can help with test files
-        return distance - 0.5 if db_fn.endswith(extension) else 0
+        return distance - (0.5 if db_fn.endswith(extension) else 0)
 
     best_match = min(db_filenames, key=key_value)
     l.info("Best match found: {}".format(best_match))
+    l.info("With value".format(key_value(best_match)))
 
     compilation_info = database.GetCompilationInfoForFile(best_match)
 
