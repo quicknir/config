@@ -545,7 +545,8 @@ before packages are loaded."
   (evil-define-key  'visual global-map "x"
     (lambda () (interactive)
       (evil-use-register ?_)
-      (call-interactively 'evil-delete-char) ))
+      (call-interactively 'evil-delete-char)
+      (evil-use-register nil)))
 
   (setq evil-v$-gets-eol nil)
 
