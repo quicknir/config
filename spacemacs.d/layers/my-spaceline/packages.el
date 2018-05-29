@@ -32,7 +32,7 @@
 
   (spaceline-define-segment nir-git
     (progn
-      (vc-refresh-state)
+      (vc-state-refresh (buffer-file-name) 'Git)
       (let ((prefix (concat " " (car (vc-git-branches)))))
         (pcase (vc-state (buffer-file-name))
           (`edited
