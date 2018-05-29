@@ -436,7 +436,11 @@ before packages are loaded."
     (treemacs-git-mode 'simple)
     (add-to-list 'treemacs-ignored-file-predicates
                  (lambda (file _)
-                   (string-match-p ".pyc\$" file))))
+                   (string-match-p ".pyc\$" file)))
+    (setq treemacs-recenter-after-tag-follow t)
+    (setq treemacs-recenter-after-file-follow t)
+    (setq treemacs-follow-recenter-distance 0.2)
+    (setq treemacs-indentation 1))
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
