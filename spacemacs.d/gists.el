@@ -30,3 +30,17 @@
 
 ;; (set-fontset-font "fontset-default" '(61547 . 61547)
 ;;                   (font-spec :name (all-the-icons-octicon-family)))
+
+;; (use-package cquery
+;;   :load-path
+;;   "/home/nir/Downloads/emacs-cquery-master/"
+;;   :config
+;;   ;; put your config here
+;;   (setq cquery-executable "/home/nir/Documents/cquery/build/release/bin/cquery"))
+;; (setq cquery-extra-args '("--log-file=/tmp/cq.log"))
+;; (use-package company-lsp
+;;   :load-path
+;;   "/home/nir/Downloads/company-lsp-master/")
+;; (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
+;; (setq cquery-sem-highlight-method 'overlay)
+;; (setq cquery-sem-highlight-method 'font-lock)
