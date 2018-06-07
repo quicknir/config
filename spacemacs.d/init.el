@@ -468,9 +468,6 @@ before packages are loaded."
   (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-timer)
   (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-timer)
   (setq avy-timeout-seconds 0.35)
-
-  (evil-define-key '(normal motion visual operator) global-map (kbd "C-;") 'avy-goto-line)
-
   (setq avy-all-windows nil)
 
   ;; Setup ace-jump-helm-line, for quick selection inside helm
