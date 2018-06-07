@@ -430,6 +430,11 @@ before packages are loaded."
   (add-to-list 'winum-ignored-buffers " *Treemacs-Framebuffer-1*")
   (spacemacs/set-leader-keys "<escape>" 'treemacs-select-window)
 
+  (custom-set-variables '(treemacs-indentation 1)
+                        '(treemacs-recenter-after-tag-follow t)
+                        '(treemacs-recenter-after-file-follow t)
+                        '(treemacs-follow-recenter-distance 0.2))
+
   (with-eval-after-load "treemacs"
     (treemacs-map-icons-with-auto-mode-alist
      '(".h")
@@ -439,11 +444,7 @@ before packages are loaded."
     (treemacs-git-mode 'simple)
     (add-to-list 'treemacs-ignored-file-predicates
                  (lambda (file _)
-                   (string-match-p ".pyc\$" file)))
-    (setq treemacs-recenter-after-tag-follow t)
-    (setq treemacs-recenter-after-file-follow t)
-    (setq treemacs-follow-recenter-distance 0.2)
-    (setq treemacs-indentation 1))
+                   (string-match-p ".pyc\$" file))))
 
   ;; ycmd setup
   (set-variable 'ycmd-server-command '("python" "ycmd"))
