@@ -414,6 +414,9 @@ before packages are loaded."
   (setq evil-mc-mode-line-prefix "Ⓔ")
   (setq ycmd-mode-line-prefix "Ⓨ")
   (setq helm-always-two-windows nil)
+  (custom-set-variables '(display-line-numbers-type 'relative))
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'magit-mode-hook 'display-line-numbers-mode)
 
   (setq helm-for-files-preferred-list '(worse-helm-source-projectile-files-list
                                         helm-source-buffers-list
