@@ -560,13 +560,18 @@ before packages are loaded."
       (set-window-buffer nil (get-buffer "*compilation*")))
   (spacemacs/set-leader-keys "cb" 'compilation-buffer)
 
-  ;; Rebind surround to S instead of s, so we can use s for avy
-  (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
-  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+  ;; After upgrading to newer commit in main spacemacs repo, with-eval-after-load will not be necessary
+  ;; Commit Name: Don't lazy load keybindings for evil surround
+  (with-eval-after-load 'evil-surround
+    ;; Rebind surround to S instead of s, so we can use s for avy
+    (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
+    (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+
+    ;; use s for avy
+    (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-timer)
+    (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-timer))
 
   ;; avy setup
-  (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-timer)
-  (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-timer)
   (setq avy-timeout-seconds 0.35)
   (setq avy-all-windows nil)
 
