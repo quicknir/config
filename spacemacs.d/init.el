@@ -522,6 +522,7 @@ before packages are loaded."
                                         helm-source-recentf))
 
   (evil-define-key '(normal motion) global-map (kbd ";") 'helm-multi-files)
+  (setq evilmi-always-simple-jump t)
 
   ;; Treemacs
   ;; Stop treemacs from messing up numbering. Bind SPC caps-lock (esc) to select treemacs
