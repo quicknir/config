@@ -505,7 +505,7 @@ before packages are loaded."
   (setq persp-add-buffer-on-after-change-major-mode t)
   (setq evil-mc-mode-line-prefix "Ⓔ")
   (setq ycmd-mode-line-prefix "Ⓨ")
-  (custom-set-variables '(display-line-numbers-type 'relative))
+  (custom-set-variables '(display-line-numbers-type 'visual))
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (add-hook 'magit-mode-hook 'display-line-numbers-mode)
 
