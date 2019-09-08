@@ -20,3 +20,6 @@
 	path = spacemacs
 	url = http://github.com/syl20bnr/spacemacs
 	branch = develop
+[submodule "clion/clion_settings"]
+	path = clion/clion_settings
+	url = https://github.com/quicknir/clion_settings
