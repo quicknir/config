@@ -1,0 +1,13 @@
+compiler explorer
+dash
+git status
+git tool box
+grep console
+idea vim
+kjump
+markdown
+navigate identifier occurence
+open in splitted tab
+rainbow brackets
+string manipulation
+tab shifter
