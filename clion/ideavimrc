@@ -1,0 +1,74 @@
+set surround
+set multiple-cursors
+set commentary
+set incsearch
+set hlsearch
+set rnu
+set nu
+
+let mapleader = " "
+
+vnoremap I <esc>`<i
+vnoremap A <esc>`>i
+
+map s :action KJumpAction.Char2<cr>
+
+nmap gd :action GotoDeclaration<cr>
+nmap gD :action opennInSplittedTab<cr>
+nmap gh :action SmartSearchAction<cr>
+nmap gr :action FindUsages<cr>
+nmap go :action FindUsagesInFile<cr>
+nmap gs :action FindInPath<cr>
+
+nmap gt :action TypeHierarchy<cr>
+nmap gi :action CIDR.Lang.ImportsHierarchy<cr>
+nmap gf :action CallHierarchy<cr>
+
+nmap zs :action FileStructurePopup<cr>
+nmap zd :action QuickImplementations<cr>
+nmap zh :action QuickJavaDoc<cr>
+nmap zr :action ShowUsages<cr>
+
+nmap <leader>/ :action SplitVertically<cr>
+nmap <leader>- :action SplitHorizontally<cr>
+nmap <leader>* :action ChangeSplitOrientation<cr>
+
+nmap <leader>h :action TabShiftActions.MoveFocusLeft<cr>
+nmap <leader>j :action TabShiftActions.MoveFocusDown<cr>
+nmap <leader>k :action TabShiftActions.MoveFocusUp<cr>
+nmap <leader>l :action TabShiftActions.MoveFocusRight<cr>
+
+nmap <leader>H :action TabShiftActions.ShiftLeft<cr>
+nmap <leader>J :action TabShiftActions.ShiftDown<cr>
+nmap <leader>K :action TabShiftActions.ShiftUp<cr>
+nmap <leader>L :action TabShiftActions.ShiftRight<cr>
+
+nmap <leader>d :action CloseEditor<cr>
+nmap <leader>D :action CloseEditor<cr>
+nmap <leader>u :action Unsplit<cr>
+nmap <leader>U :action UnsplitAll<cr>
+
+nmap <leader>rr :action Refactorings.QuickListPopupAction<cr>
+nmap <leader>rR :action RenameElement<cr>
+nmap <leader>rs :action ChangeSignature<cr>
+nmap <leader>rc :action CopyElement<cr>
+nmap <leader>rm :action Move<cr>
+nmap <leader>rd :action SafeDelete<cr>
+
+map <leader>ev :action CIDR.Lang.IntroduceVariable<cr>
+map <leader>ec :action CIDR.Lang.IntroduceConstant<cr>
+map <leader>ep :action CIDR.Lang.IntroduceParameter<cr>
+map <leader>ed :action CIDR.Lang.IntroduceDefine<cr>
+map <leader>et :action CIDR.Lang.IntroduceTypedef<cr>
+map <leader>em :action ExtractMethod<cr>
+
+nmap <leader>gg :action Generate<cr>
+nmap <leader>go :action OverrideMethods<cr>
+nmap <leader>gd :action CIDR.Lang.Cpp.GenerateDefinitions<cr>
+nmap <leader>gc :action CIDR.Lang.Cpp.GenerateConstructor<cr>
+nmap <leader>ge :action CIDR.Lang.Cpp.GenerateEqualityOperators<cr>
+nmap <leader>gr :action CIDR.Lang.Cpp.GenerateRelationalOperators<cr>
+nmap <leader>gs :action CIDR.Lang.Cpp.GenerateStreamOutputOperator<cr>
+nmap <leader>gag :action CIDR.Lang.Cpp.GenerateGetter<cr>
+nmap <leader>gas :action CIDR.Lang.Cpp.GenerateSetter<cr>
+nmap <leader>gaa :action CIDR.Lang.Cpp.GenerateGetterAndSetter<cr>
