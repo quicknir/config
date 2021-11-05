@@ -5,33 +5,63 @@ set incsearch
 set hlsearch
 set rnu
 set nu
+set easymotion
+set argtextobj
+set exchange
 
+
+set clipboard+=unnamed
 let mapleader = " "
 
 vnoremap I <esc>`<i
 vnoremap A <esc>`>i
 
-map s :action KJumpAction.Char2<cr>
+let g:argtextobj_pairs="(:),{:},<:>"
+nmap <leader><Space> :action GotoAction<cr>
+nmap <leader>; :action GotoFile<cr>
+map S <Plug>(easymotion-sn)
 
+" g is the "goto" prefix, inspired by the standard gd binding in vim
 nmap gd :action GotoDeclaration<cr>
 nmap gD :action opennInSplittedTab<cr>
 nmap gh :action SmartSearchAction<cr>
 nmap gr :action FindUsages<cr>
 nmap go :action FindUsagesInFile<cr>
 nmap gs :action FindInPath<cr>
+nmap ga :action CIDR.Lang.SwitchHeaderSource<cr>
 
+" still goto bindings, but these are a bit different because they open tool windows
+" could consider relocating in the future
 nmap gt :action TypeHierarchy<cr>
 nmap gi :action CIDR.Lang.ImportsHierarchy<cr>
 nmap gf :action CallHierarchy<cr>
 
+" z is the "quick" prefix. It doesn't navigate or open tool windows, but popups
 nmap zs :action FileStructurePopup<cr>
 nmap zd :action QuickImplementations<cr>
 nmap zh :action QuickJavaDoc<cr>
 nmap zr :action ShowUsages<cr>
 
+" f is the file prefix
+nmap <leader>ff :action ShowNavBar<cr>
+nmap <leader>fs :action SaveAll<cr>
+nmap <leader>fr :action RecentFiles<cr>
+nmap <leader>fc :e ~/.ideavimrc<cr>
+nmap <leader>fC :source ~/.ideavimrc<cr>
+
+" s is the search prefix
+nmap <leader>ss :action FindInPath<cr>
+nmap <leader>sa :action GotoAction<cr>
+nmap <leader>sf :action GotoFile<cr>
+nmap <leader>sc :action GotoClass<cr>
+
+" The next few blocks are window/buffer management. These are directly on leader instead of behind
+" a prefix, because they are frequently uscd. Note that these all apply only to editor splits, not tool windows.
 nmap <leader>/ :action SplitVertically<cr>
 nmap <leader>- :action SplitHorizontally<cr>
 nmap <leader>* :action ChangeSplitOrientation<cr>
+nmap <leader>u :action Unsplit<cr>
+nmap <leader>U :action UnsplitAll<cr>
 
 nmap <leader>h :action TabShiftActions.MoveFocusLeft<cr>
 nmap <leader>j :action TabShiftActions.MoveFocusDown<cr>
@@ -43,25 +73,27 @@ nmap <leader>J :action TabShiftActions.ShiftDown<cr>
 nmap <leader>K :action TabShiftActions.ShiftUp<cr>
 nmap <leader>L :action TabShiftActions.ShiftRight<cr>
 
-nmap <leader>d :action CloseEditor<cr>
-nmap <leader>D :action CloseEditor<cr>
-nmap <leader>u :action Unsplit<cr>
-nmap <leader>U :action UnsplitAll<cr>
+nmap <leader>k :action CloseEditor<cr>
+nmap <leader>K :action CloseEditor<cr>
 
+" refactoring prefix
 nmap <leader>rr :action Refactorings.QuickListPopupAction<cr>
 nmap <leader>rR :action RenameElement<cr>
+nmap <leader>rf :action ShowIntentionActions<cr>
 nmap <leader>rs :action ChangeSignature<cr>
 nmap <leader>rc :action CopyElement<cr>
 nmap <leader>rm :action Move<cr>
 nmap <leader>rd :action SafeDelete<cr>
+nmap <leader>r<Space> :action ReformatCode<cr>
 
+" extract prefix. A type of refactoring, but it had enough bindings to warrant its own prefix
 map <leader>ev :action CIDR.Lang.IntroduceVariable<cr>
 map <leader>ec :action CIDR.Lang.IntroduceConstant<cr>
-map <leader>ep :action CIDR.Lang.IntroduceParameter<cr>
-map <leader>ed :action CIDR.Lang.IntroduceDefine<cr>
+map <leader>ep :action CIDR.Lang.IntroduceParameter<cr> map <leader>ed :action CIDR.Lang.IntroduceDefine<cr>
 map <leader>et :action CIDR.Lang.IntroduceTypedef<cr>
 map <leader>em :action ExtractMethod<cr>
 
+" (code) generation prefix.
 nmap <leader>gg :action Generate<cr>
 nmap <leader>go :action OverrideMethods<cr>
 nmap <leader>gd :action CIDR.Lang.Cpp.GenerateDefinitions<cr>
@@ -72,3 +104,23 @@ nmap <leader>gs :action CIDR.Lang.Cpp.GenerateStreamOutputOperator<cr>
 nmap <leader>gag :action CIDR.Lang.Cpp.GenerateGetter<cr>
 nmap <leader>gas :action CIDR.Lang.Cpp.GenerateSetter<cr>
 nmap <leader>gaa :action CIDR.Lang.Cpp.GenerateGetterAndSetter<cr>
+
+" build prefix"
+nmap <leader>cc :action Build<cr>
+nmap <leader>cC :action RunConfiguration<cr>
+nmap <leader>cr :action Run<cr>
+nmap <leader>ck :action StopBackgroundProcesses<cr>
+nmap <leader>cR :action RunClass<cr>
+
+" debug prefix"
+nmap <leader>dd :action Debug<cr>
+nmap <leader>dD :action DebugClass<cr>
+nmap <leader>db :action ToggleLineBreakpoint<cr>
+nmap <leader>dp :action QuickEvaluateExpression<cr>
+nmap <leader>ds :action StepInto<cr>
+nmap <leader>dn :action StepOver<cr>
+nmap <leader>dp :action StepOut<cr>
+nmap <leader>dk :action Stop<cr>
+
+" version control prefix (generally git, but g is taken for "generate", this could be changed though)
+nmap <leader>va :action Annotate<cr>
