@@ -1,5 +1,0 @@
-
-Jun 16, 2015 11:03:42.11 NEW SESSION
-Jun 16, 2015 11:03:42.11 which: no mozilla in (/spare/local/my_path:/spare/local/nfriedman/venv-infra/bin:/apps/infra/java/groovy/bin:/apps/infra/java/maven/bin:/apps/infra/java/8/bin:/apps/infra/canopy/1.0.1/enthought/bin:/apps/infra/bin:/apps/infra/bin/opteron_rhel20:/usr/lib64/qt-3.3/bin:/usr/NX/bin:/usr/lib64/ccache:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/var/cfengine/bin:/apps/infrafs1/nfriedman/bin:/var/cfengine/bin)
-Jun 16, 2015 11:03:42.11 which: no netscape in (/spare/local/my_path:/spare/local/nfriedman/venv-infra/bin:/apps/infra/java/groovy/bin:/apps/infra/java/maven/bin:/apps/infra/java/8/bin:/apps/infra/canopy/1.0.1/enthought/bin:/apps/infra/bin:/apps/infra/bin/opteron_rhel20:/usr/lib64/qt-3.3/bin:/usr/NX/bin:/usr/lib64/ccache:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/var/cfengine/bin:/apps/infrafs1/nfriedman/bin:/var/cfengine/bin)
-Jun 16, 2015 11:03:42.11 /usr/bin/firefox

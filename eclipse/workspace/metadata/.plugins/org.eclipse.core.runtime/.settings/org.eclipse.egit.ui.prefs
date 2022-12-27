@@ -1,7 +1,0 @@
-commit_dialog_history_messages=<?xml version\="1.0" encoding\="UTF-8"?>\n<messages>\n<message>In pyqr tutorial, remove minor bugs, improve clarity and consistency</message>\n<message>Add revised python tutorial</message>\n<message>Add explicit \#include; include-what-you-use&\#x0A;&\#x0A;Change-Id\: Ibefdca77e63c77700eaa7a878316ba395db83685&\#x0A;</message>\n<message>&\#x0A;&\#x0A;Change-Id\: I0000000000000000000000000000000000000000&\#x0A;</message>\n</messages>
-eclipse.preferences.version=1
-enable_logical_model=false
-resourcehistory_graph_split=500,500
-resourcehistory_rev_split=658,341
-restore_projects_on_checkout=false
-sync_view_fetch_before_launch=false

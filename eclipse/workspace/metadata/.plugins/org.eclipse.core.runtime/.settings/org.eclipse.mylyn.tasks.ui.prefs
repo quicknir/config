@@ -1,7 +1,0 @@
-eclipse.preferences.version=1
-migrated.task.repositories.secure.store=true
-org.eclipse.mylyn.tasks.ui.filters.nonmatching=true
-org.eclipse.mylyn.tasks.ui.filters.nonmatching.encouraged=true
-org.eclipse.mylyn.tasks.ui.notifications.enabled=false
-org.eclipse.mylyn.tasks.ui.repositories.synch.schedule=false
-org.eclipse.mylyn.tasks.ui.task.list.tool.tip=false
