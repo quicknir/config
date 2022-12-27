@@ -19,3 +19,6 @@
 [submodule "clion/clion_settings"]
 	path = clion/clion_settings
 	url = https://github.com/quicknir/clion_settings
+[submodule "tmux"]
+	path = tmux
+	url = git@github.com:quicknir/tmux
