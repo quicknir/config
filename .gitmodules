@@ -16,10 +16,6 @@
 [submodule "terminal/fzf"]
 	path = terminal/fzf
 	url = https://github.com/junegunn/fzf.git
-[submodule "spacemacs"]
-	path = spacemacs
-	url = http://github.com/syl20bnr/spacemacs
-	branch = develop
 [submodule "clion/clion_settings"]
 	path = clion/clion_settings
 	url = https://github.com/quicknir/clion_settings
