@@ -5,36 +5,59 @@ set incsearch
 set hlsearch
 set rnu
 set nu
-set easymotion
 set argtextobj
 set exchange
-
-
 set clipboard+=unnamed
+set which-key
+
+" This is for which-key so the menu doesn't stop showing
+set notimeout
+" This is so that which-key doesn't pop up in cases I already know the shortcut"
+let g:WhichKey_DefaultDelay = 1000
+let g:WhichKey_FontFamily = "Jetbrains Mono"
+let g:WhichKey_SortOrder = "by_description"
+" Erase some unwanted bindings
+let g:WhichKeyDesc_erase_gc = "gc"
+let g:WhichKeyDesc_erase_gcc = "gcc"
+
 let mapleader = " "
 
 vnoremap I <esc>`<i
 vnoremap A <esc>`>i
-
-let g:argtextobj_pairs="(:),{:},<:>"
+let g:argtextobj_pairs="(:),{:},<:>,[:]"
 nmap <leader><Space> :action GotoAction<cr>
+let g:WhichKeyDesc_action = "<leader><Space> find action"
 nmap <leader>; :action GotoFile<cr>
-map S <Plug>(easymotion-sn)
+let g:WhichKeyDesc_findfile = "<leader>; find file"
+nmap <leader>/ :action FindInPath<cr>
+let g:WhichKeyDesc_search_path_direct = "<leader>/ find text"
+map s :action AceAction<cr>
 
 " g is the "goto" prefix, inspired by the standard gd binding in vim
+let g:WhichKeyDesc_goto = "g +goto"
 nmap gd :action GotoDeclaration<cr>
+let g:WhichKeyDesc_gotodef = "gd goto definition"
 nmap gD :action opennInSplittedTab<cr>
+let g:WhichKeyDesc_gotodefother = "gD goto definition other"
 nmap gh :action SmartSearchAction<cr>
+let g:WhichKeyDesc_gotohelp = "gh search help"
 nmap gr :action FindUsages<cr>
+let g:WhichKeyDesc_gotofind = "gr find usages"
 nmap go :action FindUsagesInFile<cr>
+let g:WhichKeyDesc_gotofindfind = "go find usages in file"
 nmap gs :action FindInPath<cr>
+let g:WhichKeyDesc_gotofindinpath = "gs find in path"
 nmap ga :action CIDR.Lang.SwitchHeaderSource<cr>
+let g:WhichKeyDesc_gotoheadersource = "ga header-source"
 
 " still goto bindings, but these are a bit different because they open tool windows
 " could consider relocating in the future
 nmap gt :action TypeHierarchy<cr>
+let g:WhichKeyDesc_gototype = "gt open type hierarchy"
 nmap gi :action CIDR.Lang.ImportsHierarchy<cr>
+let g:WhichKeyDesc_gotoimport = "gi open include hierarchy"
 nmap gf :action CallHierarchy<cr>
+let g:WhichKeyDesc_gotocallgraph = "gf open call graph"
 
 " z is the "quick" prefix. It doesn't navigate or open tool windows, but popups
 nmap zs :action FileStructurePopup<cr>
@@ -43,50 +66,98 @@ nmap zh :action QuickJavaDoc<cr>
 nmap zr :action ShowUsages<cr>
 
 " f is the file prefix
+let g:WhichKeyDesc_files = "<leader>f +files"
 nmap <leader>ff :action ShowNavBar<cr>
+let g:WhichKeyDesc_file_navbar = "<leader>ff navigation bar"
+nmap <leader>fe :action ActivateProjectToolWindow<cr>
+let g:WhichKeyDesc_file_explorer = "<leader>fe explorer"
 nmap <leader>fs :action SaveAll<cr>
+let g:WhichKeyDesc_file_save = "<leader>fs save all"
 nmap <leader>fr :action RecentFiles<cr>
+let g:WhichKeyDesc_file_recent = "<leader>fr recent files"
+nmap <leader>fl :action RecentLocations<cr>
+let g:WhichKeyDesc_file_locations = "<leader>fl recent locations"
 nmap <leader>fc :e ~/.ideavimrc<cr>
+let g:WhichKeyDesc_file_openconfig = "<leader>fc open ideavimrc"
 nmap <leader>fC :source ~/.ideavimrc<cr>
+let g:WhichKeyDesc_file_reloadconfig = "<leader>fC reload ideavimrc"
 
 " s is the search prefix
+let g:WhichKeyDesc_search = "<leader>s +search"
 nmap <leader>ss :action FindInPath<cr>
+let g:WhichKeyDesc_search_path = "<leader>ss search path"
 nmap <leader>sa :action GotoAction<cr>
+let g:WhichKeyDesc_search_action = "<leader>sa search action"
 nmap <leader>sf :action GotoFile<cr>
+let g:WhichKeyDesc_search_file = "<leader>sf search file"
 nmap <leader>sc :action GotoClass<cr>
+let g:WhichKeyDesc_search_class = "<leader>sc search class"
+" TODO: Add search all?
 
-" The next few blocks are window/buffer management. These are directly on leader instead of behind
-" a prefix, because they are frequently uscd. Note that these all apply only to editor splits, not tool windows.
-nmap <leader>/ :action SplitVertically<cr>
-nmap <leader>- :action SplitHorizontally<cr>
-nmap <leader>* :action ChangeSplitOrientation<cr>
-nmap <leader>u :action Unsplit<cr>
-nmap <leader>U :action UnsplitAll<cr>
+" The next few blocks are window/buffer management. Some are directly on leader instead of behind
+" a prefix, because they are frequently used. Note that these all apply only to editor splits, not tool windows.
 
+" changing focus is frequently used so we put it directly on leader
 nmap <leader>h :action TabShiftActions.MoveFocusLeft<cr>
+let g:WhichKeyDesc_left = "<leader>h focus left"
 nmap <leader>j :action TabShiftActions.MoveFocusDown<cr>
+let g:WhichKeyDesc_down = "<leader>j focus down"
 nmap <leader>k :action TabShiftActions.MoveFocusUp<cr>
+let g:WhichKeyDesc_up = "<leader>k focus up"
 nmap <leader>l :action TabShiftActions.MoveFocusRight<cr>
+let g:WhichKeyDesc_right = "<leader>l focus right"
 
+" and for consistency, using shift to these commands lets you move the tab rather than just focus
 nmap <leader>H :action TabShiftActions.ShiftLeft<cr>
+let g:WhichKeyDesc_move_left = "<leader>H move tab left"
 nmap <leader>J :action TabShiftActions.ShiftDown<cr>
+let g:WhichKeyDesc_move_down = "<leader>J move tab down"
 nmap <leader>K :action TabShiftActions.ShiftUp<cr>
+let g:WhichKeyDesc_move_up = "<leader>K move tab up"
 nmap <leader>L :action TabShiftActions.ShiftRight<cr>
+let g:WhichKeyDesc_move_right = "<leader>L move tab right"
 
-nmap <leader>k :action CloseEditor<cr>
-nmap <leader>K :action CloseEditor<cr>
+" other functions go behind the window prefix, w
+let g:WhichKeyDesc_window = "<leader>w +window"
+
+nmap <leader>w\| :action SplitVertically<cr>
+let g:WhichKeyDesc_split_vertically = "<leader>w| split vertically"
+nmap <leader>w- :action SplitHorizontally<cr>
+let g:WhichKeyDesc_split_horizontally = "<leader>w- split horizontally"
+nmap <leader>w* :action ChangeSplitOrientation<cr>
+let g:WhichKeyDesc_rotate = "<leader>w* rotate splits"
+nmap <leader>wu :action Unsplit<cr>
+let g:WhichKeyDesc_unsplit = "<leader>wu unsplit"
+nmap <leader>wU :action UnsplitAll<cr>
+let g:WhichKeyDesc_unsplitall = "<leader>wU unsplit all"
+
+nmap <leader>wd :action CloseEditor<cr>
+let g:WhichKeyDesc_close_editor = "<leader>wd delete editor"
+nmap <leader>wD :action CloseAllEditorsButActive<cr>
+let g:WhichKeyDesc_close_other_editors = "<leader>wD delete other editors"
 
 " refactoring prefix
+let g:WhichKeyDesc_refactor = "<leader>r +refactor"
+
 nmap <leader>rr :action Refactorings.QuickListPopupAction<cr>
+let g:WhichKeyDesc_refactor_popup = "<leader>rr popup"
 nmap <leader>rR :action RenameElement<cr>
+let g:WhichKeyDesc_refactor_rename = "<leader>rR rename"
 nmap <leader>rf :action ShowIntentionActions<cr>
+let g:WhichKeyDesc_refactor_fixit = "<leader>rf fixit"
 nmap <leader>rs :action ChangeSignature<cr>
+let g:WhichKeyDesc_refactor_signature = "<leader>rs change signature"
 nmap <leader>rc :action CopyElement<cr>
+let g:WhichKeyDesc_refactor_copy = "<leader>rc copy"
 nmap <leader>rm :action Move<cr>
+let g:WhichKeyDesc_refactor_move = "<leader>rm move"
 nmap <leader>rd :action SafeDelete<cr>
+let g:WhichKeyDesc_refactor_delete = "<leader>rd delete"
 nmap <leader>r<Space> :action ReformatCode<cr>
+let g:WhichKeyDesc_refactor_reformat = "<leader>r<Space> reformat"
 
 " extract prefix. A type of refactoring, but it had enough bindings to warrant its own prefix
+let g:WhichKeyDesc_extract = "<leader>e +extract"
 map <leader>ev :action CIDR.Lang.IntroduceVariable<cr>
 map <leader>ec :action CIDR.Lang.IntroduceConstant<cr>
 map <leader>ep :action CIDR.Lang.IntroduceParameter<cr> map <leader>ed :action CIDR.Lang.IntroduceDefine<cr>
@@ -94,6 +165,7 @@ map <leader>et :action CIDR.Lang.IntroduceTypedef<cr>
 map <leader>em :action ExtractMethod<cr>
 
 " (code) generation prefix.
+let g:WhichKeyDesc_generate = "<leader>g +generate"
 nmap <leader>gg :action Generate<cr>
 nmap <leader>go :action OverrideMethods<cr>
 nmap <leader>gd :action CIDR.Lang.Cpp.GenerateDefinitions<cr>
@@ -105,7 +177,8 @@ nmap <leader>gag :action CIDR.Lang.Cpp.GenerateGetter<cr>
 nmap <leader>gas :action CIDR.Lang.Cpp.GenerateSetter<cr>
 nmap <leader>gaa :action CIDR.Lang.Cpp.GenerateGetterAndSetter<cr>
 
-" build prefix"
+" compile (build) prefix"
+let g:WhichKeyDesc_compile = "<leader>c +compile"
 nmap <leader>cc :action Build<cr>
 nmap <leader>cC :action RunConfiguration<cr>
 nmap <leader>cr :action Run<cr>
@@ -113,6 +186,7 @@ nmap <leader>ck :action StopBackgroundProcesses<cr>
 nmap <leader>cR :action RunClass<cr>
 
 " debug prefix"
+let g:WhichKeyDesc_debug = "<leader>d +debug"
 nmap <leader>dd :action Debug<cr>
 nmap <leader>dD :action DebugClass<cr>
 nmap <leader>db :action ToggleLineBreakpoint<cr>
@@ -123,4 +197,5 @@ nmap <leader>dp :action StepOut<cr>
 nmap <leader>dk :action Stop<cr>
 
 " version control prefix (generally git, but g is taken for "generate", this could be changed though)
+let g:WhichKeyDesc_vc = "<leader>v +version-control"
 nmap <leader>va :action Annotate<cr>
