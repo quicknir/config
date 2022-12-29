@@ -1,7 +1,7 @@
 *.pyc
 *.elc
 terminal/zdotdir/.zcompdump
-terminal/zdotdir/.zhistory
+terminal/zdotdir/.zsh_history
 terminal/zdotdir/.zcompcache
 terminal/zdotdir/.zcompdump.zwc
 
