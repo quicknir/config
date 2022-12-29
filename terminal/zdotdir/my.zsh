@@ -22,6 +22,14 @@ eval $(eval "dircolors ${termdir}/dircolors-solarized/dircolors.ansi-light")
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 alias vi=vim
+# For better vi usability, reduce key delay/timeout                                                                       KEYTIMEOUT=1
+
+# Vim-like movement bindings!
+zmodload zsh/complist  # Necessary so that menuselect keymap gets loaded; otherwise gets lazy loaded on first use
+bindkey -M menuselect '^J' down-line-or-history
+bindkey -M menuselect '^K' up-line-or-history
+bindkey -M menuselect '^H' backward-char
+bindkey -M menuselect '^L' forward-char
 
 # fzf setup
 fzfdir="$termdir/fzf"
@@ -60,6 +68,9 @@ alias hist-dur='history -iD 0 | fzf'
 
 # Suffixes!
 alias -s txt=vim
+
+# Support for GUI clipboard
+source $ZDOTDIR/clipboard.zsh
 
 # A separate file that gets sourced; convenient for putting things you may not want to upstream
 source $ZDOTDIR/more.zsh
