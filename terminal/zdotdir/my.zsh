@@ -57,9 +57,6 @@ export FZF_COMPLETION_TRIGGER=''
 bindkey '^F' fzf-completion
 bindkey '^I' $fzf_default_completion
 
-# Use C-g for cd completion as Alt is awkward
-bindkey '^G' fzf-cd-widget
-
 # CTRL-E - word based history search
 __hist_word_sel() {
 
@@ -88,10 +85,6 @@ fzf-history-word-widget() {
 zle -N fzf-history-word-widget
 bindkey '^E' fzf-history-word-widget
 
-
-# Going up dirs is more useful than ever, since fzf only searches down!
-bindkey -s '^K' 'cd ..\n'
-
 # Useful aliases
 
 # This one
@@ -105,6 +98,43 @@ source $ZDOTDIR/clipboard.zsh
 
 # A separate file that gets sourced; convenient for putting things you may not want to upstream
 source $ZDOTDIR/more.zsh
+
+# https://www.reddit.com/r/zsh/comments/ka4sae/navigate_folder_history_like_in_fish/
+function my-redraw-prompt() {
+  {
+    builtin echoti civis
+    builtin local f
+    for f in chpwd "${chpwd_functions[@]}" precmd "${precmd_functions[@]}"; do
+      (( ! ${+functions[$f]} )) || "$f" &>/dev/null || builtin true
+    done
+    builtin zle reset-prompt
+  } always {
+    builtin echoti cnorm
+  }
+}
+
+function my-cd-rotate() {
+  () {
+    builtin emulate -L zsh
+    while (( $#dirstack )) && ! builtin pushd -q $1 &>/dev/null; do
+      builtin popd -q $1
+    done
+    (( $#dirstack ))
+  } "$@" && my-redraw-prompt
+}
+
+function my-cd-up()      { builtin cd -q .. && my-redraw-prompt; }
+function my-cd-back()    { my-cd-rotate +1; }
+function my-cd-forward() { my-cd-rotate -0; }
+
+builtin zle -N my-cd-up
+builtin zle -N my-cd-back
+builtin zle -N my-cd-forward
+
+bindkey -v '^K' my-cd-up
+bindkey -v '^H' my-cd-back
+bindkey -v '^L' my-cd-forward
+bindkey -v '^J' fzf-cd-widget
 
 # To customize prompt, run `p10k configure` or edit $ZDOTDIR/.p10k.zsh.
 [[ ! -f "${ZDOTDIR}/.p10k.zsh" ]] || source "${ZDOTDIR}/.p10k.zsh"
