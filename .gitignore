@@ -1,8 +1,7 @@
 *.pyc
-*.elc
 terminal/zdotdir/.zcompdump
 terminal/zdotdir/.zsh_history
 terminal/zdotdir/.zcompcache
 terminal/zdotdir/.zcompdump.zwc
-
-spacemacs.d/customize.el
+terminal/zdotdir/.chpwd-recent-dirs
+terminal/zdotdir/ignore.zsh
