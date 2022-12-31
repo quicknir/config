@@ -22,3 +22,6 @@
 [submodule "tmux"]
 	path = tmux
 	url = git@github.com:quicknir/tmux
+[submodule "terminal/fzf-tab"]
+	path = terminal/fzf-tab
+	url = git@github.com:Aloxaf/fzf-tab

@@ -35,8 +35,6 @@ bindkey -M menuselect '^L' forward-char
 fzfdir="$termdir/fzf"
 export PATH="$PATH:$fzfdir/bin"
 
-[[ $- == *i* ]] && source "$fzfdir/shell/completion.zsh" 2> /dev/null
-
 source "$fzfdir/shell/key-bindings.zsh"
 
 # To generate paths, use default find-based command for dirs,
@@ -50,13 +48,6 @@ export FZF_DEFAULT_OPTS="-e \
    --color 16,fg:11,bg:-1,hl:1,hl+:1,bg+:7,fg+:11 \
    --color prompt:4,pointer:13,marker:13,spinner:3,info:3"
 
-
-
-# Simply use C-f to trigger fzf; no trigger + tab
-export FZF_COMPLETION_TRIGGER=''
-bindkey '^F' fzf-completion
-bindkey '^I' $fzf_default_completion
-
 # CTRL-E - word based history search
 __hist_word_sel() {
 
@@ -67,7 +58,6 @@ __hist_word_sel() {
     echo -n "${(q)item} "
   done
   local ret=$?
-  echo
   return $ret
 }
 
