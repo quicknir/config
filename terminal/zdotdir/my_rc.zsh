@@ -5,17 +5,13 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Set terminal
-export TERM="xterm-256color"
+# Set in my_env.zsh, but set again, in case system files are changing it...
+eval $(eval "dircolors ${ZDOTDIR:h}/dircolors-solarized/dircolors.ansi-light")
 
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
-
-# Better ls coloring when using solarized terminal theme
-eval $(eval "dircolors ${termdir}/dircolors-solarized/dircolors.ansi-light")
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # Handy reference, courtesy of https://github.com/seebi/dircolors-solarized
 # SOLARIZED HEX     16/8 TERMCOL  XTERM/HEX   L*A*B      sRGB        HSB
@@ -54,13 +50,15 @@ printc() {
 
 # Colors for fzf-tab
 zstyle ':fzf-tab:*' default-color $'\033[93m'
-
-# Our zshenv has handled setting zdotdir to the path within our repo, so now
-# we can use zdotdir to locate the rest of our config
-termdir="${ZDOTDIR:h}"
-
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'fzf_ls_preview $realpath'
+zstyle ':fzf-tab:*' popup-min-size 100 10
+zstyle ':fzf-tab:*' prefix ''
+#zstyle ':fzf-tab:complete:*' popup-pad 0 50
+ 
 alias vi=vim
-# For better vi usability, reduce key delay/timeout                                                                       KEYTIMEOUT=1
+# For better vi usability, reduce key delay/timeout
+KEYTIMEOUT=1
 
 # Vim-like movement bindings!
 zmodload zsh/complist  # Necessary so that menuselect keymap gets loaded; otherwise gets lazy loaded on first use
@@ -69,17 +67,12 @@ bindkey -M menuselect '^K' up-line-or-history
 bindkey -M menuselect '^H' backward-char
 bindkey -M menuselect '^L' forward-char
 
+# Edit command in full blown vim; bound to normal mode C-e
+bindkey -M vicmd "$key_info[Control]E" edit-command-line
+
 # fzf setup
-fzfdir="$termdir/fzf"
-export PATH="$PATH:$fzfdir/bin"
-
-source "$fzfdir/shell/key-bindings.zsh"
-
-# To generate paths, use default find-based command for dirs,
-# and ag to find files more quickly
-_fzf_compgen_path() {
-  { _fzf_compgen_dir $1 & ag --hidden -g "" "$1" } 2> /dev/null
-}
+export PATH="$PATH:${ZDOTDIR:h}/fzf/bin"
+source "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
 
 # Exact matching similar to helm
 export FZF_DEFAULT_OPTS="-e \
@@ -98,6 +91,12 @@ __hist_word_sel() {
   local ret=$?
   return $ret
 }
+
+
+export FZF_TMUX_OPTS="-p -w 62% -h 38%"
+export FZF_CTRL_T_OPTS="--preview-window hidden --layout reverse-list --preview 'bat --color=always {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_ALT_C_OPTS="--preview-window hidden --layout reverse-list --preview 'fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_TMUX=1
 
 __fzfcmd() {
   [ -n "${TMUX_PANE-}" ] && { [ "${FZF_TMUX:-0}" != 0 ] || [ -n "${FZF_TMUX_OPTS-}" ]; } &&
@@ -121,9 +120,6 @@ alias hist-dur='history -iD 0 | fzf'
 # Suffixes!
 alias -s txt=vim
 
-# Named directories
-hash -d config="${ZDOTDIR:h:h}"
-
 # Support for GUI clipboard
 source $ZDOTDIR/clipboard.zsh
 
@@ -135,38 +131,26 @@ autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 zstyle ':chpwd:*' recent-dirs-max 1000
 
-# Replace the fzf cd widget. Our widget doesn't print the line
+# Replace the fzf cd widget. Our widget doesn't print the line.
+# Also, this cd widget includes all of the directories from our history.
 fzf-cd-widget() {
+  local cmd1='echo hello'
+  local cmd1="cdr -l | tr -s ' ' | cut -d ' ' -f 2-"
   local cmd="${FZF_ALT_C_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs'     -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
     -o -type d -print 2> /dev/null | cut -b3-"}"
   setopt localoptions pipefail no_aliases 2> /dev/null
-  local dir="$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
+  local dir="$(eval "{ $cmd1 & $cmd }" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
   if [[ -z "$dir" ]]; then
     zle redisplay
     return 0
   fi
+  dir=${~dir}
   builtin cd -q "${(q)dir}" && my-redraw-prompt;
   local ret=$?
   return $ret
 }
 zle -N fzf-cd-widget
 
-
-fzf-recent-dir-widget() {
-  local cmd="cdr -l | tr -s ' ' | cut -d ' ' -f 2-"
-  setopt localoptions pipefail no_aliases 2> /dev/null
-  local dir="$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
-  if [[ -z "$dir" ]]; then
-    zle redisplay
-    return 0
-  fi
-  eval "dir=$dir"  # Force ~ expansion
-  builtin cd -q "${dir}" && my-redraw-prompt;
-  local ret=$?
-  return $ret
-}
-zle -N fzf-recent-dir-widget
-bindkey '^F' fzf-recent-dir-widget
 
 # Intuitive back-forward navigation, similar to a browser.
 # Also provides up (cd ..), and down (fzf recursive dir search).
@@ -207,6 +191,8 @@ bindkey -v '^K' my-cd-up
 bindkey -v '^H' my-cd-back
 bindkey -v '^L' my-cd-forward
 bindkey -v '^J' fzf-cd-widget
+
+maybe_source "$ZDOTDIR/ignore_rc.zsh"
 
 # To customize prompt, run `p10k configure` or edit $ZDOTDIR/.p10k.zsh.
 [[ ! -f "${ZDOTDIR}/.p10k.zsh" ]] || source "${ZDOTDIR}/.p10k.zsh"
