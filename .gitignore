@@ -4,4 +4,4 @@ terminal/zdotdir/.zsh_history
 terminal/zdotdir/.zcompcache
 terminal/zdotdir/.zcompdump.zwc
 terminal/zdotdir/.chpwd-recent-dirs
-terminal/zdotdir/ignore.zsh
+terminal/zdotdir/ignore*
