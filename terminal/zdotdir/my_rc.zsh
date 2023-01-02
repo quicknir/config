@@ -70,6 +70,11 @@ bindkey -M menuselect '^L' forward-char
 # Edit command in full blown vim; bound to normal mode C-e
 bindkey -M vicmd "$key_info[Control]E" edit-command-line
 
+# rg/fzf interactive search widget
+rg_fzf_search_widget() { "${ZDOTDIR}/search.sh" }
+zle -N rg_fzf_search_widget
+bindkey -M vicmd "s" rg_fzf_search_widget
+
 # fzf setup
 export PATH="$PATH:${ZDOTDIR:h}/fzf/bin"
 source "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
