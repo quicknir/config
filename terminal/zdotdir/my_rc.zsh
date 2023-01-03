@@ -13,6 +13,12 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+alias ls='exa --icons --group-directories-first'
+alias ll='exa -lG --icons --group-directories-first'
+alias less='bat'
+alias cat='bat'
+
+
 # Handy reference, courtesy of https://github.com/seebi/dircolors-solarized
 # SOLARIZED HEX     16/8 TERMCOL  XTERM/HEX   L*A*B      sRGB        HSB
 # --------- ------- ---- -------  ----------- ---------- ----------- -----------
@@ -57,6 +63,7 @@ zstyle ':fzf-tab:*' prefix ''
 #zstyle ':fzf-tab:complete:*' popup-pad 0 50
  
 alias vi=vim
+alias vim=XDG_CONFIG_HOME='$ZDOTDIR/.. nvim'
 # For better vi usability, reduce key delay/timeout
 KEYTIMEOUT=1
 
@@ -116,14 +123,15 @@ fzf-history-word-widget() {
 }
 zle -N fzf-history-word-widget
 bindkey '^E' fzf-history-word-widget
-
 # Useful aliases
 
 # This one
 alias hist-dur='history -iD 0 | fzf'
 
 # Suffixes!
-alias -s txt=vim
+alias -s {txt,json}=vim
+alias -s log=bat
+alias -s git='git clone'
 
 # Support for GUI clipboard
 source $ZDOTDIR/clipboard.zsh

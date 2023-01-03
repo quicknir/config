@@ -16,6 +16,7 @@ hash -d vwap=/apps/mosaic/research/data/vwap
 
 # Typically we use ls (or exa) to preview dirs, and cat (or bat) to preview
 # files. So any settings related to these should be here.
+
 export TERM="xterm-256color"
 eval $(eval "dircolors ${ZDOTDIR:h}/dircolors-solarized/dircolors.ansi-light")
 
@@ -23,7 +24,7 @@ export BAT_THEME='Solarized (light)'
 
 fzf_ls_preview() {
     local d=${~1}
-    ls --color=always $d
+    exa --icons --group-directories-first $d
 }
 
 # A useful function and we already need it so may as well define it here
