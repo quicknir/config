@@ -106,7 +106,7 @@ __hist_word_sel() {
 
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-export FZF_CTRL_T_OPTS="--preview-window hidden --layout reverse-list --preview 'bat --color=always {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_CTRL_T_OPTS="--preview-window hidden --layout reverse-list --preview 'bat --color=always {} --style numbers,grid' --bind 'ctrl-p:toggle-preview'"
 export FZF_ALT_C_OPTS="--preview-window hidden --layout reverse-list --preview 'fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
 export FZF_TMUX=1
 
@@ -164,6 +164,41 @@ fzf-cd-widget() {
 }
 zle -N fzf-cd-widget
 
+__fsel() {
+  local search_dir="."
+  local cut_width="3"
+
+  if [[ ${LBUFFER[-1]} != ' ' ]]; then
+      tokens=(${(z)LBUFFER})
+      if [[ -d ${~tokens[-1]} ]]; then
+          search_dir=${~tokens[-1]}
+          cut_width="2"
+      fi
+  fi
+  builtin cd -q $search_dir
+  local cmd="${FZF_CTRL_T_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
+    -o -type f -print \
+    -o -type d -print \
+    -o -type l -print 2> /dev/null | cut -b${cut_width}-"}"
+  setopt localoptions pipefail no_aliases 2> /dev/null
+  local item
+  eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_CTRL_T_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
+    echo -n "${(q)item} "
+  done
+  local ret=$?
+  echo
+  return $ret
+}
+
+
+fzf-file-widget() {
+  LBUFFER="${LBUFFER}$(__fsel)"
+  local ret=$?
+  zle reset-prompt
+  return $ret
+}
+
+zle -N fzf-file-widget
 
 # Intuitive back-forward navigation, similar to a browser.
 # Also provides up (cd ..), and down (fzf recursive dir search).
@@ -204,6 +239,7 @@ bindkey -v '^K' my-cd-up
 bindkey -v '^H' my-cd-back
 bindkey -v '^L' my-cd-forward
 bindkey -v '^J' fzf-cd-widget
+bindkey -v '^T' fzf-file-widget
 
 maybe_source "$ZDOTDIR/ignore_rc.zsh"
 
