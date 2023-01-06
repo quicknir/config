@@ -6,13 +6,7 @@ export VISUAL=vim
 # should be defined here
 
 # Dir bookmarks are potentially used in previewing recent dirs
-hash -d config=/spare/ssd_local/nir/config
-hash -d gpfs=/n/gpfs0/mosaic/nir
-hash -d hd=/spare/local/nir
-hash -d pol=/spare/ssd_local/nir/code/dev/polygon
-hash -d src=/spare/ssd_local/nir/code/dev
-hash -d ssd=/spare/ssd_local/nir
-hash -d vwap=/apps/mosaic/research/data/vwap
+hash -d config="${ZDOTDIR:h:h}"
 
 # Typically we use ls (or exa) to preview dirs, and cat (or bat) to preview
 # files. So any settings related to these should be here.
