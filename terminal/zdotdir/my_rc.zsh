@@ -13,9 +13,10 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+
 alias ls='exa --icons --group-directories-first'
-alias ll='exa -lG --icons --group-directories-first'
-alias less='bat'
+alias ll='exa -l --icons --group-directories-first'
+alias less='bat --paging always'
 alias cat='bat'
 
 
