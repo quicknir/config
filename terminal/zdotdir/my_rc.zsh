@@ -246,9 +246,14 @@ bindkey -v '^T' fzf-file-widget
 
 maybe_source "$ZDOTDIR/ignore_rc.zsh"
 
-# From prezto
-# environment
+unsetopt LIST_BEEP
 
+# From prezto
+# zpreztrc
+autoload zmv
+autoload zargs
+
+# environment
 setopt COMBINING_CHARS      # Combine zero-length punctuation characters (accents)
                             # with the base character.
 setopt INTERACTIVE_COMMENTS # Enable comments in interactive shell.
@@ -269,8 +274,11 @@ unsetopt BG_NICE          # Don't run all background jobs at a lower priority.
 unsetopt HUP              # Don't kill jobs on shell exit.
 unsetopt CHECK_JOBS       # Don't report on jobs when shell exit.
 
-# history
+# editor
+# by default backspace is vi-delete-char which has some pretty funky behavior
+bindkey "^?" backward-delete-char
 
+# history
 setopt BANG_HIST                 # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format.
 setopt SHARE_HISTORY             # Share history between all sessions.
@@ -287,7 +295,7 @@ HISTFILE="${ZDOTDIR}/.zsh_history"  # The path to the history file.
 HISTSIZE=10000  # The maximum number of events to save in the internal history.
 SAVEHIST=10000  # The maximum number of events to save in the history file.
 
-
+# directory
 setopt AUTO_CD              # Auto changes to a directory without typing cd.
 setopt AUTO_PUSHD           # Push the old directory onto the stack on cd.
 setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd.
@@ -305,5 +313,11 @@ alias ln='ln -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
+# completion
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
 # To customize prompt, run `p10k configure` or edit $ZDOTDIR/.p10k.zsh.
 [[ ! -f "${ZDOTDIR}/.p10k.zsh" ]] || source "${ZDOTDIR}/.p10k.zsh"
+
+. "${ZDOTDIR:h}/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+fast-theme -q "${ZDOTDIR:h}/fast-syntax-solarized.ini"
