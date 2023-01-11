@@ -1,3 +1,7 @@
+location=$(readlink -f ${(%):-%N})
+export ZDOTDIR=${location:h}
+unset location
+
 # Useful to define editor "early" as it may be used by other code to set defaults
 export EDITOR=vim
 export VISUAL=vim

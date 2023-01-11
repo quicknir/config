@@ -1,1 +1,1 @@
-../prezto/runcoms/zshrc
+my_rc.zsh

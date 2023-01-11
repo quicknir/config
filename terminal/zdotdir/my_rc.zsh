@@ -18,6 +18,7 @@ alias ls='exa --icons --group-directories-first'
 alias ll='exa -l --icons --group-directories-first'
 alias less='bat --paging always'
 alias cat='bat'
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 
 # Handy reference, courtesy of https://github.com/seebi/dircolors-solarized

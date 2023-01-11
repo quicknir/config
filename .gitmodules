@@ -1,9 +1,6 @@
 [submodule "vim-colors-solarized"]
 	path = vim/vim/bundle/vim-colors-solarized
 	url = https://github.com/altercation/vim-colors-solarized
-[submodule "terminal/prezto"]
-	path = terminal/prezto
-	url = https://github.com/quicknir/prezto
 [submodule "terminal/dircolors-solarized"]
 	path = terminal/dircolors-solarized
 	url = https://github.com/seebi/dircolors-solarized

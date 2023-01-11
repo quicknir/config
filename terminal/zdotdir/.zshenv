@@ -1,1 +1,1 @@
-../prezto/runcoms/zshenv
+my_env.zsh
