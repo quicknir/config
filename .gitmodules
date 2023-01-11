@@ -28,3 +28,6 @@
 [submodule "terminal/fast-syntax-highlighting"]
 	path = terminal/fast-syntax-highlighting
 	url = git@github.com:zdharma-continuum/fast-syntax-highlighting.git
+[submodule "terminal/powerlevel10k"]
+	path = terminal/powerlevel10k
+	url = git@github.com:romkatv/powerlevel10k.git
