@@ -1,3 +1,6 @@
+# To get beam shaped cursor on instant prompt startup
+echo -ne '\e[5 q'
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of /spare/ssd_local/nir/zsh/home/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -8,11 +11,8 @@ fi
 # Set in my_env.zsh, but set again, in case system files are changing it...
 eval $(eval "dircolors ${ZDOTDIR:h}/dircolors-solarized/dircolors.ansi-light")
 
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
-
+# Source powerlevel10k
+. "${ZDOTDIR:h}/powerlevel10k/powerlevel10k.zsh-theme"
 
 alias ls='exa --icons --group-directories-first'
 alias ll='exa -l --icons --group-directories-first'
@@ -314,7 +314,57 @@ alias mv='mv -i'
 alias rm='rm -i'
 
 # completion
+# Load and initialize the completion system ignoring insecure directories with a
+# cache time of 20 hours, so it should almost always regenerate the first time a
+# shell is opened each day.
+autoload -Uz compinit
+_comp_path="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
+# #q expands globs in conditional expressions
+if [[ $_comp_path(#qNmh-20) ]]; then
+  # -C (skip function check) implies -i (skip security check).
+  compinit -C -d "$_comp_path"
+else
+  mkdir -p "$_comp_path:h"
+  compinit -i -d "$_comp_path"
+  # Keep $_comp_path younger than cache time even if it isn't regenerated.
+  touch "$_comp_path"
+fi
+unset _comp_path
+
+
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompcache"
+
+# We avoid completing user because it's VERY expensive on some setups (and not very useful)
+zstyle ':completion:*:*:*:users' users
+
+. "${ZDOTDIR:h}/fzf-tab/fzf-tab.plugin.zsh"
+
+
+# Change cursor shape for different vi modes.
+# https://unix.stackexchange.com/questions/433273/changing-cursor-style-based-on-mode-in-both-zsh-and-vim
+# https://github.com/romkatv/powerlevel10k/issues/2151
+function zle-keymap-select {
+  if [[ ${KEYMAP} == vicmd ]] ||
+     [[ $1 = 'block' ]]; then
+    >$TTY echo -ne '\e[1 q'
+  elif [[ ${KEYMAP} == main ]] ||
+       [[ ${KEYMAP} == viins ]] ||
+       [[ ${KEYMAP} = '' ]] ||
+       [[ $1 = 'beam' ]]; then
+    >$TTY echo -ne '\e[5 q'
+  fi
+}
+zle -N zle-keymap-select
+zle-line-init() {
+    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+    >$TTY echo -ne "\e[5 q"
+}
+zle -N zle-line-init
+preexec() {
+    >$TTY echo -ne '\e[5 q' ;
+} # Use beam shape cursor for each new prompt.
 
 # To customize prompt, run `p10k configure` or edit $ZDOTDIR/.p10k.zsh.
 [[ ! -f "${ZDOTDIR}/.p10k.zsh" ]] || source "${ZDOTDIR}/.p10k.zsh"
