@@ -20,9 +20,18 @@ eval $(eval "dircolors ${ZDOTDIR:h}/dircolors-solarized/dircolors.ansi-light")
 
 export BAT_THEME='Solarized (light)'
 
-fzf_ls_preview() {
+__fzf_ls_preview() {
     local d=${~1}
     exa --icons --group-directories-first $d
+}
+
+__fzf_ls_bat_preview() {
+    local d=${~1}
+    if [[ -d $d ]]; then
+        exa --icons --group-directories-first $d
+    else
+        bat --color=always --style numbers,grid $d
+    fi
 }
 
 # A useful function and we already need it so may as well define it here

@@ -15,7 +15,7 @@ eval $(eval "dircolors ${ZDOTDIR:h}/dircolors-solarized/dircolors.ansi-light")
 . "${ZDOTDIR:h}/powerlevel10k/powerlevel10k.zsh-theme"
 
 alias ls='exa --icons --group-directories-first'
-alias ll='exa -l --icons --group-directories-first'
+alias ll='exa -l --icons --group-directories-first --git'
 alias less='bat --paging always'
 alias cat='bat'
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
@@ -59,7 +59,7 @@ printc() {
 # Colors for fzf-tab
 zstyle ':fzf-tab:*' default-color $'\033[93m'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'fzf_ls_preview $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview '__fzf_ls_preview $realpath'
 zstyle ':fzf-tab:*' popup-min-size 100 10
 zstyle ':fzf-tab:*' prefix ''
 #zstyle ':fzf-tab:complete:*' popup-pad 0 50
@@ -110,8 +110,8 @@ __hist_word_sel() {
 
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-export FZF_CTRL_T_OPTS="--preview-window hidden --layout reverse-list --preview 'bat --color=always {} --style numbers,grid' --bind 'ctrl-p:toggle-preview'"
-export FZF_ALT_C_OPTS="--preview-window hidden --layout reverse-list --preview 'fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_CTRL_T_OPTS="--preview-window hidden --layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_ALT_C_OPTS="--preview-window hidden --layout reverse-list --preview '__fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
 export FZF_TMUX=1
 
 __fzfcmd() {
