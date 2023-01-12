@@ -96,7 +96,7 @@ __hist_word_sel() {
 
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-export FZF_CTRL_T_OPTS="--layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_CTRL_T_OPTS="--ansi --layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview'"
 export FZF_ALT_C_OPTS="--layout reverse-list --preview '__fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
 export FZF_TMUX=1
 
@@ -134,10 +134,10 @@ autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 zstyle ':chpwd:*' recent-dirs-max 1000
 
+export FZF_ALT_C_COMMAND="fd --type d"
 # Replace the fzf cd widget. Our widget doesn't print the line.
 # Also, this cd widget includes all of the directories from our history.
 fzf-cd-widget() {
-  local cmd1='echo hello'
   local cmd1="cdr -l | tr -s ' ' | cut -d ' ' -f 2-"
   local cmd="${FZF_ALT_C_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs'     -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
     -o -type d -print 2> /dev/null | cut -b3-"}"
@@ -154,6 +154,7 @@ fzf-cd-widget() {
 }
 zle -N fzf-cd-widget
 
+export FZF_CTRL_T_COMMAND="fd --color always"
 __fsel() {
   local search_dir="."
   local cut_width="3"
