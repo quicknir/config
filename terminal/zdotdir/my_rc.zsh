@@ -56,25 +56,10 @@ printc() {
     echo -E ${(qqqq)${(%)color}}
 }
 
-# Colors for fzf-tab
-zstyle ':fzf-tab:*' default-color $'\033[93m'
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-zstyle ':fzf-tab:complete:cd:*' fzf-preview '__fzf_ls_preview $realpath'
-zstyle ':fzf-tab:*' popup-min-size 100 10
-zstyle ':fzf-tab:*' prefix ''
-#zstyle ':fzf-tab:complete:*' popup-pad 0 50
- 
 alias vi=vim
 alias vim=XDG_CONFIG_HOME='$ZDOTDIR/.. nvim'
 # For better vi usability, reduce key delay/timeout
 KEYTIMEOUT=1
-
-# Vim-like movement bindings!
-zmodload zsh/complist  # Necessary so that menuselect keymap gets loaded; otherwise gets lazy loaded on first use
-bindkey -M menuselect '^J' down-line-or-history
-bindkey -M menuselect '^K' up-line-or-history
-bindkey -M menuselect '^H' backward-char
-bindkey -M menuselect '^L' forward-char
 
 # Edit command in full blown vim; bound to normal mode C-e
 autoload -Uz edit-command-line
@@ -93,7 +78,8 @@ source "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
 # Exact matching similar to helm
 export FZF_DEFAULT_OPTS="-e \
    --color 16,fg:11,bg:-1,hl:1,hl+:1,bg+:7,fg+:11 \
-   --color prompt:4,pointer:13,marker:13,spinner:3,info:3"
+   --color prompt:4,pointer:13,marker:13,spinner:3,info:3 --preview-window hidden"
+
 
 # CTRL-E - word based history search
 __hist_word_sel() {
@@ -110,8 +96,8 @@ __hist_word_sel() {
 
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-export FZF_CTRL_T_OPTS="--preview-window hidden --layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview'"
-export FZF_ALT_C_OPTS="--preview-window hidden --layout reverse-list --preview '__fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_CTRL_T_OPTS="--layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_ALT_C_OPTS="--layout reverse-list --preview '__fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
 export FZF_TMUX=1
 
 __fzfcmd() {
@@ -332,7 +318,6 @@ else
 fi
 unset _comp_path
 
-
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompcache"
@@ -340,8 +325,30 @@ zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/pre
 # We avoid completing user because it's VERY expensive on some setups (and not very useful)
 zstyle ':completion:*:*:*:users' users
 
+# fzf-tab recommendations
+# disable sort when completing `git checkout`
+# could consider extending this to other things; presumably this is because sort gets in the way
+# of fzf's async nature
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+
 . "${ZDOTDIR:h}/fzf-tab/fzf-tab.plugin.zsh"
 
+zstyle ':fzf-tab:*' default-color $'\033[93m'
+zstyle ':fzf-tab:*' single-color $'\033[93m'
+
+export FZF_TAB_GROUP_COLORS=($'\033[34m' $'\033[31m' $'\033[32m' $'\033[35m' $'\033[36m'
+    $'\033[33m' $'\033[95m' $'\033[91m' $'\033[93m')
+
+zstyle ':fzf-tab:*' group-colors $FZF_TAB_GROUP_COLORS
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:*' fzf-flags $(echo $FZF_DEFAULT_OPTS)
+#zstyle ':fzf-tab:complete:cd:*' fzf-preview '__fzf_ls_preview $realpath'
+#zstyle ':fzf-tab:*' popup-min-size 100 10
+zstyle ':fzf-tab:*' prefix ''
+zstyle ':fzf-tab:*' accept-line 'ctrl-l'
+#zstyle ':fzf-tab:complete:*' popup-pad 0 50
 
 # Change cursor shape for different vi modes.
 # https://unix.stackexchange.com/questions/433273/changing-cursor-style-based-on-mode-in-both-zsh-and-vim
