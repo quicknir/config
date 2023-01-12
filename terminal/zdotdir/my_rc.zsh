@@ -77,7 +77,7 @@ source "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
 
 # Exact matching similar to helm
 export FZF_DEFAULT_OPTS="-e \
-   --color 16,fg:11,bg:-1,hl:1,hl+:1,bg+:7,fg+:11 \
+   --color 16,fg:11,bg:-1,hl:1,hl+:1,bg+:7,fg+:-1:regular:underline \
    --color prompt:4,pointer:13,marker:13,spinner:3,info:3 --preview-window hidden"
 
 
