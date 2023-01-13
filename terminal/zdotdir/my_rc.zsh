@@ -8,13 +8,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Set in my_env.zsh, but set again, in case system files are changing it...
-eval $(eval "dircolors ${ZDOTDIR:h}/dircolors-solarized/dircolors.ansi-light")
-
 # Source powerlevel10k
 . "${ZDOTDIR:h}/powerlevel10k/powerlevel10k.zsh-theme"
 
-alias ls='exa --icons --group-directories-first'
 alias ll='exa -l --icons --group-directories-first --git'
 alias less='bat --paging always'
 alias cat='bat'
@@ -73,13 +69,16 @@ bindkey -M vicmd "s" rg_fzf_search_widget
 
 # fzf setup
 export PATH="$PATH:${ZDOTDIR:h}/fzf/bin"
-source "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
+# just for ctrl-r which we use unmodified; we have our own versions
+# of ctrl-t and alt-c (and the latter is bound to ctrl-j)
+. "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
 
 # Exact matching similar to helm
-export FZF_DEFAULT_OPTS="-e \
+export FZF_DEFAULT_COLORS="\
    --color 16,fg:11,bg:-1,hl:1,hl+:1,bg+:7,fg+:-1:regular:underline \
-   --color prompt:4,pointer:13,marker:13,spinner:3,info:3 --preview-window hidden"
+   --color prompt:4,pointer:13,marker:13,spinner:3,info:3"
 
+export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS}"
 
 # CTRL-E - word based history search
 __hist_word_sel() {
@@ -96,8 +95,8 @@ __hist_word_sel() {
 
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-export FZF_CTRL_T_OPTS="--ansi --layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview'"
-export FZF_ALT_C_OPTS="--layout reverse-list --preview '__fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
+export FZF_CTRL_T_OPTS="--preview-window hidden --ansi --layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview' --bind 'ctrl-h:reload(fd -H --color always)'"
+export FZF_ALT_C_OPTS="--preview-window hidden --layout reverse-list --preview '__fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
 export FZF_TMUX=1
 
 __fzfcmd() {
@@ -119,7 +118,16 @@ bindkey '^E' fzf-history-word-widget
 alias hist-dur='history -iD 0 | fzf'
 
 # Suffixes!
-alias -s {txt,json,sh,zsh}=vim
+# utility function; open script files in vim if not executable, otherwise execute
+__exec_or_vim() {
+    if [[ -x $1 ]]; then
+        $1
+    else
+        vim $1
+    fi
+}
+alias -s {sh,zsh,py}=__exec_or_vim
+alias -s {txt,json,ini}=vim
 alias -s log=bat
 alias -s git='git clone'
 
@@ -155,6 +163,7 @@ fzf-cd-widget() {
 zle -N fzf-cd-widget
 
 export FZF_CTRL_T_COMMAND="fd --color always"
+
 __fsel() {
   local search_dir="."
   local cut_width="3"
@@ -190,6 +199,19 @@ fzf-file-widget() {
 }
 
 zle -N fzf-file-widget
+
+      #--preview 'bat --color=always {1} --highlight-line{2}'
+fzf-rg-widget() {
+  RG_PREFIX="rg --line-number --no-heading --color=always --smart-case "
+  fzf --ansi \
+      --disabled --query "$INITIAL_QUERY" \
+      --bind "change:reload:sleep 0.1; eval $RG_PREFIX {q} || true" \
+      --delimiter : \
+      --preview 'bat --color=always {1} --highlight-line {2}' \
+      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
+}
+zle -N fzf-rg-widget
+bindkey '^S' fzf-rg-widget
 
 # Intuitive back-forward navigation, similar to a browser.
 # Also provides up (cd ..), and down (fzf recursive dir search).
@@ -334,8 +356,6 @@ zstyle ':completion:*:git-checkout:*' sort false
 # set descriptions format to enable group support
 zstyle ':completion:*:descriptions' format '[%d]'
 
-. "${ZDOTDIR:h}/fzf-tab/fzf-tab.plugin.zsh"
-
 zstyle ':fzf-tab:*' default-color $'\033[93m'
 zstyle ':fzf-tab:*' single-color $'\033[93m'
 
@@ -343,13 +363,13 @@ export FZF_TAB_GROUP_COLORS=($'\033[34m' $'\033[31m' $'\033[32m' $'\033[35m' $'\
     $'\033[33m' $'\033[95m' $'\033[91m' $'\033[93m')
 
 zstyle ':fzf-tab:*' group-colors $FZF_TAB_GROUP_COLORS
+
+. "${ZDOTDIR:h}/fzf-tab/fzf-tab.plugin.zsh"
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+# Surprisingly, fzf-tab doesn't respect FZF_DEFAULT_OPTS
 zstyle ':fzf-tab:*' fzf-flags $(echo $FZF_DEFAULT_OPTS)
-#zstyle ':fzf-tab:complete:cd:*' fzf-preview '__fzf_ls_preview $realpath'
-#zstyle ':fzf-tab:*' popup-min-size 100 10
 zstyle ':fzf-tab:*' prefix ''
 zstyle ':fzf-tab:*' accept-line 'ctrl-l'
-#zstyle ':fzf-tab:complete:*' popup-pad 0 50
 
 # Change cursor shape for different vi modes.
 # https://unix.stackexchange.com/questions/433273/changing-cursor-style-based-on-mode-in-both-zsh-and-vim
