@@ -2,7 +2,7 @@ location=$(readlink -f ${(%):-%N})
 export ZDOTDIR=${location:h}
 unset location
 
-# Useful to define editor "early" as it may be used by other code to set defaults
+# Useful to define editor "early" as it may be used by other code to set defaults, e.g. tmux
 export EDITOR=vim
 export VISUAL=vim
 
@@ -16,19 +16,24 @@ hash -d config="${ZDOTDIR:h:h}"
 # files. So any settings related to these should be here.
 
 export TERM="xterm-256color"
-eval $(eval "dircolors ${ZDOTDIR:h}/dircolors-solarized/dircolors.ansi-light")
+
+# This is done like this just to avoid needing the dependency on vivid everywhere
+# to change the ls colors theme, use vivid generate solarized-light.yml > ls_colors.txt
+export LS_COLORS=$(cat "${ZDOTDIR:h}/ls_colors.txt")
 
 export BAT_THEME='Solarized (light)'
 
+alias ls='exa --icons --group-directories-first'
+
 __fzf_ls_preview() {
     local d=${~1}
-    exa --icons --group-directories-first $d
+    ls $d
 }
 
 __fzf_ls_bat_preview() {
     local d=${~1}
     if [[ -d $d ]]; then
-        exa --icons --group-directories-first $d
+        ls $d
     else
         bat --color=always --style numbers,grid $d
     fi
