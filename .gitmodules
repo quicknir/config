@@ -1,6 +1,3 @@
-[submodule "vim-colors-solarized"]
-	path = vim/vim/bundle/vim-colors-solarized
-	url = https://github.com/altercation/vim-colors-solarized
 [submodule "terminal/dircolors-solarized"]
 	path = terminal/dircolors-solarized
 	url = https://github.com/seebi/dircolors-solarized
