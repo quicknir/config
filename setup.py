@@ -1,57 +1,40 @@
-import os
-from os import path
-import sys
+from pathlib import Path
+from itertools import count
+import subprocess
 
 
-def bak(dest):
-    path = dest + ".bak"
-    i = 0
-    num_path = path + str(i)
-    while os.path.exists(num_path):
-        i += 1
-        num_path = path + str(i)
-    os.rename(dest, num_path)
+def bak(dest: Path) -> Path:
+    name = dest.name
+    for i in count():
+        new_path = dest.with_name(f"{name}.bak_{i}")
+        if not new_path.exists():
+            break
+    dest.rename(new_path)
+    return new_path
 
 
-def symlink_and_bak(src, dest):
-    if os.path.exists(dest):
-        bak(dest)
-    try:  # Create directory if it doesn't exist. Suppress failure.
-        os.makedirs(os.path.split(dest)[0])
-    except:
-        pass
-    os.symlink(src, dest)
+def symlink_and_bak(src: Path, dest: Path):
+    if dest.exists():
+        backup_path = bak(dest)
+        print(f"Backing up existing file at {dest} to {backup_path}")
+    dest.parent.mkdir(exist_ok=True, parents=True)
+    dest.symlink_to(src)
 
 
-def setup_config(repo_path):
-    # setup prezto
-    prezto_path = path.join(repo_path, "terminal", "prezto")
-    prezto_runcom_path = path.join(prezto_path, "runcoms")
-    zdotdir_path = path.join(repo_path, "terminal", "zdotdir")
+def setup_config(repo_path: Path):
+    print("Setup zsh")
+    symlink_and_bak(repo_path / "terminal/zdotdir/.zshenv", Path("~/.zshenv").expanduser())
 
-    with open(path.join(prezto_runcom_path, "zshenv")) as f:
-        zshenv_data = f.readlines()
+    print("Setup tmux")
+    symlink_and_bak(repo_path / "tmux/.tmux.conf", Path("~/.tmux.conf").expanduser())
+    symlink_and_bak(repo_path / "tmux/.tmux.conf.local", Path("~/.tmux.conf.local").expanduser())
 
-    zshenv_data.append("export ZDOTDIR={}\n".format(zdotdir_path))
-    zshenv_path = path.expanduser("~/.zshenv")
-    if path.exists(zshenv_path):
-        bak(zshenv_path)
-    with open(zshenv_path, 'w') as f:
-        f.writelines(zshenv_data)
+    print("Installing fzf")
+    subprocess.run(["./install"], cwd=(repo_path/"terminal/fzf"), input=b'n\nn\nn\n')
 
-    # Setup terminator
-    symlink_and_bak(
-        path.join(repo_path, "terminal", "terminator", "config"),
-        path.expanduser('~/.config/terminator/config'))
+    # Install fonts; come back to this
+    #symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
 
-    symlink_and_bak(path.join(repo_path, 'spacemacs'), path.expanduser('~/.emacs.d'))
-    symlink_and_bak(path.join(repo_path, 'spacemacs.d'), path.expanduser('~/.spacemacs.d'))
-
-    symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
-
-    print "Other things to do"
-    print "Goto fzf, run install"
-    print "Install xcape, xclip, silver surfer"
 
 if __name__ == "__main__":
-    setup_config(path.dirname(path.realpath(__file__)))
+    setup_config(Path(__file__).parent.resolve())
