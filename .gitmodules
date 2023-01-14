@@ -22,3 +22,6 @@
 [submodule "terminal/nvim/pack/plugins/start/vim-surround"]
 	path = terminal/nvim/pack/plugins/start/vim-surround
 	url = git@github.com:tpope/vim-surround.git
+[submodule "terminal/zsh-autosuggestions"]
+	path = terminal/zsh-autosuggestions
+	url = git@github.com:zsh-users/zsh-autosuggestions.git

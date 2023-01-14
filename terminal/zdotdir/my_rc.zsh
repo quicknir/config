@@ -400,3 +400,10 @@ preexec() {
 
 . "${ZDOTDIR:h}/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 fast-theme -q "${ZDOTDIR:h}/fast-syntax-solarized.ini"
+
+. "${ZDOTDIR:h}/zsh-autosuggestions/zsh-autosuggestions.zsh"
+bindkey '^ ' autosuggest-accept
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=14"
+export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
