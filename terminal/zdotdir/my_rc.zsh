@@ -429,18 +429,11 @@ highlight_to_format() {
 }
 
 apply_format_to_substr() {
-    local x=$1
-    local first=$((x+1))
-    local last=$2
-    local s=$3
-    local f=$4
-    local pre_escape=$(print -cP "$f")
-    local post_escape=$(print -cP "%f%b%u%s%k")
-    local pre_escape_len=${#pre_escape}
-    local post_escape_len=${#post_escape}
-    local insert_string=${pre_escape}${s[$index_map[$first], $index_map[$last]]}${post_escape}
-    s[$index_map[$first],$index_map[$last]]=$insert_string
-    for key value in ${(kv)index_map}; do echo "$key->$value"; done
+    local mapped_first=$index_map[$first]
+    local mapped_last=$index_map[$last]
+    local s=$1
+    local insert_string=${pre_escape}${s[$mapped_first, $mapped_last]}${post_escape}
+    s[$mapped_first,$mapped_last]=$insert_string
     echo $s
 }
 
@@ -448,15 +441,29 @@ highlight_to_str() {
     local str=$1
     highlight_arr_name=$2
     local -A index_map
+    local str_length=${#str}
     for i in {1..${#str}}; do index_map[$i]=$i; done
     for highlight in ${(P)${highlight_arr_name}}; do
         local parts=(${(s/ /)highlight})
         format=$(highlight_to_format $parts[3])
-        echo $format
-        str=$(apply_format_to_substr $parts[1] $parts[2] $str $format)
-        echo $str
+        local pre_escape=$(print -cP "$format")
+        local post_escape=$(print -cP "%f%b%u%s%k")
+        local pre_escape_len=${#pre_escape}
+        local post_escape_len=${#post_escape}
+        local x=$parts[1]
+        local first=$((x+1))
+        local last=$parts[2]
+        str=$(apply_format_to_substr $str)
+        for i in {$first..$last}; do
+            local v=$index_map[$i]
+            index_map[$i]=$((v+pre_escape_len))
+        done
+        for i in {$last..$str_length}; do
+            local v=$index_map[$i]
+            index_map[$i]=$((v+pre_escape_len+post_escape_len))
+        done
     done
-    colored_string=$str
+    echo $str
 }
 
 foo() {
