@@ -407,3 +407,65 @@ export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=14"
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
+highlight_to_format() {
+    local result=""
+    local parts=(${(s/,/)1})
+    for part in $parts; do
+        case "$part" in
+            underline)
+                result+="%U"
+                ;;
+            bold)
+                result+="%B"
+                ;;
+            fg*)
+                local sub_parts=(${(s/=/)part})
+                result+="%F{$sub_parts[2]}"
+                ;;
+        esac
+    done
+    echo $result
+}
+
+apply_format_to_substr() {
+    local x=$1
+    local first=$((x+1))
+    local last=$2
+    local s=$3
+    local f=$4
+    local pre_escape=$(print -cP "$f")
+    local post_escape=$(print -cP "%f%b%u%s%k")
+    local pre_escape_len=${#pre_escape}
+    local post_escape_len=${#post_escape}
+    local insert_string=${pre_escape}${s[$index_map[$first], $index_map[$last]]}${post_escape}
+    s[$index_map[$first],$index_map[$last]]=$insert_string
+    for key value in ${(kv)index_map}; do echo "$key->$value"; done
+    echo $s
+}
+
+highlight_to_str() {
+    local str=$1
+    highlight_arr_name=$2
+    local -A index_map
+    for i in {1..${#str}}; do index_map[$i]=$i; done
+    for highlight in ${(P)${highlight_arr_name}}; do
+        local parts=(${(s/ /)highlight})
+        format=$(highlight_to_format $parts[3])
+        echo $format
+        str=$(apply_format_to_substr $parts[1] $parts[2] $str $format)
+        echo $str
+    done
+    colored_string=$str
+}
+
+foo() {
+    local reply=()
+    local colored_string
+    -fast-highlight-process "" "$1" 0
+    #highlight_to_str $1 reply
+    #echo $colored_string >> "${HISTFILE}.color"
+}
+
+autoload -Uz add-zsh-hook
+add-zsh-hook zshaddhistory foo
