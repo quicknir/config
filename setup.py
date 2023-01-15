@@ -30,7 +30,7 @@ def setup_config(repo_path: Path):
     symlink_and_bak(repo_path / "tmux/.tmux.conf.local", Path("~/.tmux.conf.local").expanduser())
 
     print("Installing fzf")
-    subprocess.run(["./install"], cwd=(repo_path/"terminal/fzf"), input=b'n\nn\nn\n')
+    subprocess.run(["./install", "--bin"], cwd=(repo_path/"terminal/fzf"))
 
     # Install fonts; come back to this
     #symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
