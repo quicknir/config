@@ -204,7 +204,7 @@ __hist_sel() {
   setopt localoptions pipefail no_aliases 2> /dev/null
   local item
   local cmd="tac ${HISTFILE}.color"
-  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore --ansi ${FZF_DEFAULT_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
+  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme history --bind=ctrl-z:ignore --ansi ${FZF_DEFAULT_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
     echo -n "${item} "
   done
   local ret=$?
@@ -428,51 +428,68 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 
 highlight_to_format() {
-    local result=""
     local parts=(${(s/,/)1})
+    local before=""
+    local after=""
     for part in $parts; do
         case "$part" in
             underline)
-                result+="%U"
+                before+="%U"
+                after+="%u"
                 ;;
             bold)
-                result+="%B"
+                before+="%B"
+                after+="%b"
                 ;;
             fg*)
                 local sub_parts=(${(s/=/)part})
-                result+="%F{$sub_parts[2]}"
+                before+="%F{$sub_parts[2]}"
+                after+="%f"
+                ;;
+            bg*)
+                local sub_parts=(${(s/=/)part})
+                before+="%K{$sub_parts[2]}"
+                after+="%k"
                 ;;
         esac
     done
-    echo $result
+    pre_escape=${(%)before}
+    post_escape=${(%)after}
 }
 
 apply_format_to_substr() {
     local mapped_first=$index_map[$first]
     local mapped_last=$index_map[$last]
-    local s=$1
-    local insert_string=${pre_escape}${s[$mapped_first, $mapped_last]}${post_escape}
+    s=$1
+    local insert_string=${pre_escape}${s[$mapped_first,$mapped_last]}${post_escape}
     s[$mapped_first,$mapped_last]=$insert_string
-    echo $s
 }
 
 highlight_to_str() {
     local str=$1
-    highlight_arr_name=$2
+    local highlight_arr_name=$2
     local -A index_map
     local str_length=${#str}
+    local i pre_escape post_escape s
+
     for i in {1..${#str}}; do index_map[$i]=$i; done
+
     for highlight in ${(P)${highlight_arr_name}}; do
         local parts=(${(s/ /)highlight})
-        format=$(highlight_to_format $parts[3])
-        local pre_escape=$(print -cP "$format")
-        local post_escape=$(print -cP "%f%b%u%s%k")
+
+        if [[ ${#parts} != 3 ]]; then 
+            # Sometimes we get bad responses from fast-syntax highlighting
+            continue
+        fi
+
+        highlight_to_format $parts[3]
+
         local pre_escape_len=${#pre_escape}
         local post_escape_len=${#post_escape}
-        local x=$parts[1]
-        local first=$((x+1))
+        local first=$((parts[1]+1))
         local last=$parts[2]
-        str=$(apply_format_to_substr $str)
+        apply_format_to_substr $str
+        str=${(%)s}
         for i in {$first..$last}; do
             local v=$index_map[$i]
             index_map[$i]=$((v+pre_escape_len))
@@ -482,7 +499,7 @@ highlight_to_str() {
             index_map[$i]=$((v+pre_escape_len+post_escape_len))
         done
     done
-    echo $str
+    echo -n $str
 }
 
 make_hist_color_file() {
@@ -490,21 +507,24 @@ make_hist_color_file() {
     # first attempt to syntax highlight git
     -fast-highlight-process "" 'git push' 0
     rm -f "${HISTFILE}.color"
-    hist_array=("${(@fOa)$(fc -ln 1)}")
-    for line in $hist_array; do
+    local line
+    for line in ${(Oa)history[@]}; do
         local reply=()
         -fast-highlight-process "" "$line" 0
         -fast-highlight-string-process "" "$line" 0
         highlight_to_str "$line" reply >>! "${HISTFILE}.color"
+        echo '' >>! "${HISTFILE}.color"
     done
 }
 
-foo() {
-    local reply=()
-    -fast-highlight-process "" "$1" 0
-    -fast-highlight-string-process "" "$1" 0
-    highlight_to_str "$1" reply >>! "${HISTFILE}.color"
+add_color_history_entry() {
+    if [[ ${#1} > 1 ]]; then
+        local reply=()
+        -fast-highlight-process "" "$1" 0
+        -fast-highlight-string-process "" "$1" 0
+        highlight_to_str "$1" reply >>! "${HISTFILE}.color"
+    fi
 }
 
 autoload -Uz add-zsh-hook
-add-zsh-hook zshaddhistory foo
+add-zsh-hook zshaddhistory add_color_history_entry
