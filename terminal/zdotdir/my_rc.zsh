@@ -200,6 +200,25 @@ fzf-file-widget() {
 
 zle -N fzf-file-widget
 
+__hist_sel() {
+  setopt localoptions pipefail no_aliases 2> /dev/null
+  local item
+  local cmd="tac ${HISTFILE}.color"
+  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore --ansi ${FZF_DEFAULT_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
+    echo -n "${item} "
+  done
+  local ret=$?
+  echo
+  return $ret
+}
+
+fzf-history-widget() {
+  LBUFFER="${LBUFFER}$(__hist_sel)"
+  local ret=$?
+  zle reset-prompt
+  return $ret
+}
+
       #--preview 'bat --color=always {1} --highlight-line{2}'
 fzf-rg-widget() {
   RG_PREFIX="rg --line-number --no-heading --color=always --smart-case "
@@ -466,12 +485,25 @@ highlight_to_str() {
     echo $str
 }
 
+make_hist_color_file() {
+    # some kind of insane caching mechanism that produces garbage for the
+    # first attempt to syntax highlight git
+    -fast-highlight-process "" 'git push' 0
+    rm -f "${HISTFILE}.color"
+    hist_array=("${(@fOa)$(fc -ln 1)}")
+    for line in $hist_array; do
+        local reply=()
+        -fast-highlight-process "" "$line" 0
+        -fast-highlight-string-process "" "$line" 0
+        highlight_to_str "$line" reply >>! "${HISTFILE}.color"
+    done
+}
+
 foo() {
     local reply=()
-    local colored_string
     -fast-highlight-process "" "$1" 0
-    #highlight_to_str $1 reply
-    #echo $colored_string >> "${HISTFILE}.color"
+    -fast-highlight-string-process "" "$1" 0
+    highlight_to_str "$1" reply >>! "${HISTFILE}.color"
 }
 
 autoload -Uz add-zsh-hook

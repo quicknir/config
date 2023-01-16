@@ -1,6 +1,7 @@
 *.pyc
 terminal/zdotdir/.zcompdump
 terminal/zdotdir/.zsh_history
+terminal/zdotdir/.zsh_history.color
 terminal/zdotdir/.zcompcache
 terminal/zdotdir/.zcompdump.zwc
 terminal/zdotdir/.chpwd-recent-dirs
