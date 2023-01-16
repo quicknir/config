@@ -479,6 +479,16 @@ highlight_to_str() {
 
         if [[ ${#parts} != 3 ]]; then 
             # Sometimes we get bad responses from fast-syntax highlighting
+            # git commands are the usual culprit it seems
+            continue
+        fi
+
+        local first=$((parts[1]+1))
+        local last=$parts[2]
+
+        if [[ $first > $last ]]; then
+            # Again, fast-syntax sometimes includes segments like this;
+            # have observed it with git commit -m <quoted text>
             continue
         fi
 
@@ -486,8 +496,6 @@ highlight_to_str() {
 
         local pre_escape_len=${#pre_escape}
         local post_escape_len=${#post_escape}
-        local first=$((parts[1]+1))
-        local last=$parts[2]
         apply_format_to_substr $str
         str=${(%)s}
         for i in {$first..$last}; do
