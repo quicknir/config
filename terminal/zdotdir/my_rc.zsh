@@ -78,25 +78,13 @@ export FZF_DEFAULT_COLORS="\
    --color 16,fg:11,bg:-1,hl:1,hl+:1,bg+:7,fg+:-1:regular:underline \
    --color prompt:4,pointer:13,marker:13,spinner:3,info:3"
 
-export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS}"
-
-# CTRL-E - word based history search
-__hist_word_sel() {
-
-  local cmd='for line in $(fc -l 0 | cut -d '' '' -f 3-); do for word in $line; do echo $word; done; done | sort --unique'
-  setopt localoptions pipefail no_aliases 2> /dev/null
-  local item
-  eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_CTRL_T_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
-    echo -n "${(q)item} "
-  done
-  local ret=$?
-  return $ret
-}
-
+export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS} --bind 'ctrl-l:accept' --ansi --layout default"
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-export FZF_CTRL_T_OPTS="--preview-window hidden --ansi --layout reverse-list --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-p:toggle-preview' --bind 'ctrl-h:reload(fd -H --color always)'"
-export FZF_ALT_C_OPTS="--preview-window hidden --layout reverse-list --preview '__fzf_ls_preview {}' --bind 'ctrl-p:toggle-preview'"
+FZF_TC_COMMON_OPTS="--preview-window hidden --bind 'ctrl-h:toggle-preview'"
+export FZF_CTRL_T_OPTS="${FZF_TC_COMMON_OPTS} --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-i:unbind(ctrl-i)+reload(fd -u --color always)' --bind 'ctrl-space:toggle'"
+export FZF_ALT_C_OPTS="${FZF_TC_COMMON_OPTS} --preview '__fzf_ls_preview {}' --bind 'ctrl-i:unbind(ctrl-i)+reload(__dir_entries -u)'"
+
 export FZF_TMUX=1
 
 __fzfcmd() {
@@ -104,14 +92,6 @@ __fzfcmd() {
     echo "fzf-tmux ${FZF_TMUX_OPTS:--d${FZF_TMUX_HEIGHT:-40%}} -- " || echo "fzf"
 }
 
-fzf-history-word-widget() {
-  LBUFFER="${LBUFFER}$(__hist_word_sel)"
-  local ret=$?
-  zle reset-prompt
-  return $ret
-}
-zle -N fzf-history-word-widget
-bindkey '^E' fzf-history-word-widget
 # Useful aliases
 
 # This one
@@ -135,7 +115,7 @@ alias -s git='git clone'
 source $ZDOTDIR/clipboard.zsh
 
 # A separate file that gets sourced; convenient for putting things you may not want to upstream
-() { local FILE="$ZDOTDIR/ignore.zsh" && test -f $FILE && . $FILE }
+maybe_source $ZDOTDIR/ignore.zsh
 
 # recent directories
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
@@ -204,7 +184,7 @@ __hist_sel() {
   setopt localoptions pipefail no_aliases 2> /dev/null
   local item
   local cmd="tac ${HISTFILE}.color"
-  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme history --bind=ctrl-z:ignore --ansi ${FZF_DEFAULT_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
+  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme history --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-}" $(__fzfcmd) "$@" | while read item; do
     echo -n "${item} "
   done
   local ret=$?

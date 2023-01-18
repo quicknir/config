@@ -6,16 +6,23 @@ unset location
 export EDITOR=vim
 export VISUAL=vim
 
-# fzf previews run in a fresh, non-interactive shell, so anything needed by preview code
-# should be defined here
-
 # Dir bookmarks are potentially used in previewing recent dirs
 hash -d config="${ZDOTDIR:h:h}"
 
+export TERM="xterm-256color"
+
+# fzf previews run in a fresh, non-interactive shell, so anything needed by preview code
+# should be defined here
 # Typically we use ls (or exa) to preview dirs, and cat (or bat) to preview
 # files. So any settings related to these should be here.
+# Further, any reload commands are also executed similarly, so any functions called in a
+# reload binding also need to be defined in zshenv.
 
-export TERM="xterm-256color"
+__dir_entries() {
+  local cmd1="cdr -l | tr -s ' ' | cut -d ' ' -f 2-"
+  local cmd="fd --type d $1"
+  eval "{ $cmd1 & $cmd }"
+}
 
 # This is done like this just to avoid needing the dependency on vivid everywhere
 # to change the ls colors theme, use vivid generate solarized-light.yml > ls_colors.txt
