@@ -73,11 +73,11 @@ export PATH="$PATH:${ZDOTDIR:h}/fzf/bin"
 # of ctrl-t and alt-c (and the latter is bound to ctrl-j)
 . "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
 
-# Exact matching similar to helm
 export FZF_DEFAULT_COLORS="\
    --color 16,fg:11,bg:-1,hl:1,hl+:1,bg+:7,fg+:-1:regular:underline \
    --color prompt:4,pointer:13,marker:13,spinner:3,info:3"
 
+# -e is for exact matching within a group
 export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS} --bind 'ctrl-l:accept' --ansi --layout default"
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
@@ -365,10 +365,8 @@ zstyle ':fzf-tab:*' group-colors $FZF_TAB_GROUP_COLORS
 
 . "${ZDOTDIR:h}/fzf-tab/fzf-tab.plugin.zsh"
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-# Surprisingly, fzf-tab doesn't respect FZF_DEFAULT_OPTS
-zstyle ':fzf-tab:*' fzf-flags $(echo $FZF_DEFAULT_OPTS)
+zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
 zstyle ':fzf-tab:*' prefix ''
-zstyle ':fzf-tab:*' accept-line 'ctrl-l'
 
 # Change cursor shape for different vi modes.
 # https://unix.stackexchange.com/questions/433273/changing-cursor-style-based-on-mode-in-both-zsh-and-vim
