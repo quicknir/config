@@ -318,9 +318,9 @@ tmux_conf_theme_window_status_bell_bg="default"
 tmux_conf_theme_window_status_bell_attr="blink,bold"
 
 # window last status style
-tmux_conf_theme_window_status_last_fg="default"
-tmux_conf_theme_window_status_last_bg="default"
-tmux_conf_theme_window_status_last_attr="none"
+tmux_conf_theme_window_status_last_fg="$tmux_conf_theme_colour_13"
+tmux_conf_theme_window_status_last_bg="$tmux_conf_theme_colour_4"
+#tmux_conf_theme_window_status_last_attr="none"
 
 # status left/right sections separators
 #tmux_conf_theme_left_separator_main=""
