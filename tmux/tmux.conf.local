@@ -484,7 +484,7 @@ bind n new-window
 bind "\\" split-window -h # tmux vertical/horizontal is backwards
 bind "-" split-window -v # tmux vertical/horizontal is backwards
 bind R source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
-bind-key r command-prompt -I "#W" "rename-window '%%'"
+bind-key r command-prompt "rename-window '%%'"
 bind-key D detach
 bind-key d kill-window
 bind-key x kill-pane
