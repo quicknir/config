@@ -24,7 +24,7 @@ colors:
 
 core:
   normal_text:
-    foreground: base00
+    foreground: green
 
   regular_file:
     foreground: base00
@@ -34,11 +34,9 @@ core:
 
   directory:
     foreground: blue
-    font-style: bold
 
   symlink:
-    foreground: cyan
-    font-style: bold
+    foreground: yellow
 
   multi_hard_link: {}
 
@@ -50,7 +48,6 @@ core:
   socket:
     foreground: magenta
     background: base02
-    font-style: bold
 
   door:
     foreground: magenta
@@ -90,31 +87,46 @@ core:
   sticky: {}
 
   executable_file:
-    foreground: green
-    font-style: bold
+    foreground: magenta
 
 text:
   special:
-    foreground: base00
+    foreground: green
+    font-style: bold
 
   todo:
-    foreground: base00
+    foreground: green
     font-style: bold
 
   licenses:
-    foreground: base00
+    foreground: green
 
   configuration:
-    foreground: base00
+    foreground: green
+    font-style: bold
 
   other:
-    foreground: base00
+    foreground: green
 
 markup:
   foreground: base00
 
 programming:
-  foreground: base00
+  foreground: cyan
+  source:
+    foreground: cyan
+    cxx:
+      foreground: cyan
+      font-style: bold
+    rust:
+      foreground: cyan
+      font-style: bold
+  tooling:
+    foreground: cyan
+    vcs:
+      foreground: violet
+    build:
+      foreground: orange
 
 media:
   image:
@@ -138,7 +150,7 @@ archives:
   font-style: bold
 
 executable:
-  foreground: base00
+  foreground: magenta
 
 unimportant:
   foreground: base1

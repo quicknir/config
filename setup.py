@@ -27,10 +27,12 @@ def setup_config(repo_path: Path):
 
     print("Setup tmux")
     symlink_and_bak(repo_path / "tmux/.tmux.conf", Path("~/.tmux.conf").expanduser())
-    symlink_and_bak(repo_path / "tmux/.tmux.conf.local", Path("~/.tmux.conf.local").expanduser())
 
     print("Installing fzf")
     subprocess.run(["./install", "--bin"], cwd=(repo_path/"terminal/fzf"))
+
+    print("Add zsh fast syntax highlighting symlink")
+    symlink_and_bak(repo_path / "config/terminal", Path("~/.fsh").expanduser())
 
     # Install fonts; come back to this
     #symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))

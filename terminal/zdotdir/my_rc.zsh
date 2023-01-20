@@ -1,6 +1,7 @@
 # To get beam shaped cursor on instant prompt startup
 echo -ne '\e[5 q'
 
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of /spare/ssd_local/nir/zsh/home/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
