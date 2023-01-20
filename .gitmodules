@@ -22,3 +22,6 @@
 [submodule "terminal/zsh-autosuggestions"]
 	path = terminal/zsh-autosuggestions
 	url = git@github.com:zsh-users/zsh-autosuggestions.git
+[submodule "tmux/extrakto"]
+	path = tmux/extrakto
+	url = git@github.com:laktak/extrakto.git
