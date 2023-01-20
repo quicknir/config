@@ -12,6 +12,7 @@ fi
 # Source powerlevel10k
 . "${ZDOTDIR:h}/powerlevel10k/powerlevel10k.zsh-theme"
 
+alias ls='exa --icons --group-directories-first'
 alias ll='exa -l --icons --group-directories-first --git'
 alias less='bat --paging always'
 alias cat='bat'

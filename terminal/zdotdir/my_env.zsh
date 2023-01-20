@@ -30,17 +30,16 @@ export LS_COLORS=$(cat "${ZDOTDIR:h}/ls_colors.txt")
 
 export BAT_THEME='Solarized (light)'
 
-alias ls='exa --icons --group-directories-first'
 
 __fzf_ls_preview() {
     local d=${~1}
-    ls $d
+    exa --icons --group-directories-first $d
 }
 
 __fzf_ls_bat_preview() {
     local d=${~1}
     if [[ -d $d ]]; then
-        ls $d
+        exa --icons --group-directories-first $d
     else
         bat --color=always --style numbers,grid $d
     fi
