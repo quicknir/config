@@ -26,7 +26,7 @@ def setup_config(repo_path: Path):
     symlink_and_bak(repo_path / "terminal/zdotdir/.zshenv", Path("~/.zshenv").expanduser())
 
     print("Setup tmux")
-    symlink_and_bak(repo_path / "tmux/.tmux.conf", Path("~/.tmux.conf").expanduser())
+    symlink_and_bak(repo_path / "tmux/tmux.conf", Path("~/.tmux.conf").expanduser())
 
     print("Installing fzf")
     subprocess.run(["./install", "--bin"], cwd=(repo_path/"terminal/fzf"))
