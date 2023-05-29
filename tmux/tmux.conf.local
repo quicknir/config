@@ -51,20 +51,10 @@ set -s escape-time 10                     # faster command sequences
 set -sg repeat-time 600                   # increase repeat timeout
 set -s focus-events on
 
-set -g prefix2 C-a                        # GNU-Screen compatible prefix
-bind C-a send-prefix -2
-
 set -q -g status-utf8 on                  # expect UTF-8 (tmux < 2.2)
 setw -q -g utf8 on
 
 set -g history-limit 5000                 # boost history
-
-# edit configuration
-bind e new-window -n "~/.tmux.conf.local" sh -c '${EDITOR:-vim} ~/.tmux.conf.local && tmux source ~/.tmux.conf && tmux display "~/.tmux.conf sourced"'
-
-# reload configuration
-bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
-
 
 # -- display -------------------------------------------------------------------
 
@@ -89,8 +79,21 @@ set -g monitor-activity on
 set -g visual-activity off
 
 
-# -- navigation ----------------------------------------------------------------
+# -- bindings ----------------------------------------------------------------
 
+# edit configuration
+bind e new-window -n "~/.tmux.conf.local" sh -c '${EDITOR:-vim} ~/.tmux.conf.local && tmux source ~/.tmux.conf && tmux display "~/.tmux.conf sourced"'
+
+bind R source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
+
+# Use C-a as prefix; C-a twice to send C-a
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+
+
+# -- sessions ------------------------------------------------------------------
+# NF: this is error prone, maybe change to something else?
 # create session
 bind C-c new-session
 
@@ -100,16 +103,50 @@ bind C-f command-prompt -p find-session 'switch-client -t %%'
 # session navigation
 bind BTab switch-client -l  # move to last session
 
-# split current window horizontally
-bind - split-window -v
-# split current window vertically
-bind _ split-window -h
 
-# pane navigation
-bind -r h select-pane -L  # move left
-bind -r j select-pane -D  # move down
-bind -r k select-pane -U  # move up
-bind -r l select-pane -R  # move right
+# -- windows -------------------------------------------------------------------
+
+bind -r C-h previous-window # select previous window
+bind -r C-l next-window     # select next window
+bind Tab last-window        # move to last active window
+
+bind n new-window
+bind r command-prompt "rename-window '%%'"
+bind D detach
+bind d kill-window
+# Merge current pane into ith window
+bind m command-prompt "join-pane -t '%%'"
+
+# Find good binding for this and swap-pane
+bind -r ) swap-window -d -t +1
+bind -r ( swap-window -d -t -1
+
+
+bind E command-prompt -p "Command:" \
+       "run \"tmux list-panes -a -F '##{session_name}:##{window_index}.##{pane_index}' \
+              | xargs -I PANE tmux send-keys -t PANE '%1' Enter\""
+
+
+# -- panes ----------------------------------------------------------------
+
+# Note the absence of -r; repeat just not worth it for these, too error prone
+bind h select-pane -L  # move left
+bind j select-pane -D  # move down
+bind k select-pane -U  # move up
+bind l select-pane -R  # move right
+
+# Unused and the Up binding was annoying due to repeat mode when wanting to quickly rerun last
+# command in another terminal
+unbind Up
+unbind Down
+unbind Left
+unbind Right
+
+bind "\\" split-window -h # tmux vertical/horizontal is backwards
+bind "-" split-window -v # tmux vertical/horizontal is backwards
+
+bind x kill-pane
+
 bind > swap-pane -D       # swap current pane with the next one
 bind < swap-pane -U       # swap current pane with the previous one
 
@@ -121,13 +158,6 @@ bind -r H resize-pane -L 2
 bind -r J resize-pane -D 2
 bind -r K resize-pane -U 2
 bind -r L resize-pane -R 2
-
-# window navigation
-unbind n
-unbind p
-bind -r C-h previous-window # select previous window
-bind -r C-l next-window     # select next window
-bind Tab last-window        # move to last active window
 
 # toggle mouse
 bind m run "cut -c3- ~/.tmux.conf | sh -s _toggle_mouse"
@@ -187,7 +217,7 @@ tmux_conf_theme_colour_3="#002b36"    # solarized base 03 (darkest)
 tmux_conf_theme_colour_4="#268bd2"    # solarized blue
 tmux_conf_theme_colour_5="#b58900"    # solarized yellow
 tmux_conf_theme_colour_6="#080808"    # dark gray
-tmux_conf_theme_colour_7="#e4e4e4"    # white
+tmux_conf_theme_colour_7="#6c71c4"    # solarized violet
 tmux_conf_theme_colour_8="#080808"    # dark gray
 tmux_conf_theme_colour_9="#b58900"    # solarized yellow
 tmux_conf_theme_colour_10="#ff00af"   # pink
@@ -360,14 +390,14 @@ tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see
 #     - #{username}
 #     - #{username_ssh}
 #tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
-tmux_conf_theme_status_left=" ❐ #S "
-#tmux_conf_theme_status_left=" ❐ #S |#{prefix}"
+#tmux_conf_theme_status_left=" ❐ #S "
+tmux_conf_theme_status_left=" ❐ #S |#{prefix} "
 #tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
 tmux_conf_theme_status_right=" %R , %d %b | #{username}#{root} | #{hostname} "
 
 # status left style
-tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
-tmux_conf_theme_status_left_bg="$tmux_conf_theme_colour_9,$tmux_conf_theme_colour_10,$tmux_conf_theme_colour_11"
+tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_1,$tmux_conf_theme_colour_1,$tmux_conf_theme_colour_8"
+tmux_conf_theme_status_left_bg="$tmux_conf_theme_colour_9,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_11"
 tmux_conf_theme_status_left_attr="bold,none,none"
 
 # status right style
@@ -469,42 +499,6 @@ set -g history-limit 10000
 # start with mouse mode enabled
 #set -g mouse on
 
-# replace C-b by C-a instead of using both prefixes
-set -gu prefix2
-unbind C-a
-unbind C-b
-set -g prefix C-a
-bind C-a send-prefix
-
-# if you don't want Oh my tmux! to alter a binding, use #!important
-# bind v new-window -c #{pane_current_path} #!important
-
-
-bind n new-window
-bind "\\" split-window -h # tmux vertical/horizontal is backwards
-bind "-" split-window -v # tmux vertical/horizontal is backwards
-bind R source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
-bind-key r command-prompt "rename-window '%%'"
-bind-key D detach
-bind-key d kill-window
-bind-key x kill-pane
-
-bind E command-prompt -p "Command:" \
-       "run \"tmux list-panes -a -F '##{session_name}:##{window_index}.##{pane_index}' \
-              | xargs -I PANE tmux send-keys -t PANE '%1' Enter\""
-
-# Unused and the Up binding was annoying due to repeat mode when wanting to quickly rerun last
-# command in another terminal
-unbind Up
-unbind Down
-unbind Left
-unbind Right
-
-# Note the absence of -r; repeat just not worth it for these, too error prone
-bind h select-pane -L  # move left
-bind j select-pane -D  # move down
-bind k select-pane -U  # move up
-bind l select-pane -R  # move right
 
 # Makes cursor/prompt start at the bottom of the window; more consistent
 # (not sure if I'm keeping it yet)
