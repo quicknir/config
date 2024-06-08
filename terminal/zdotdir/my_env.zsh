@@ -13,7 +13,7 @@ export TERM="xterm-256color"
 
 # fzf previews run in a fresh, non-interactive shell, so anything needed by preview code
 # should be defined here
-# Typically we use ls (or exa) to preview dirs, and cat (or bat) to preview
+# Typically we use ls (or eza) to preview dirs, and cat (or bat) to preview
 # files. So any settings related to these should be here.
 # Further, any reload commands are also executed similarly, so any functions called in a
 # reload binding also need to be defined in zshenv.
@@ -33,13 +33,13 @@ export BAT_THEME='Solarized (light)'
 
 __fzf_ls_preview() {
     local d=${~1}
-    exa --icons --group-directories-first $d
+    eza --icons --group-directories-first --colour=always $d
 }
 
 __fzf_ls_bat_preview() {
     local d=${~1}
     if [[ -d $d ]]; then
-        exa --icons --group-directories-first $d
+        eza --icons --group-directories-first --color=always $d
     else
         bat --color=always --style numbers,grid $d
     fi
@@ -50,7 +50,7 @@ maybe_source () {
     test -f $1 && . $1
 }
 
-# Adds PATH entries that we may need in scripts
-maybe_source "$HOME/.cargo/env"
-# May add e.g. machine-specific dir bookmarks
+# ignore_env.zsh needs to provide the environment for finding eza and bat
+# it may also contain machine specific directory bookmarks; they need to be defined there
+# for previews to correctly
 maybe_source "$ZDOTDIR/ignore_env.zsh"

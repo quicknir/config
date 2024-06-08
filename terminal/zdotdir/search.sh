@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Currently unused; come back to this sometime
 # Switch between Ripgrep launcher mode (CTRL-R) and fzf filtering mode (CTRL-F)
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
 INITIAL_QUERY="${*:-}"

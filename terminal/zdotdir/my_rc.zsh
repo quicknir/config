@@ -1,6 +1,7 @@
+# *** PROMPT ***
+
 # To get beam shaped cursor on instant prompt startup
 echo -ne '\e[5 q'
-
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of /spare/ssd_local/nir/zsh/home/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -12,6 +13,10 @@ fi
 # Source powerlevel10k
 . "${ZDOTDIR:h}/powerlevel10k/powerlevel10k.zsh-theme"
 
+# To customize prompt, run `p10k configure` or edit $ZDOTDIR/.p10k.zsh.
+[[ ! -f "${ZDOTDIR}/.p10k.zsh" ]] || source "${ZDOTDIR}/.p10k.zsh"
+
+# *** ALIASES ***
 alias ls='eza --icons --group-directories-first'
 alias ll='eza -l --icons --group-directories-first --git'
 alias less='bat --paging always'
@@ -19,87 +24,18 @@ alias cat='bat'
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 alias mm='micromamba'
 
-
-# Handy reference, courtesy of https://github.com/seebi/dircolors-solarized
-# SOLARIZED HEX     16/8 TERMCOL  XTERM/HEX   L*A*B      sRGB        HSB
-# --------- ------- ---- -------  ----------- ---------- ----------- -----------
-# base03    #002b36  8/4 brblack  234 #1c1c1c 15 -12 -12   0  43  54 193 100  21
-# base02    #073642  0/4 black    235 #262626 20 -12 -12   7  54  66 192  90  26
-# base01    #586e75 10/7 brgreen  240 #4e4e4e 45 -07 -07  88 110 117 194  25  46
-# base00    #657b83 11/7 bryellow 241 #585858 50 -07 -07 101 123 131 195  23  51
-# base0     #839496 12/6 brblue   244 #808080 60 -06 -03 131 148 150 186  13  59
-# base1     #93a1a1 14/4 brcyan   245 #8a8a8a 65 -05 -02 147 161 161 180   9  63
-# base2     #eee8d5  7/7 white    254 #d7d7af 92 -00  10 238 232 213  44  11  93
-# base3     #fdf6e3 15/7 brwhite  230 #ffffd7 97  00  10 253 246 227  44  10  99
-# yellow    #b58900  3/3 yellow   136 #af8700 60  10  65 181 137   0  45 100  71
-# orange    #cb4b16  9/3 brred    166 #d75f00 50  50  55 203  75  22  18  89  80
-# red       #dc322f  1/1 red      160 #d70000 50  65  45 220  50  47   1  79  86
-# magenta   #d33682  5/5 magenta  125 #af005f 50  65 -05 211  54 130 331  74  83
-# violet    #6c71c4 13/5 brmagenta 61 #5f5faf 50  15 -45 108 113 196 237  45  77
-# blue      #268bd2  4/4 blue      33 #0087ff 55 -10 -45  38 139 210 205  82  82
-# cyan      #2aa198  6/6 cyan      37 #00afaf 60 -35 -05  42 161 152 175  74  63
-# green     #859900  2/2 green     64 #5f8700 60 -20  65 133 153   0  68 100  60
-
-# Usage: palette
-palette() {
-    local -a colors
-    for i in {000..16}; do
-        colors+=("%F{$i}hello: $i%f")
-    done
-    print -cP $colors
-}
-
-# Usage: printc COLOR_CODE
-printc() {
-    local color="%F{$1}"
-    echo -E ${(qqqq)${(%)color}}
-}
-
 alias vi=vim
 alias vim=XDG_CONFIG_HOME='$ZDOTDIR/.. nvim'
-# For better vi usability, reduce key delay/timeout
-KEYTIMEOUT=1
 
-# Edit command in full blown vim; bound to normal mode C-e
-autoload -Uz edit-command-line
-zle -N edit-command-line
-bindkey -M vicmd "^E" edit-command-line
-
-# rg/fzf interactive search widget
-rg_fzf_search_widget() { "${ZDOTDIR}/search.sh" }
-zle -N rg_fzf_search_widget
-bindkey -M vicmd "s" rg_fzf_search_widget
-
-# fzf setup
-export PATH="$PATH:${ZDOTDIR:h}/fzf/bin"
-# just for ctrl-r which we use unmodified; we have our own versions
-# of ctrl-t and alt-c (and the latter is bound to ctrl-j)
-. "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
-
-# Use the = style for arguments rather than a space. fzf-tab gets confused otherwise
-export FZF_DEFAULT_COLORS="--color=16,fg:11,bg:-1,hl:1:regular,hl+:1,bg+:7,fg+:-1:regular:underline --color=prompt:4,pointer:13,marker:13,spinner:3,info:3"
-
-# -e is for exact matching within a group
-export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS} --bind 'ctrl-l:accept' --ansi --layout default"
-
-export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-FZF_TC_COMMON_OPTS="--preview-window hidden --bind 'ctrl-h:toggle-preview'"
-export FZF_CTRL_T_OPTS="${FZF_TC_COMMON_OPTS} --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-i:unbind(ctrl-i)+reload(fd -u --color always)' --bind 'ctrl-space:toggle'"
-export FZF_ALT_C_OPTS="${FZF_TC_COMMON_OPTS} --preview '__fzf_ls_preview {}' --bind 'ctrl-i:unbind(ctrl-i)+reload(__dir_entries -u)'"
-
-export FZF_TMUX=1
-
-__fzfcmd() {
-  [ -n "${TMUX_PANE-}" ] && { [ "${FZF_TMUX:-0}" != 0 ] || [ -n "${FZF_TMUX_OPTS-}" ]; } &&
-    echo "fzf-tmux ${FZF_TMUX_OPTS:--d${FZF_TMUX_HEIGHT:-40%}} -- " || echo "fzf"
-}
-
-# Useful aliases
-
-# This one
 alias hist-dur='history -iD 0 | fzf'
 
-# Suffixes!
+# Safe ops. Ask the user before doing anything destructive.
+alias cp='cp -i'
+alias ln='ln -i'
+alias mv='mv -i'
+alias rm='rm -i'
+
+# suffix aliases!
 # utility function; open script files in vim if not executable, otherwise execute
 __exec_or_vim() {
     if [[ -x $1 ]]; then
@@ -113,106 +49,33 @@ alias -s {txt,json,ini}=vim
 alias -s log=bat
 alias -s git='git clone'
 
+# For better vi usability, reduce key delay/timeout
+KEYTIMEOUT=1
+
+# Edit command in full blown vim; bound to normal mode C-e
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd "^E" edit-command-line
+
+# Unused; come back to this
+# rg/fzf interactive search widget
+# rg_fzf_search_widget() { "${ZDOTDIR}/search.sh" }
+# zle -N rg_fzf_search_widget
+# bindkey -M vicmd "s" rg_fzf_search_widget
+
+
 # Support for GUI clipboard
 source $ZDOTDIR/clipboard.zsh
 
 # A separate file that gets sourced; convenient for putting things you may not want to upstream
-maybe_source $ZDOTDIR/ignore.zsh
+maybe_source $ZDOTDIR/ignore_rc.zsh
 
 # recent directories
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 zstyle ':chpwd:*' recent-dirs-max 1000
 
-export FZF_ALT_C_COMMAND="fd --type d"
-# Replace the fzf cd widget. Our widget doesn't print the line.
-# Also, this cd widget includes all of the directories from our history.
-fzf-cd-widget() {
-  local cmd1="cdr -l | tr -s ' ' | cut -d ' ' -f 2-"
-  local cmd="${FZF_ALT_C_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs'     -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
-    -o -type d -print 2> /dev/null | cut -b3-"}"
-  setopt localoptions pipefail no_aliases 2> /dev/null
-  local dir="$(eval "{ $cmd1 & $cmd }" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
-  if [[ -z "$dir" ]]; then
-    zle redisplay
-    return 0
-  fi
-  dir=${~dir}
-  builtin cd -q "${(q)dir}" && my-redraw-prompt;
-  local ret=$?
-  return $ret
-}
-zle -N fzf-cd-widget
-
-export FZF_CTRL_T_COMMAND="fd --color always"
-
-__fsel() {
-  local search_dir="."
-  local cut_width="3"
-
-  if [[ ${LBUFFER[-1]} != ' ' ]]; then
-      tokens=(${(z)LBUFFER})
-      if [[ -d ${~tokens[-1]} ]]; then
-          search_dir=${~tokens[-1]}
-          cut_width="2"
-      fi
-  fi
-  builtin cd -q $search_dir
-  local cmd="${FZF_CTRL_T_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
-    -o -type f -print \
-    -o -type d -print \
-    -o -type l -print 2> /dev/null | cut -b${cut_width}-"}"
-  setopt localoptions pipefail no_aliases 2> /dev/null
-  local item
-  eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_CTRL_T_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
-    echo -n "${(q)item} "
-  done
-  local ret=$?
-  echo
-  return $ret
-}
-
-
-fzf-file-widget() {
-  LBUFFER="${LBUFFER}$(__fsel)"
-  local ret=$?
-  zle reset-prompt
-  return $ret
-}
-
-zle -N fzf-file-widget
-
-__hist_sel() {
-  setopt localoptions pipefail no_aliases 2> /dev/null
-  local item
-  local cmd="tac ${HISTFILE}.color"
-  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme history --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-}" $(__fzfcmd) "$@" | while read item; do
-    echo -n "${item} "
-  done
-  local ret=$?
-  echo
-  return $ret
-}
-
-fzf-history-widget() {
-  LBUFFER="${LBUFFER}$(__hist_sel)"
-  local ret=$?
-  zle reset-prompt
-  return $ret
-}
-
-      #--preview 'bat --color=always {1} --highlight-line{2}'
-fzf-rg-widget() {
-  RG_PREFIX="rg --line-number --no-heading --color=always --smart-case "
-  fzf --ansi \
-      --disabled --query "$INITIAL_QUERY" \
-      --bind "change:reload:sleep 0.1; eval $RG_PREFIX {q} || true" \
-      --delimiter : \
-      --preview 'bat --color=always {1} --highlight-line {2}' \
-      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
-}
-zle -N fzf-rg-widget
-bindkey '^S' fzf-rg-widget
+source "$ZDOTDIR/fzf.zsh"
 
 # Intuitive back-forward navigation, similar to a browser.
 # Also provides up (cd ..), and down (fzf recursive dir search).
@@ -260,7 +123,7 @@ maybe_source "$ZDOTDIR/ignore_rc.zsh"
 unsetopt LIST_BEEP
 
 # From prezto
-# zpreztrc
+# zpreztorc
 autoload zmv
 autoload zargs
 
@@ -277,7 +140,6 @@ unsetopt MAIL_WARNING       # Don't print a warning message if a mail file has b
 #
 # Jobs
 #
-
 setopt LONG_LIST_JOBS     # List jobs in the long format by default.
 setopt AUTO_RESUME        # Attempt to resume existing job before creating a new process.
 setopt NOTIFY             # Report status of background jobs immediately.
@@ -317,34 +179,16 @@ setopt EXTENDED_GLOB        # Use extended globbing syntax.
 unsetopt CLOBBER            # Do not overwrite existing files with > and >>.
                             # Use >! and >>! to bypass.
 
-# utility
-# Safe ops. Ask the user before doing anything destructive.
-alias cp='cp -i'
-alias ln='ln -i'
-alias mv='mv -i'
-alias rm='rm -i'
 
-# completion
-# Load and initialize the completion system ignoring insecure directories with a
-# cache time of 20 hours, so it should almost always regenerate the first time a
-# shell is opened each day.
+# *** COMPLETION ***
+# Add completions dir
+fpath=($ZDOTDIR/completions $fpath)
 autoload -Uz compinit
-_comp_path="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
-# #q expands globs in conditional expressions
-if [[ $_comp_path(#qNmh-20) ]]; then
-  # -C (skip function check) implies -i (skip security check).
-  compinit -C -d "$_comp_path"
-else
-  mkdir -p "$_comp_path:h"
-  compinit -i -d "$_comp_path"
-  # Keep $_comp_path younger than cache time even if it isn't regenerated.
-  touch "$_comp_path"
-fi
-unset _comp_path
+compinit
 
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion::complete:*' use-cache on
-zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompcache"
+zstyle ':completion::complete:*' cache-path "${ZDOTDIR}/.zcompcache"
 
 # We avoid completing user because it's VERY expensive on some setups (and not very useful)
 zstyle ':completion:*:*:*:users' users
@@ -396,9 +240,6 @@ preexec() {
     >$TTY echo -ne '\e[5 q' ;
 } # Use beam shape cursor for each new prompt.
 
-# To customize prompt, run `p10k configure` or edit $ZDOTDIR/.p10k.zsh.
-[[ ! -f "${ZDOTDIR}/.p10k.zsh" ]] || source "${ZDOTDIR}/.p10k.zsh"
-
 . "${ZDOTDIR:h}/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 fast-theme -q "${ZDOTDIR:h}/fast-syntax-solarized.ini"
 
@@ -409,132 +250,4 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=14"
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 
-highlight_to_format() {
-    local parts=(${(s/,/)1})
-    local before=""
-    local after=""
-    for part in $parts; do
-        case "$part" in
-            underline)
-                before+="%U"
-                after+="%u"
-                ;;
-            bold)
-                before+="%B"
-                after+="%b"
-                ;;
-            fg*)
-                local sub_parts=(${(s/=/)part})
-                before+="%F{$sub_parts[2]}"
-                after+="%f"
-                ;;
-            bg*)
-                local sub_parts=(${(s/=/)part})
-                before+="%K{$sub_parts[2]}"
-                after+="%k"
-                ;;
-        esac
-    done
-    pre_escape=${(%)before}
-    post_escape=${(%)after}
-}
-
-apply_format_to_substr() {
-    local mapped_first=$index_map[$first]
-    local mapped_last=$index_map[$last]
-    s=$1
-    local insert_string=${pre_escape}${s[$mapped_first,$mapped_last]}${post_escape}
-    s[$mapped_first,$mapped_last]=$insert_string
-}
-
-highlight_to_str() {
-    local str=$1
-    local highlight_arr_name=$2
-    local -A index_map
-    local str_length=${#str}
-    local i pre_escape post_escape s v
-
-    for i in {1..${#str}}; do index_map[$i]=$i; done
-
-    for highlight in ${(P)${highlight_arr_name}}; do
-        local parts=(${(s/ /)highlight})
-
-        if [[ ${#parts} != 3 ]]; then 
-            # Sometimes we get bad responses from fast-syntax highlighting
-            # e.g. if fed '($index++)', we get
-            # 0 1 fg=yellow 1 9 fg=red,bold 9 10 fg=yellow 0 1 fg=green,bold 9 10 fg=green,bold 9 10 bg=blue  1 bg=blue
-            # That trailing style doesn't have a begin and end; so we just ignore it
-            continue
-        fi
-
-        local first=$((parts[1]+1))
-        local last=$parts[2]
-
-        if [[ $first -ge $last ]]; then
-            # Again, fast-syntax sometimes includes segments like this where start is greater than end
-            # have observed it with git commit -m <quoted text>
-            continue
-        fi
-
-        highlight_to_format $parts[3]
-
-        local pre_escape_len=${#pre_escape}
-        local post_escape_len=${#post_escape}
-        apply_format_to_substr $str
-        str=${(%)s}
-        for i in {$first..$last}; do
-            v=$index_map[$i]
-            index_map[$i]=$((v+pre_escape_len))
-        done
-        if [[ $last != $str_length ]]; then
-            for i in {$((last+1))..$str_length}; do
-                v=$index_map[$i]
-                index_map[$i]=$((v+pre_escape_len+post_escape_len))
-            done
-        fi
-    done
-    echo -n $str
-}
-
-# the setup of fast-syntax-highlight calls was taken from here
-# https://github.com/zdharma-continuum/fast-syntax-highlighting/blob/master/test/parse.zsh#L180
---fast-syntax-highlight-str() {
-    emulate -L zsh
-    reply=()
-    -fast-highlight-init
-
-    local right_brace_is_recognized_everywhere
-    integer path_dirs_was_set multi_func_def ointeractive_comments
-    -fast-highlight-fill-option-variables
-
-    -fast-highlight-process "" "$1" "0"
-    -fast-highlight-string-process "" "$1"
-
-    highlight_to_str $1 reply
-}
-
-make_hist_color_file() {
-    emulate -L zsh
-    # sometimes get some crazy git dump the first time we syntax highlight some git stuff
-    -fast-highlight-process "" 'git diff foo' "0"
-
-    rm -f "${HISTFILE}.color"
-
-    local line
-    for line in ${(Oa)history[@]}; do
-        --fast-syntax-highlight-str $line >>! "${HISTFILE}.color"
-        echo '' >>! "${HISTFILE}.color"
-    done
-}
-
---add-color-history-entry() {
-    emulate -L zsh
-    if [[ ${#1} > 1 ]]; then
-        # sometimes get some crazy git dump the first time we syntax highlight some git stuff
-        -fast-highlight-process "" 'git diff foo' "0"
-        --fast-syntax-highlight-str $1 >>! "${HISTFILE}.color"
-    fi
-}
-
-autoload -Uz add-zsh-hook
-add-zsh-hook zshaddhistory --add-color-history-entry
+source ${ZDOTDIR}/color_history.zsh
