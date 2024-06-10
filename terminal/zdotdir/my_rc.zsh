@@ -35,19 +35,30 @@ alias ln='ln -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
+# utility function; edit with whatever is appropriate - vscode or vim
+e() {
+  if [[ -v VSCODE_NONCE ]]; then
+      code $1
+  else
+      vim $1
+  fi
+}
+
 # suffix aliases!
-# utility function; open script files in vim if not executable, otherwise execute
-__exec_or_vim() {
+# utility function; open script files for editing if not executable, otherwise execute
+__exec_or_edit() {
     if [[ -x $1 ]]; then
         $1
     else
-        vim $1
+        e $1
     fi
 }
-alias -s {sh,zsh,py}=__exec_or_vim
-alias -s {txt,json,ini}=vim
-alias -s log=bat
+alias -s {sh,zsh,py}=__exec_or_edit
+alias -s {txt,json,ini,toml,yml,yaml,xml,html,md,lock,snap,rst,cpp,h,rs}=e
+alias -s {log,csv}=bat
 alias -s git='git clone'
+alias -s o='nm --demangle'
+alias -s so='ldd'
 
 # For better vi usability, reduce key delay/timeout
 KEYTIMEOUT=1
