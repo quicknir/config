@@ -2,12 +2,21 @@ location=$(readlink -f ${(%):-%N})
 export ZDOTDIR=${location:h}
 unset location
 
+# Dir bookmarks are potentially used in previewing recent dirs
+hash -d config="${ZDOTDIR:h:h}"
+
+# Prevents duplicate entries in PATH
+typeset -U path PATH
+
+# Uses the config repo's built in mamba setup - devtools env gives us access to things like eza and bat
+# needed in env not rc because fzf previews launch in a non-interactive subshell
+export MAMBA_ROOT_PREFIX=~config/micromamba
+path[1,0]=($MAMBA_ROOT_PREFIX/envs/devtools/bin $MAMBA_ROOT_PREFIX/bin)
+
 # Useful to define editor "early" as it may be used by other code to set defaults, e.g. tmux
 export EDITOR=vim
 export VISUAL=vim
 
-# Dir bookmarks are potentially used in previewing recent dirs
-hash -d config="${ZDOTDIR:h:h}"
 
 export TERM="xterm-256color"
 
@@ -50,7 +59,9 @@ maybe_source () {
     test -f $1 && . $1
 }
 
-# ignore_env.zsh needs to provide the environment for finding eza and bat
-# it may also contain machine specific directory bookmarks; they need to be defined there
-# for previews to correctly
+# If not using the built in micromamba setup ignore_env.zsh needs to provide
+# the environment for finding eza and bat.
+# It may also contain machine specific directory bookmarks; they need to be defined there
+# for previews to work correctly (otherwise, fzf's non-interactive preview subshell will
+# not recognize the bookmark and the preview will fail)
 maybe_source "$ZDOTDIR/ignore_env.zsh"

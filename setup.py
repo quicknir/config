@@ -23,19 +23,35 @@ def symlink_and_bak(src: Path, dest: Path):
 
 def setup_config(repo_path: Path):
     print("Setup zsh")
-    symlink_and_bak(repo_path / "terminal/zdotdir/.zshenv", Path("~/.zshenv").expanduser())
+    symlink_and_bak(
+        repo_path / "terminal/zdotdir/.zshenv", Path("~/.zshenv").expanduser()
+    )
 
     print("Setup tmux")
     symlink_and_bak(repo_path / "tmux/tmux.conf", Path("~/.tmux.conf").expanduser())
-
-    print("Installing fzf")
-    subprocess.run(["./install", "--bin"], cwd=(repo_path/"terminal/fzf"))
 
     print("Add zsh fast syntax highlighting symlink")
     symlink_and_bak(repo_path / "terminal", Path("~/.fsh").expanduser())
 
     # Install fonts; come back to this
-    #symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
+    # symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
+
+    # Install micromamba
+    mm_path = repo_path / "micromamba"
+    subprocess.run(
+        f"curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj -C {mm_path} bin/micromamba",
+        shell=True,
+        check=True,
+    )
+
+    prefix_str = f"export MAMBA_ROOT_PREFIX={mm_path}"
+    path_str = f"export PATH=$MAMBA_ROOT_PREFIX/envs/devtools/bin:$MAMBA_ROOT_PREFIX/bin:$PATH"
+
+    subprocess.run(
+        f"{prefix_str} && {path_str} && micromamba create -f {mm_path}/devtools.yaml",
+        shell=True,
+        check=True
+    )
 
 
 if __name__ == "__main__":

@@ -25,7 +25,9 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 alias mm='micromamba'
 
 alias vi=vim
-alias vim=XDG_CONFIG_HOME='$ZDOTDIR/.. nvim'
+# nvim respects XDG_CONFIG_DIRS
+alias vim=nvim
+export XDG_CONFIG_DIRS=$ZDOTDIR/..
 
 alias hist-dur='history -iD 0 | fzf'
 

@@ -6,3 +6,6 @@ terminal/zdotdir/.zcompcache
 terminal/zdotdir/.zcompdump.zwc
 terminal/zdotdir/.chpwd-recent-dirs
 terminal/zdotdir/ignore*
+micromamba/bin
+micromamba/envs
+micromamba/pkgs

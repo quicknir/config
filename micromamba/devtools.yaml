@@ -1,0 +1,13 @@
+name: devtools
+channels:
+  - conda-forge
+dependencies:
+  - git
+  - tmux
+  - eza
+  - ripgrep
+  - fd-find
+  - nvim
+  - bat
+  - zsh
+  - fzf
