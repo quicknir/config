@@ -44,13 +44,18 @@ def setup_config(repo_path: Path):
         check=True,
     )
 
-    prefix_str = f"export MAMBA_ROOT_PREFIX={mm_path}"
-    path_str = f"export PATH=$MAMBA_ROOT_PREFIX/envs/devtools/bin:$MAMBA_ROOT_PREFIX/bin:$PATH"
-
+    # Create devtools environment
     subprocess.run(
-        f"{prefix_str} && {path_str} && micromamba create -f {mm_path}/devtools.yaml",
-        shell=True,
-        check=True
+        [
+            f"{mm_path/'bin/micromamba'}",
+            "-r",
+            str(mm_path),
+            "create",
+            "-f",
+            str(mm_path / "devtools.yaml"),
+            "-y",
+        ],
+        check=True,
     )
 
 

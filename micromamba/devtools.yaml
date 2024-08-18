@@ -11,3 +11,4 @@ dependencies:
   - bat
   - zsh
   - fzf
+  - git-delta
