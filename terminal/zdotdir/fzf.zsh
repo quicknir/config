@@ -1,3 +1,4 @@
+path[1,0]="${ZDOTDIR:h}/fzf/bin"  # just for fzf-tmux
 # just for ctrl-r which we use unmodified; we have our own versions
 # of ctrl-t and alt-c (and the latter is bound to ctrl-j)
 . "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
