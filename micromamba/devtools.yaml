@@ -12,3 +12,4 @@ dependencies:
   - zsh
   - fzf
   - git-delta
+  - lazygit
