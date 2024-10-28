@@ -33,8 +33,7 @@ def setup_config(repo_path: Path):
     print("Add zsh fast syntax highlighting symlink")
     symlink_and_bak(repo_path / "terminal", Path("~/.fsh").expanduser())
 
-    # Install fonts; come back to this
-    # symlink_and_bak(path.join(repo_path, 'fonts/Input'), path.expanduser('~/.fonts/Input'))
+    print("Install fonts - Jetbrains Mono Nerd Font from https://www.nerdfonts.com/font-downloads")
 
     # Install micromamba
     mm_path = repo_path / "micromamba"
