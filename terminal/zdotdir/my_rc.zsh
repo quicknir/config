@@ -76,7 +76,6 @@ bindkey -M vicmd "^E" edit-command-line
 # zle -N rg_fzf_search_widget
 # bindkey -M vicmd "s" rg_fzf_search_widget
 
-
 # Support for GUI clipboard
 source $ZDOTDIR/clipboard.zsh
 

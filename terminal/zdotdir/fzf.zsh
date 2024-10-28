@@ -1,6 +1,6 @@
 path[1,0]="${ZDOTDIR:h}/fzf/bin"  # just for fzf-tmux
-# just for ctrl-r which we use unmodified; we have our own versions
-# of ctrl-t and alt-c (and the latter is bound to ctrl-j)
+# We have our own versions of all the major fzf commands (file, dir jump, history)
+# but still have dependencies on this file
 . "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
 
 # Use the = style for arguments rather than a space. fzf-tab gets confused otherwise
