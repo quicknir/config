@@ -18,6 +18,8 @@ export VISUAL=vim
 
 export TERM="xterm-256color"
 
+export XDG_CONFIG_HOME=~config/xdg_config_home
+
 # fzf previews run in a fresh, non-interactive shell, so anything needed by preview code
 # should be defined here
 # Typically we use ls (or eza) to preview dirs, and cat (or bat) to preview

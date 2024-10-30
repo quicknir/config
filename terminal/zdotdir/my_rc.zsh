@@ -76,6 +76,7 @@ bindkey -M vicmd "^E" edit-command-line
 # zle -N rg_fzf_search_widget
 # bindkey -M vicmd "s" rg_fzf_search_widget
 
+
 # Support for GUI clipboard
 source $ZDOTDIR/clipboard.zsh
 
@@ -253,7 +254,7 @@ preexec() {
 } # Use beam shape cursor for each new prompt.
 
 . "${ZDOTDIR:h}/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-fast-theme -q "${ZDOTDIR:h}/fast-syntax-solarized.ini"
+fast-theme -q "${XDG_CONFIG_HOME}/fsh/fast-syntax-solarized.ini"
 
 . "${ZDOTDIR:h}/zsh-autosuggestions/zsh-autosuggestions.zsh"
 bindkey '^ ' autosuggest-accept
