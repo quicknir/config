@@ -22,3 +22,6 @@
 [submodule "tmux/extrakto"]
 	path = tmux/extrakto
 	url = git@github.com:laktak/extrakto.git
+[submodule "tmux/oh-my-tmux"]
+	path = tmux/oh-my-tmux
+	url = git@github.com:quicknir/oh-my-tmux.git
