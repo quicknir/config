@@ -14,7 +14,7 @@
 	path = terminal/powerlevel10k
 	url = git@github.com:romkatv/powerlevel10k.git
 [submodule "terminal/nvim/pack/plugins/start/vim-surround"]
-	path = terminal/nvim/pack/plugins/start/vim-surround
+	path = xdg_config_home/nvim/pack/plugins/start/vim-surround
 	url = git@github.com:tpope/vim-surround.git
 [submodule "terminal/zsh-autosuggestions"]
 	path = terminal/zsh-autosuggestions
