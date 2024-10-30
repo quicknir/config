@@ -1,0 +1,7 @@
+[user]
+	email = quicknir@gmail.com
+	name = Nir Friedman
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
