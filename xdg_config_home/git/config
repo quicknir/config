@@ -5,3 +5,5 @@
 	rebase = true
 [rebase]
 	autoStash = true
+[includeIf "hasconfig:remote.*.url:https://example.com/**"]
+	path = work_email.inc
