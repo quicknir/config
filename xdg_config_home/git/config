@@ -6,4 +6,4 @@
 [rebase]
 	autoStash = true
 [includeIf "hasconfig:remote.*.url:*tower-research.com*/**"]
-	path = work_email.inc
+	path = work.inc
