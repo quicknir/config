@@ -27,12 +27,6 @@ def setup_config(repo_path: Path):
         repo_path / "terminal/zdotdir/.zshenv", Path("~/.zshenv").expanduser()
     )
 
-    print("Setup tmux")
-    symlink_and_bak(repo_path / "tmux/tmux.conf", Path("~/.tmux.conf").expanduser())
-
-    print("Add zsh fast syntax highlighting symlink")
-    symlink_and_bak(repo_path / "terminal", Path("~/.fsh").expanduser())
-
     print("Install fonts - Jetbrains Mono Nerd Font from https://www.nerdfonts.com/font-downloads")
 
     # Install micromamba
