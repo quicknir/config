@@ -9,7 +9,5 @@
 	path = work.inc
 [merge]
 conflictStyle=diff3
-[url "https://github.com/"]
-	insteadOf = git@github.com:
 [include]
 	path = ignore.inc
