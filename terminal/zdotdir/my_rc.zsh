@@ -62,6 +62,12 @@ alias -s git='git clone'
 alias -s o='nm --demangle'
 alias -s so='ldd'
 
+edit_output() {
+  file=`mktemp`.sh
+  tmux capture-pane -p > $file
+  e $file
+}
+
 # For better vi usability, reduce key delay/timeout
 KEYTIMEOUT=1
 
