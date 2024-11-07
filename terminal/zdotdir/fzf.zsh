@@ -1,7 +1,4 @@
 path[1,0]="${ZDOTDIR:h}/fzf/bin"  # just for fzf-tmux
-# We have our own versions of all the major fzf commands (file, dir jump, history)
-# but still have dependencies on this file
-. "${ZDOTDIR:h}/fzf/shell/key-bindings.zsh"
 
 # Use the = style for arguments rather than a space. fzf-tab gets confused otherwise
 export FZF_DEFAULT_COLORS="--color=16,fg:11,bg:-1,hl:1:regular,hl+:1,bg+:7,fg+:-1:regular:underline --color=prompt:4,pointer:13,marker:13,spinner:3,info:3"
@@ -10,9 +7,9 @@ export FZF_DEFAULT_COLORS="--color=16,fg:11,bg:-1,hl:1:regular,hl+:1,bg+:7,fg+:-
 export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS} --bind 'ctrl-l:accept' --ansi --layout default"
 
 export FZF_TMUX_OPTS="-p -w 62% -h 38%"
-FZF_TC_COMMON_OPTS="--preview-window hidden --bind 'ctrl-h:toggle-preview'"
-export FZF_CTRL_T_OPTS="${FZF_TC_COMMON_OPTS} --preview '__fzf_ls_bat_preview {}' --bind 'ctrl-i:unbind(ctrl-i)+reload(fd -u --color always)' --bind 'ctrl-space:toggle'"
-export FZF_ALT_C_OPTS="${FZF_TC_COMMON_OPTS} --preview '__fzf_ls_preview {}' --bind 'ctrl-i:unbind(ctrl-i)+reload(__dir_entries -u)'"
+FZF_TC_COMMON_OPTS="--preview-window hidden --bind 'ctrl-h:toggle-preview' --preview '__fzf_ls_bat_preview {}'"
+export FZF_CTRL_T_OPTS="${FZF_TC_COMMON_OPTS} --bind 'ctrl-i:unbind(ctrl-i)+reload(fd -u --color always)' --bind 'ctrl-space:toggle'"
+export FZF_ALT_C_OPTS="${FZF_TC_COMMON_OPTS} --bind 'ctrl-i:unbind(ctrl-i)+reload(__dir_entries -u)'"
 
 export FZF_TMUX=1
 
@@ -98,6 +95,8 @@ fzf-history-widget() {
   zle reset-prompt
   return $ret
 }
+
+zle -N fzf-history-widget
 
 # Not currently used; come back to this one day
 # fzf-rg-widget() {

@@ -39,12 +39,6 @@ export LS_COLORS=$(cat "${ZDOTDIR:h}/ls_colors.txt")
 
 export BAT_THEME='Solarized (light)'
 
-
-__fzf_ls_preview() {
-    local d=${~1}
-    eza --icons --group-directories-first --colour=always $d
-}
-
 __fzf_ls_bat_preview() {
     local d=${~1}
     if [[ -d $d ]]; then
