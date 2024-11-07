@@ -38,7 +38,7 @@ alias rm='rm -i'
 # Our tmux conf contains:
 # set-option -ga update-environment VSCODE_IPC_HOOK_CLI
 # This ensures that every time a tmux session is created *or* attached to,
-# the value of VSCODE_IPC_CLI_HOOK is copied into the environment of the *session*.
+# the value of VSCODE_IPC_HOOK_CLI is copied into the environment of the *session*.
 # If the variable isn't defined in the parent, it gets unset in the session.
 # Individual windows may still have "stale" values of VSCODE_IPC_HOOK_CLI, but
 # our functions below solve this issue by "grabbing" the correct value
@@ -49,6 +49,8 @@ alias rm='rm -i'
 __get_vscode_ipc__() {
   if [[ -v TMUX ]]; then
     tmux show-env VSCODE_IPC_HOOK_CLI 2>/dev/null
+  else
+    echo "VSCODE_IPC_HOOK_CLI=${VSCODE_IPC_HOOK_CLI}"
   fi
 }
 
@@ -56,7 +58,7 @@ alias code='env $(__get_vscode_ipc__) code'
 
 lazygit() {
   local vscode_ipc=$(__get_vscode_ipc__)
-  if [[ vscode_ipc != "" ]]; then
+  if [[ $vscode_ipc != "" ]]; then
     env $vscode_ipc VISUAL=code command lazygit "$@"
   else
     command lazygit "$@"
@@ -66,7 +68,7 @@ lazygit() {
 # utility function; edit with whatever is appropriate - vscode or vim
 e() {
   local vscode_ipc=$(__get_vscode_ipc__)
-  if [[ vscode_ipc != "" ]]; then
+  if [[ $vscode_ipc != "" ]]; then
     env $vscode_ipc code "$@"
   else
     vim "$@"
