@@ -37,12 +37,58 @@ alias ln='ln -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
+# Our tmux conf contains:
+# set-option -ga update-environment VSCODE_IPC_HOOK_CLI
+# This ensures that every time a tmux session is created *or* attached to,
+# the value of VSCODE_IPC_CLI_HOOK is copied into the environment of the *session*.
+# If the variable isn't defined in the parent, it gets unset in the session.
+# Individual windows may still have "stale" values of VSCODE_IPC_HOOK_CLI, but
+# our functions below solve this issue by "grabbing" the correct value
+# of VSCODE_IPC_HOOK_CLI from tmux. This also makes whether VSCODE_IPC_HOOK_CLI is set
+# a reliable indicator of whether we are running inside vscode - TERM_PROGRAM gets
+# overwritten by tmux, so it's not reliable when tmux is nested inside vscode.
+
+__get_vscode_ipc__() {
+  if [[ -v TMUX ]]; then
+    tmux show-env VSCODE_IPC_HOOK_CLI 2>/dev/null
+  fi
+}
+
+alias code='env $(__get_vscode_ipc__) code'
+
+# Alternate implementation - commit the commented code, then delete
+# code() {
+#   # local vscode_ipc=$(tmux show-env VSCODE_IPC_HOOK_CLI | cut -d '=' -f2) 2>/dev/null
+#   localvscode_ipc=$(__get_vscode_ipc__)
+#   if [[ -v TMUX && vscode_ipc != "" ]]; then
+#     VSCODE_IPC_HOOK_CLI=$vscode_ipc command code "$@"
+#   else
+#     command code "$@"
+#   fi
+# }
+
+lazygit() {
+  local vscode_ipc=$(__get_vscode_ipc__)
+  if [[ vscode_ipc != "" ]]; then
+    env $vscode_ipc VISUAL=code command lazygit "$@"
+    # Alternate implementation - commit then delete
+    # if [[ -v TMUX ]]; then
+    #   VISUAL=code VSCODE_IPC_HOOK_CLI=$vscode_ipc command lazygit "$@"
+    # else
+    #   VISUAL=code lazygit "$@"
+    # fi
+  else
+    command lazygit "$@"
+  fi
+}
+
 # utility function; edit with whatever is appropriate - vscode or vim
 e() {
-  if [[ -v VSCODE_NONCE ]]; then
-      code $1
+  local vscode_ipc=$(__get_vscode_ipc__)
+  if [[ vscode_ipc != "" ]]; then
+      env $vscode_ipc code "$@"
   else
-      vim $1
+      vim "$@"
   fi
 }
 
