@@ -56,27 +56,10 @@ __get_vscode_ipc__() {
 
 alias code='env $(__get_vscode_ipc__) code'
 
-# Alternate implementation - commit the commented code, then delete
-# code() {
-#   # local vscode_ipc=$(tmux show-env VSCODE_IPC_HOOK_CLI | cut -d '=' -f2) 2>/dev/null
-#   localvscode_ipc=$(__get_vscode_ipc__)
-#   if [[ -v TMUX && vscode_ipc != "" ]]; then
-#     VSCODE_IPC_HOOK_CLI=$vscode_ipc command code "$@"
-#   else
-#     command code "$@"
-#   fi
-# }
-
 lazygit() {
   local vscode_ipc=$(__get_vscode_ipc__)
   if [[ vscode_ipc != "" ]]; then
     env $vscode_ipc VISUAL=code command lazygit "$@"
-    # Alternate implementation - commit then delete
-    # if [[ -v TMUX ]]; then
-    #   VISUAL=code VSCODE_IPC_HOOK_CLI=$vscode_ipc command lazygit "$@"
-    # else
-    #   VISUAL=code lazygit "$@"
-    # fi
   else
     command lazygit "$@"
   fi
@@ -86,9 +69,9 @@ lazygit() {
 e() {
   local vscode_ipc=$(__get_vscode_ipc__)
   if [[ vscode_ipc != "" ]]; then
-      env $vscode_ipc code "$@"
+    env $vscode_ipc code "$@"
   else
-      vim "$@"
+    vim "$@"
   fi
 }
 
