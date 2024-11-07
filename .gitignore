@@ -10,3 +10,4 @@ micromamba/bin
 micromamba/envs
 micromamba/pkgs
 xdg_config_home/git/ignore.inc
+xdg_config_home/htop
