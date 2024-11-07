@@ -26,11 +26,17 @@ export XDG_CONFIG_HOME=~config/xdg_config_home
 # files. So any settings related to these should be here.
 # Further, any reload commands are also executed similarly, so any functions called in a
 # reload binding also need to be defined in zshenv.
+# TODO: it might be nice to fallback to find if fd isn't available. For now though, I just
+# always install fd.
 
 __dir_entries() {
   local cmd1="cdr -l | tr -s ' ' | cut -d ' ' -f 2-"
-  local cmd="fd --type d $1"
+  local cmd="fd --type d $@"
   eval "{ $cmd1 & $cmd }"
+}
+
+__file_entries() {
+  fd --color always "$@"
 }
 
 # This is done like this just to avoid needing the dependency on vivid everywhere
