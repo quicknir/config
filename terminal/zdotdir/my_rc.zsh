@@ -25,9 +25,7 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 alias mm='micromamba'
 
 alias vi=vim
-# nvim respects XDG_CONFIG_DIRS
 alias vim=nvim
-export XDG_CONFIG_DIRS=$ZDOTDIR/..
 
 alias hist-dur='history -iD 0 | fzf'
 
@@ -165,6 +163,7 @@ bindkey -v '^H' my-cd-back
 bindkey -v '^L' my-cd-forward
 bindkey -v '^J' fzf-cd-widget
 bindkey -v '^T' fzf-file-widget
+bindkey -v '^R' fzf-history-widget
 
 maybe_source "$ZDOTDIR/ignore_rc.zsh"
 
