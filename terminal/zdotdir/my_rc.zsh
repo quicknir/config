@@ -49,7 +49,7 @@ alias rm='rm -i'
 __get_vscode_ipc__() {
   if [[ -v TMUX ]]; then
     tmux show-env VSCODE_IPC_HOOK_CLI 2>/dev/null
-  else
+  elif [[ -v VSCODE_IPC_HOOK_CLI ]]; then
     echo "VSCODE_IPC_HOOK_CLI=${VSCODE_IPC_HOOK_CLI}"
   fi
 }
@@ -69,9 +69,9 @@ lazygit() {
 e() {
   local vscode_ipc=$(__get_vscode_ipc__)
   if [[ $vscode_ipc != "" ]]; then
-    env $vscode_ipc code "$@"
+    env $vscode_ipc command code "$@"
   else
-    vim "$@"
+    $VISUAL "$@"
   fi
 }
 
