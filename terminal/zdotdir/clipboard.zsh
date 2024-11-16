@@ -1,6 +1,6 @@
 function cutbuffer() {
   zle .$WIDGET
-  echo $CUTBUFFER | xclip -selection clipboard
+  echo $CUTBUFFER | xclip -selection clipboard 2> /dev/null
 }
 
 zle_cut_widgets=(
@@ -23,7 +23,12 @@ done
 
 
 function putbuffer() {
-  zle copy-region-as-kill "$(xclip -o -selection clipboard)"
+  local p rc
+  p="$(xclip -o -selection clipboard 2> /dev/null)"
+  rc=$?
+  if [[ $rc == 0 ]]; then
+    zle copy-region-as-kill "$p"
+  fi
   zle .$WIDGET
 }
 
