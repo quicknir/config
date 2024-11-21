@@ -13,3 +13,4 @@ dependencies:
   - fzf
   - git-delta
   - lazygit
+  - btop
