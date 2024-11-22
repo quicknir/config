@@ -52,7 +52,7 @@ __get_vscode_ipc__() {
   fi
 }
 
-alias code='$(__get_vscode_ipc__) code'
+alias code='__get_vscode_ipc__ && code'
 
 lazygit() {
   __get_vscode_ipc__
