@@ -1,30 +1,21 @@
-path[1,0]="${ZDOTDIR:h}/fzf/bin"  # just for fzf-tmux
-
 # Use the = style for arguments rather than a space. fzf-tab gets confused otherwise
 export FZF_DEFAULT_COLORS="--color=16,fg:11,bg:-1,hl:1:regular,hl+:1,bg+:7,fg+:-1:regular:underline --color=prompt:4,pointer:13,marker:13,spinner:3,info:3"
 
 # -e is for exact matching within a group
 # The 40% height is only used outside of tmux, so it's not very important
 # ctrl-z ignore: https://github.com/junegunn/fzf/issues/2289
-export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS} --bind 'ctrl-l:accept' --ansi --layout default --height 40% --bind=ctrl-z:ignore"
+export FZF_DEFAULT_OPTS="-e ${FZF_DEFAULT_COLORS} --bind 'ctrl-l:accept' --ansi --layout default --bind=ctrl-z:ignore --height 40% --tmux 62%,38%"
 
-export FZF_TMUX_OPTS="-p -w 62% -h 38%"
 FZF_TC_COMMON_OPTS="--preview-window hidden --bind 'ctrl-h:toggle-preview' --preview '__fzf_ls_bat_preview {}'"
 export FZF_CTRL_T_OPTS="${FZF_TC_COMMON_OPTS} --bind 'ctrl-i:unbind(ctrl-i)+reload(__file_entries -u)' --bind 'ctrl-space:toggle'"
 export FZF_ALT_C_OPTS="${FZF_TC_COMMON_OPTS} --bind 'ctrl-i:unbind(ctrl-i)+reload(__dir_entries -u)'"
-
-export FZF_TMUX=1
-
-__fzfcmd() {
-  [ -n "${TMUX_PANE-}" ] && { [ "${FZF_TMUX:-0}" != 0 ] || [ -n "${FZF_TMUX_OPTS-}" ]; } &&
-    echo "fzf-tmux ${FZF_TMUX_OPTS:--d${FZF_TMUX_HEIGHT:-40%}} -- " || echo "fzf"
-}
 
 # Replace the fzf cd widget. Our widget doesn't print the line.
 # Also, this cd widget includes all of the directories from our history.
 fzf-cd-widget() {
   setopt localoptions pipefail no_aliases 2> /dev/null
-  local dir="$(__dir_entries | FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
+  # +m to disable multiselect
+  local dir="$(__dir_entries | FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" fzf +m)"
   if [[ -z "$dir" ]]; then
     zle redisplay
     return 0
@@ -52,7 +43,7 @@ __fsel() {
   builtin cd -q $search_dir
   setopt localoptions pipefail no_aliases 2> /dev/null
   local item
-  __file_entries | FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS-} ${FZF_CTRL_T_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
+  __file_entries | FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS-} ${FZF_CTRL_T_OPTS-}" fzf -m "$@" | while read item; do
     echo -n "${(q)item} "
   done
   local ret=$?
@@ -73,7 +64,7 @@ __hist_sel() {
   setopt localoptions pipefail no_aliases 2> /dev/null
   local item
   local cmd="tac ${HISTFILE}.color"
-  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--scheme history  ${FZF_DEFAULT_OPTS-}" $(__fzfcmd) "$@" | while read item; do
+  eval "$cmd" | awk '!visited[$0]++' | FZF_DEFAULT_OPTS="--scheme history  ${FZF_DEFAULT_OPTS-}" fzf "$@" | while read item; do
     echo -n "${item} "
   done
   local ret=$?

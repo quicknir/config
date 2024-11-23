@@ -253,10 +253,11 @@ zstyle ':fzf-tab:*' group-colors $FZF_TAB_GROUP_COLORS
 
 . "${ZDOTDIR:h}/fzf-tab/fzf-tab.plugin.zsh"
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
-# fzf-tab's relationship with FZF_DEFAULT_ARGUMENTS is... very complicated. Better to set colors explicitly
-zstyle ':fzf-tab:*' fzf-flags $(echo $FZF_DEFAULT_COLORS)
 zstyle ':fzf-tab:*' prefix ''
+# As of the latest fzf-tab, FZF_DEFAULT_OPTIONS are ignored completely (by default).
+# So, we need to separately set anything we want for fzf-tab
+zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
+zstyle ':fzf-tab:*' fzf-flags $(echo $FZF_DEFAULT_COLORS)
 
 # Change cursor shape for different vi modes.
 # https://unix.stackexchange.com/questions/433273/changing-cursor-style-based-on-mode-in-both-zsh-and-vim
