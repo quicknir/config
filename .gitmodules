@@ -1,6 +1,3 @@
-[submodule "terminal/dircolors-solarized"]
-	path = terminal/dircolors-solarized
-	url = https://github.com/seebi/dircolors-solarized
 [submodule "terminal/fzf-tab"]
 	path = terminal/fzf-tab
 	url = https://github.com/Aloxaf/fzf-tab
