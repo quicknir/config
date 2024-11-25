@@ -1,18 +1,27 @@
-[submodule "terminal/fzf-tab"]
-	path = terminal/fzf-tab
-	url = https://github.com/Aloxaf/fzf-tab
-[submodule "terminal/fast-syntax-highlighting"]
-	path = terminal/fast-syntax-highlighting
-	url = https://github.com/zdharma-continuum/fast-syntax-highlighting.git
-[submodule "terminal/powerlevel10k"]
-	path = terminal/powerlevel10k
-	url = https://github.com/romkatv/powerlevel10k.git
-[submodule "terminal/nvim/pack/plugins/start/vim-surround"]
-	path = xdg_config_home/nvim/pack/plugins/start/vim-surround
-	url = https://github.com/tpope/vim-surround.git
-[submodule "terminal/zsh-autosuggestions"]
-	path = terminal/zsh-autosuggestions
-	url = https://github.com/zsh-users/zsh-autosuggestions.git
 [submodule "tmux/oh-my-tmux"]
 	path = tmux/oh-my-tmux
 	url = git@github.com:quicknir/oh-my-tmux.git
+
+# zsh plugins
+[submodule "terminal/fzf-tab"]
+	path = terminal/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab
+	shallow = true
+[submodule "terminal/fast-syntax-highlighting"]
+	path = terminal/fast-syntax-highlighting
+	url = https://github.com/zdharma-continuum/fast-syntax-highlighting.git
+	shallow = true
+[submodule "terminal/powerlevel10k"]
+	path = terminal/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
+	shallow = true
+[submodule "terminal/zsh-autosuggestions"]
+	path = terminal/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
+	shallow = true
+
+# vim plugins
+[submodule "terminal/nvim/pack/plugins/start/vim-surround"]
+	path = xdg_config_home/nvim/pack/plugins/start/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+	shallow = true
