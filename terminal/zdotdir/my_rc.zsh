@@ -121,8 +121,6 @@ autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 zstyle ':chpwd:*' recent-dirs-max 1000
 
-source "$ZDOTDIR/fzf.zsh"
-
 # Intuitive back-forward navigation, similar to a browser.
 # Also provides up (cd ..), and down (fzf recursive dir search).
 # Bound to Ctrl-hjkl
@@ -243,21 +241,9 @@ zstyle ':completion:*:git-checkout:*' sort false
 # set descriptions format to enable group support
 zstyle ':completion:*:descriptions' format '[%d]'
 
-zstyle ':fzf-tab:*' default-color $'\033[93m'
-zstyle ':fzf-tab:*' single-color $'\033[93m'
-
-export FZF_TAB_GROUP_COLORS=($'\033[34m' $'\033[31m' $'\033[32m' $'\033[35m' $'\033[36m'
-    $'\033[33m' $'\033[95m' $'\033[91m' $'\033[93m')
-
-zstyle ':fzf-tab:*' group-colors $FZF_TAB_GROUP_COLORS
-
-. "${ZDOTDIR:h}/fzf-tab/fzf-tab.plugin.zsh"
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-zstyle ':fzf-tab:*' prefix ''
-# As of the latest fzf-tab, FZF_DEFAULT_OPTIONS are ignored completely (by default).
-# So, we need to separately set anything we want for fzf-tab
-zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
-zstyle ':fzf-tab:*' fzf-flags $(echo $FZF_DEFAULT_COLORS)
+# Note the order - fzf.zsh also handles fzf-tab - which must be loaded after compinit, but
+# before autosuggestions and syntax highlighting
+source "$ZDOTDIR/fzf.zsh"
 
 # Change cursor shape for different vi modes.
 # https://unix.stackexchange.com/questions/433273/changing-cursor-style-based-on-mode-in-both-zsh-and-vim
