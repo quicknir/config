@@ -8,7 +8,7 @@ hash -d nikud="${ZDOTDIR:h:h}"
 # Prevents duplicate entries in PATH
 typeset -U path PATH
 
-# Uses the config repo's built in mamba setup - devtools env gives us access to things like eza and bat
+# Uses the repo's built in mamba setup - devtools env gives us access to things like eza and bat
 # needed in env not rc because fzf previews launch in a non-interactive subshell
 path[1,0]=~nikud/micromamba/envs/devtools/bin
 
