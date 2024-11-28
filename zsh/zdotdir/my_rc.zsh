@@ -211,9 +211,9 @@ HISTSIZE=10000  # The maximum number of events to save in the internal history.
 SAVEHIST=10000  # The maximum number of events to save in the history file.
 
 # directory
-setopt AUTO_CD              # Allows ~config 
+setopt AUTO_CD              # Allows ~nikud
 setopt AUTO_PUSHD           # Push the old directory onto the stack on cd. Needed for my-cd-rotate
-setopt CDABLE_VARS          # Allows cd config instead of cd ~config
+setopt CDABLE_VARS          # Allows cd nikud instead of cd ~nikud
 setopt MULTIOS              # Write to multiple descriptors.
 setopt EXTENDED_GLOB        # Use extended globbing syntax.
 unsetopt CLOBBER            # Do not overwrite existing files with > and >>.

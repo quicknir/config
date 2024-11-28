@@ -3,14 +3,14 @@ export ZDOTDIR=${location:h}
 unset location
 
 # Dir bookmarks are potentially used in previewing recent dirs
-hash -d config="${ZDOTDIR:h:h}"
+hash -d nikud="${ZDOTDIR:h:h}"
 
 # Prevents duplicate entries in PATH
 typeset -U path PATH
 
 # Uses the config repo's built in mamba setup - devtools env gives us access to things like eza and bat
 # needed in env not rc because fzf previews launch in a non-interactive subshell
-path[1,0]=~config/micromamba/envs/devtools/bin
+path[1,0]=~nikud/micromamba/envs/devtools/bin
 
 # Useful to define editor "early" as it may be used by other code to set defaults, e.g. tmux
 export EDITOR=vim
@@ -18,7 +18,7 @@ export VISUAL=vim
 
 export TERM="xterm-256color"
 
-export XDG_CONFIG_HOME=~config/xdg_config_home
+export XDG_CONFIG_HOME=~nikud/xdg_config_home
 
 # fzf previews run in a fresh, non-interactive shell, so anything needed by preview code
 # should be defined here
@@ -41,7 +41,7 @@ function __file_entries() {
 
 # This is done like this just to avoid needing the dependency on vivid everywhere
 # to change the ls colors theme, use vivid generate solarized-light.yml > ls_colors.txt
-export LS_COLORS=$(cat "${ZDOTDIR:h}/ls_colors.txt")
+export LS_COLORS=$(cat ~nikud/zsh/ls_colors.txt)
 
 export BAT_THEME='Solarized (light)'
 
