@@ -116,6 +116,9 @@ source $ZDOTDIR/clipboard.zsh
 # A separate file that gets sourced; convenient for putting things you may not want to upstream
 maybe_source $ZDOTDIR/ignore_rc.zsh
 
+# A per host file that optionally gets sourced
+maybe_source $ZDOTDIR/host_$(hostname)_rc.zsh
+
 # recent directories
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs

@@ -67,3 +67,6 @@ function maybe_source () {
 # for previews to work correctly (otherwise, fzf's non-interactive preview subshell will
 # not recognize the bookmark and the preview will fail)
 maybe_source "$ZDOTDIR/ignore_env.zsh"
+
+# A per host file that optionally gets sourced
+maybe_source $ZDOTDIR/host_$(hostname)_env.zsh
