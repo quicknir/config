@@ -29,13 +29,13 @@ export XDG_CONFIG_HOME=~config/xdg_config_home
 # TODO: it might be nice to fallback to find if fd isn't available. For now though, I just
 # always install fd.
 
-__dir_entries() {
+function __dir_entries() {
   local cmd1="cdr -l | tr -s ' ' | cut -d ' ' -f 2-"
   local cmd="fd --type d $@"
   eval "{ $cmd1 & $cmd }"
 }
 
-__file_entries() {
+function __file_entries() {
   fd --color always "$@"
 }
 
@@ -45,17 +45,19 @@ export LS_COLORS=$(cat "${ZDOTDIR:h}/ls_colors.txt")
 
 export BAT_THEME='Solarized (light)'
 
-__fzf_ls_bat_preview() {
-    local d=${~1}
-    if [[ -d $d ]]; then
-        eza --icons --group-directories-first --color=always $d
-    else
-        bat --color=always --style numbers,grid $d
-    fi
+function __fzf_ls_bat_preview() {
+  # This expansion is to force expanding any directory bookmarks, which often show up in the arguments
+  # to preview
+  local d=${~1}
+  if [[ -d $d ]]; then
+    eza --icons --group-directories-first --color=always $d
+  else
+    bat --color=always --style numbers,grid $d
+  fi
 }
 
 # A useful function and we already need it so may as well define it here
-maybe_source () {
+function maybe_source () {
     test -f $1 && . $1
 }
 
