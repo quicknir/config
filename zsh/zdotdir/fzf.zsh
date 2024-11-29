@@ -15,7 +15,7 @@ function {
   local fzf_base_args="-e ${fzf_colors} --bind=ctrl-l:accept --bind=ctrl-z:ignore" 
 
   # The 40% height is only used outside of tmux, so it's not very important
-  export FZF_DEFAULT_OPTS="${fzf_base_args} --ansi --layout default --height 40% --tmux 62%,38%"
+  export FZF_DEFAULT_OPTS="${fzf_base_args} --ansi --layout default --height 40% --tmux 62%,38% --exit-0"
 
   zstyle ':fzf-tab:*' group-colors \
     $'\033[34m' $'\033[31m' $'\033[32m' $'\033[35m' $'\033[36m' $'\033[33m' $'\033[95m' $'\033[91m' $'\033[93m'
