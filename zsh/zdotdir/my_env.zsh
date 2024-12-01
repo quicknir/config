@@ -20,6 +20,10 @@ export TERM="xterm-256color"
 
 export XDG_CONFIG_HOME=~nikud/xdg_config_home
 
+# "Encouraging" some other tools to use XDG_CONFIG_HOME
+export IPYTHONDIR="${XDG_CONFIG_HOME}/ipython"
+export JUPYTER_CONFIG_DIR="${XDG_CONFIG_HOME}/jupyter"
+
 # fzf previews run in a fresh, non-interactive shell, so anything needed by preview code
 # should be defined here
 # Typically we use ls (or eza) to preview dirs, and cat (or bat) to preview
